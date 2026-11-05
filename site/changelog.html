@@ -75,7 +75,7 @@
 
 <h3>Packaging</h3>
 <ul>
-  <li>The release archive is now byte-identical across rebuilds of the same folder, so a checksum can be compared between machines.</li>
+  <li>Release archive entries now carry a fixed timestamp, so rebuilding the same folder produces a byte-identical zip and an identical checksum. The compiled binaries still carry their own build timestamps, so two separate builds do not match.</li>
 </ul>
 
 <h2>1.0.0</h2>
