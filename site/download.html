@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Download | Zycord</title>
+<meta name="description" content="Download Zycord 1.0.0 for Windows. One zip archive, no installer, with a published SHA-256 checksum.">
+<link rel="canonical" href="https://izynu.github.io/zycord/download.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Download | Zycord">
+<meta property="og:description" content="Download Zycord 1.0.0 for Windows. One zip archive, no installer, with a published SHA-256 checksum.">
+<meta property="og:url" content="https://izynu.github.io/zycord/download.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Download | Zycord">
+<meta name="twitter:description" content="Download Zycord 1.0.0 for Windows. One zip archive, no installer, with a published SHA-256 checksum.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html" class="is-active" aria-current="page">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Download</p>
+    <h1>Zycord 1.0.0 for Windows 10 and Windows 11, 64-bit</h1>
+    <p class="lead">One zip archive, no installer, no background service and no registry entry. Extract it, run Zycord.exe, and the launcher is ready.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>Get the release</h2>
+        </div>
+        <p>
+          The archive contains the launcher, the session stub, the interface, the
+          catalog and the WebView2 assemblies. There is nothing else to install.
+        </p>
+        <div class="actions" style="margin:18px 0">
+          <a class="btn btn-primary" href="https://github.com/iZynu/zycord/releases/download/v1.0.0/Zycord-1.0.0.zip">Download Zycord-1.0.0.zip</a>
+          <a class="btn btn-secondary" href="https://github.com/iZynu/zycord/releases">All releases</a>
+        </div>
+        <p class="muted" style="font-size:12.5px">
+          The download is 0.93 MB. Unpacked, it is about 3.1 MB. Each prepared game adds about 35 KB.
+        </p>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Verify the download</h2>
+        </div>
+        <p>
+          Every release publishes the SHA-256 of the archive on its GitHub release
+          page. Compare it before you run anything. On Windows:
+        </p>
+        <pre class="code">certutil -hashfile Zycord-1.0.0.zip SHA256</pre>
+        <p style="margin-top:12px">On Linux or macOS, with the archive and the published hash side by side:</p>
+        <pre class="code">sha256sum Zycord-1.0.0.zip</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What is in the archive</h2>
+    </div>
+    <pre class="code">Zycord-1.0.0/
+  Zycord.exe                     the launcher
+  stub.exe                       the session process, about 35 KB
+  ui/
+    index.html                   the interface
+    app.css
+    app.js
+    catalog.json                 10,447 games
+    mark.svg
+  Microsoft.Web.WebView2.Core.dll
+  Microsoft.Web.WebView2.WinForms.dll
+  WebView2Loader.dll
+  README.md
+  LICENSE</pre>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>Installing</h2>
+        </div>
+        <ol>
+          <li>Extract the archive to a folder you can write to, for example <code class="inline">C:\Users\you\Apps\Zycord</code>.</li>
+          <li>Run <code class="inline">Zycord.exe</code>.</li>
+          <li>If Windows shows a SmartScreen warning, choose More info and then Run anyway.</li>
+        </ol>
+        <p>
+          There is no installer and no elevation prompt. The launcher runs as your
+          user and writes only to <code class="inline">%LOCALAPPDATA%\Zycord</code>.
+        </p>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Upgrading and removing</h2>
+        </div>
+        <p>
+          To upgrade, extract the new version over the old folder. Settings, logs and
+          prepared game files live in <code class="inline">%LOCALAPPDATA%\Zycord</code>
+          and are not touched.
+        </p>
+        <p>
+          To remove it, stop any running sessions, delete the folder you extracted,
+          then delete <code class="inline">%LOCALAPPDATA%\Zycord</code> to remove
+          settings, logs and prepared files.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+  <div class="notice notice-warn">
+    <span class="notice-title">Why SmartScreen warns.</span>
+    The executable is not signed with a code-signing certificate. Signing certificates cost money and identify a legal entity, and this project does not have one, so Windows cannot verify the publisher. If that matters to you, build from source instead. The <a href="docs.html">documentation</a> explains how, and the build uses only the compiler that ships with Windows.
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Requirements</h2>
+    </div>
+  <table class="spec">
+      <tr><th>Operating system</th><td>Windows 10 or Windows 11, 64-bit.</td></tr>
+      <tr><th>WebView2 Runtime</th><td>Included with Windows 11 and current Windows 10 updates. If it is missing, install the Evergreen Runtime from Microsoft, then run Zycord again.</td></tr>
+      <tr><th>Discord</th><td>The desktop application, running on the same computer.</td></tr>
+      <tr><th>Disk</th><td>about 3.1 MB unpacked, plus about 35 KB for each prepared game.</td></tr>
+      <tr><th>Privileges</th><td>None.</td></tr>
+  </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy policy | Zycord</title>
+<meta name="description" content="What Zycord stores on your computer, what it never collects, and how this website handles data. Local only, no telemetry, no account.">
+<link rel="canonical" href="https://izynu.github.io/zycord/privacy.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Privacy policy | Zycord">
+<meta property="og:description" content="What Zycord stores on your computer, what it never collects, and how this website handles data. Local only, no telemetry, no account.">
+<meta property="og:url" content="https://izynu.github.io/zycord/privacy.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Privacy policy | Zycord">
+<meta name="twitter:description" content="What Zycord stores on your computer, what it never collects, and how this website handles data. Local only, no telemetry, no account.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <article class="doc">
+    <h1>Privacy policy</h1>
+    <p class="updated">Last updated 5 November 2026</p>
+
+<p>
+  This policy covers two things: the Zycord desktop application and the Zycord
+  website. They are treated separately because they behave differently.
+</p>
+<p>
+  The short version: the application collects nothing and sends nothing, and the
+  website sets no cookies and runs no analytics. The rest of this page explains
+  what that means in detail.
+</p>
+
+<h2>The Zycord application</h2>
+
+<h3>What it collects</h3>
+<p>
+  Nothing. Zycord has no analytics, no crash reporting, no update check and no
+  server. It does not transmit data anywhere.
+</p>
+
+<h3>What it stores on your computer</h3>
+<p>All of it lives in <code class="inline">%LOCALAPPDATA%\Zycord</code>:</p>
+<ul>
+  <li><code class="inline">settings.json</code> holds your preferences and the games you saved to the library. It contains game names, application ids and executable paths, and no personal information.</li>
+  <li><code class="inline">logs</code> holds one text file per day recording session starts and stops, process ids, refused operations and errors. It does not record your Discord account, token or messages.</li>
+  <li><code class="inline">games</code> holds copies of the session stub, renamed for each game you started.</li>
+  <li><code class="inline">webview</code> is a standard Microsoft Edge WebView2 profile folder, used to render the interface. Zycord does not read it.</li>
+</ul>
+<p>
+  Deleting <code class="inline">%LOCALAPPDATA%\Zycord</code> removes everything
+  the application has stored. Settings are written atomically, so an interrupted
+  save cannot leave a truncated file, and the previous copy is kept as
+  <code class="inline">settings.json.bak</code>.
+</p>
+
+<h3>What it does not access</h3>
+<ul>
+  <li>Discord's installation, files, memory or credentials.</li>
+  <li>Your browser history, documents, or any file outside its own data folder.</li>
+  <li>Your network, microphone, camera or location.</li>
+</ul>
+
+<h3>Network access</h3>
+<p>
+  The application makes no network requests. The game catalog is stored with the
+  application rather than downloaded. Game icons shown in the interface are loaded
+  from <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer,
+  using only the icon hash stored in the catalog. That request fetches a public
+  image and sends no information about you or your sessions.
+</p>
+
+<h3>Discord</h3>
+<p>
+  Zycord has no account, no sign-in and no token. It does not connect to Discord's
+  gateway, does not read or modify the Discord client, and does not send anything
+  to Discord. It starts a local process with a particular file name, and Discord's
+  own client does the detecting.
+</p>
+
+<h2>This website</h2>
+
+<h3>Hosting</h3>
+<p>
+  The site is served by GitHub Pages. GitHub may record standard web server
+  information such as the requesting IP address, the page requested and the time,
+  as described in GitHub's own privacy statement. That logging is done by GitHub,
+  not by this project, and this project has no access to it.
+</p>
+
+<h3>Cookies and analytics</h3>
+<p>
+  The site sets no cookies. It uses no analytics, no advertising, no tracking
+  pixels and no third-party embeds. There is no consent banner because there is
+  nothing to consent to.
+</p>
+
+<h3>External links</h3>
+<p>
+  Links to GitHub leave this site and are governed by GitHub's policies. The
+  project does not control what those pages collect.
+</p>
+
+<h2>Children</h2>
+<p>
+  Zycord is not directed at children. Discord requires users to be at least 13
+  years old, and Zycord is only useful alongside a Discord account.
+</p>
+
+<h2>Changes to this policy</h2>
+<p>
+  If this policy changes, the updated version appears on this page with a new
+  date. Because the application collects nothing, changes are unlikely to affect
+  you in practice.
+</p>
+
+<h2>Contact</h2>
+<p>
+  Questions about privacy can be raised at
+  <a href="https://github.com/iZynu/zycord/issues">github.com/iZynu/zycord/issues</a>.
+</p>
+
+  </article>
+</div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

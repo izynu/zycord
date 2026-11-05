@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap | Zycord</title>
+<meta name="description" content="What has shipped in Zycord, what is next, what is later, and what is deliberately not planned.">
+<link rel="canonical" href="https://izynu.github.io/zycord/roadmap.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Roadmap | Zycord">
+<meta property="og:description" content="What has shipped in Zycord, what is next, what is later, and what is deliberately not planned.">
+<meta property="og:url" content="https://izynu.github.io/zycord/roadmap.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Roadmap | Zycord">
+<meta name="twitter:description" content="What has shipped in Zycord, what is next, what is later, and what is deliberately not planned.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html" class="is-active" aria-current="page">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Roadmap</p>
+    <h1>What is shipped, what comes next, and what is deliberately not planned</h1>
+    <p class="lead">This is a short list on purpose. It describes intent, not a schedule, and nothing here is a promise of a date.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.0.0</h3>
+          <p>The launcher, the ten sections, the fixed catalog, session tracking and the build script, all released together.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-next"></span>
+        <div>
+          <h3>A refreshed catalog</h3>
+          <p>Discord adds games to its detectable list over time. Each release rebuilds the catalog from that list, so new games appear with the next version rather than through a download.</p>
+        </div>
+        <span class="road-when">Next</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-next"></span>
+        <div>
+          <h3>Compatibility checks on current Windows builds</h3>
+          <p>Verifying the launcher and the WebView2 host on the latest Windows 10 and Windows 11 servicing updates before each release.</p>
+        </div>
+        <span class="road-when">Next</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-next"></span>
+        <div>
+          <h3>Clearer failure messages</h3>
+          <p>When the WebView2 Runtime is missing or a prepared file cannot be written, the message should name the cause and the fix directly, rather than a generic error.</p>
+        </div>
+        <span class="road-when">Next</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-later"></span>
+        <div>
+          <h3>Requests from the issue tracker</h3>
+          <p>Ideas are considered one at a time against the rule that the launcher stays local and makes no network request. Open an issue to propose one.</p>
+        </div>
+        <span class="road-when">Later</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-later"></span>
+        <div>
+          <h3>Not planned: accounts, telemetry and auto-update</h3>
+          <p>These are excluded by design, not deferred. Zycord has no sign-in, collects nothing and does not update itself.</p>
+        </div>
+        <span class="road-when">Never</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How to read this</h2>
+    </div>
+    <p>
+      Shipped means the work is in a release you can download. Next means it is the
+      current focus. Later means it is wanted but not scheduled. Never means the
+      decision is settled and will not change.
+    </p>
+    <p>
+      There are no dates on this page because there is no team with a release
+      calendar. The project is maintained in the open, and the issue tracker is
+      where priorities are discussed.
+    </p>
+    <p><a href="https://github.com/iZynu/zycord/issues">Open or read an issue</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

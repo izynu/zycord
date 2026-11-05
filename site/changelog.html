@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog | Zycord</title>
+<meta name="description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+<link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Changelog | Zycord">
+<meta property="og:description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+<meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Changelog | Zycord">
+<meta name="twitter:description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html" class="is-active" aria-current="page">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <article class="doc">
+    <h1>Changelog</h1>
+    <p class="updated">Version 1.0.0</p>
+
+<h2>1.0.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 5 November 2026</p>
+<p>The first public release. Everything below shipped in it.</p>
+
+<h3>Launcher</h3>
+<ul>
+  <li>A borderless window with a native title bar, minimise, maximise and close.</li>
+  <li>The interface is rendered in Microsoft Edge WebView2 from files in the same folder. No installer, no background service, no account and no server.</li>
+  <li>Ten sections: Home, Games, Library, Favourites, Sessions, History, Settings, Logs, About and Help.</li>
+  <li>Light and dark themes, a reduced motion setting, and tray behaviour that keeps sessions running when the window closes.</li>
+  <li>Settings, library, favourites, history and logs are stored in <code class="inline">%LOCALAPPDATA%\Zycord</code>. Nothing leaves the machine.</li>
+</ul>
+
+<h3>Catalog</h3>
+<ul>
+  <li>10,447 games and 11,151 executable entries, generated from Discord's public detectable list and filtered to Windows executables.</li>
+  <li>20 launcher entries and 10,434 game icons.</li>
+  <li>The catalog is stored as about 583 KB compressed, against about 2.0 MB of raw JSON.</li>
+  <li>Search by name, alias or theme, with exact matches ranked first, then prefixes, then word matches.</li>
+  <li>Filters for a single executable, multiple executables, and games that ship a launcher process.</li>
+</ul>
+
+<h3>Sessions</h3>
+<ul>
+  <li>A session stub of about 35 KB, copied into <code class="inline">%LOCALAPPDATA%\Zycord\games\&lt;app_id&gt;\</code> under the executable name Discord expects, then started.</li>
+  <li>The stub holds no game code and makes no network calls. It shows a window with the elapsed time and an End session button, or runs with no window at all.</li>
+  <li>It watches the launcher's process id and exits if the launcher disappears, so a crash cannot leave a session running with no way to stop it.</li>
+  <li>A live timer, an optional auto stop in minutes, extension by fifteen minutes, and protection against starting the same game twice.</li>
+  <li>Every session is written to history with its start, stop, duration and end reason.</li>
+</ul>
+
+<h3>Packaging</h3>
+<ul>
+  <li><code class="inline">python build.py</code> compiles the launcher and the stub with the .NET Framework compiler that ships with Windows, runs a 25 check self test against a real WebView2 host, and writes <code class="inline">Zycord-1.0.0.zip</code> with <code class="inline">SHA256.txt</code>.</li>
+  <li>The zip you download is 0.93 MB. Unpacked, the release folder is about 3.1 MB across 12 files, including the WebView2 assemblies.</li>
+</ul>
+
+<h3>Security</h3>
+<ul>
+  <li>Every path that comes from the catalog or from user input is validated before use. The self test feeds ten hostile inputs through the validator and requires all ten to be rejected.</li>
+  <li>The interface runs under a content security policy that allows only local scripts and styles, plus images from the Discord icon CDN.</li>
+  <li>A build time check fails the build if an identifier from an earlier project appears in the source.</li>
+</ul>
+
+<h2>Earlier versions</h2>
+<p>There are none. Version 1.0.0 is the first release.</p>
+<p>The full history is kept in <a href="https://github.com/iZynu/zycord/blob/main/CHANGELOG.md">CHANGELOG.md</a>, and each release is tagged at <a href="https://github.com/iZynu/zycord/releases">github.com/iZynu/zycord/releases</a>.</p>
+
+  </article>
+</div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

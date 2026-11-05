@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en" data-theme="glass">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data: https://cdn.discordapp.com; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Zycord</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.6 12 4l8 6.6V19a1.4 1.4 0 0 1-1.4 1.4h-3.9v-5.2H9.3v5.2H5.4A1.4 1.4 0 0 1 4 19z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.6" y="3.6" width="7" height="7" rx="2"/><rect x="13.4" y="3.6" width="7" height="7" rx="2"/><rect x="3.6" y="13.4" width="7" height="7" rx="2"/><rect x="13.4" y="13.4" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-library" viewBox="0 0 24 24"><path d="M5 4.6h4.2v14.8H5zM10.9 4.6h4.2v14.8h-4.2z"/><path d="m16.9 5.9 3.6 1 3 13.4-3.6 1z" transform="translate(-1.6 -1.2)"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.7 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.9l5.9-.9z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.4 2.8 5.6 13.5h5.1l-1.1 7.7 7.8-10.7h-5.1z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 7.3v5.1l3.4 2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="15" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="9" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3.2" y="4.4" width="17.6" height="15.2" rx="3" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m7.4 9.6 2.9 2.5-2.9 2.5M12.4 15.2h4.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 11v5.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.9" r="1.2"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M9.7 9.5a2.4 2.4 0 1 1 3.2 2.3c-.7.3-.9.8-.9 1.5v.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="m15.6 15.6 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8.2 5.4 19 12 8.2 18.6z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2.6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.6 7h14.8M9.4 7V4.8h5.2V7M6.6 7l.9 12.2h9l.9-12.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M13.4 4.6h6v6M19.4 4.6l-8 8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.2 14.4v4.2a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 18.6V7.2a1.4 1.4 0 0 1 1.4-1.4h4.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.6 7.4A1.8 1.8 0 0 1 5.4 5.6h4l2 2.4h7.2a1.8 1.8 0 0 1 1.8 1.8v8.6a1.8 1.8 0 0 1-1.8 1.8H5.4a1.8 1.8 0 0 1-1.8-1.8z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.6" y="8.6" width="11" height="11" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M15.4 5.8a2 2 0 0 0-2-1.4H6.4a2 2 0 0 0-2 2v7a2 2 0 0 0 1.4 2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.4 12a7.4 7.4 0 1 1-2.2-5.2M19.6 4.4v4.8h-4.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4.4v10.2M7.8 10.6 12 14.8l4.2-4.2M5 19.2h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.6 6.6 10.8 10.8M17.4 6.6 6.6 17.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-min" viewBox="0 0 24 24"><path d="M6 12h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-max" viewBox="0 0 24 24"><rect x="6.4" y="6.4" width="11.2" height="11.2" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><rect x="4.6" y="8.4" width="10.2" height="10.2" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.4 8.4V6.6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-1.8" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5.4 12.6 4.2 4.2 9-9.4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4.2 21 19.8H3z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 9.8v4.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17" r="1.1"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.4 13.7 9l5.6 1.7-5.6 1.7L12 18l-1.7-5.6L4.7 10.7 10.3 9z"/><path d="M18.6 15.2 19.4 18l2.8.8-2.8.8-.8 2.8-.8-2.8-2.8-.8 2.8-.8z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.4 19.2 6v5.8c0 4.4-3 7.6-7.2 8.8-4.2-1.2-7.2-4.4-7.2-8.8V6z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="m8.8 11.8 2.2 2.2 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<div class="frame">
+  <div class="aurora" aria-hidden="true"><i class="b b1"></i><i class="b b2"></i><i class="b b3"></i><i class="b b4"></i></div>
+
+  <header class="titlebar">
+    <div class="tb-drag" id="tb-drag">
+      <img class="tb-mark" src="mark.svg" alt="" width="22" height="22">
+      <span class="tb-name">Zycord</span>
+      <span class="tb-by">by Zynu</span>
+      <span class="tb-state" id="tb-state" hidden>Session running</span>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-btn" id="tb-min" title="Minimise" aria-label="Minimise"><svg><use href="#i-min"/></svg></button>
+      <button class="tb-btn" id="tb-max" title="Maximise" aria-label="Maximise"><svg><use href="#i-max"/></svg></button>
+      <button class="tb-btn is-close" id="tb-close" title="Close" aria-label="Close"><svg><use href="#i-close"/></svg></button>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="rail">
+      <nav class="nav" id="nav" aria-label="Sections">
+        <button class="nav-item is-active" data-page="home"><svg><use href="#i-home"/></svg><span>Home</span></button>
+        <button class="nav-item" data-page="games"><svg><use href="#i-grid"/></svg><span>Games</span></button>
+        <button class="nav-item" data-page="library"><svg><use href="#i-library"/></svg><span>Library</span><em class="nav-count" id="nav-library" hidden>0</em></button>
+        <button class="nav-item" data-page="favorites"><svg><use href="#i-star"/></svg><span>Favourites</span><em class="nav-count" id="nav-fav" hidden>0</em></button>
+        <button class="nav-item" data-page="sessions"><svg><use href="#i-bolt"/></svg><span>Sessions</span><em class="nav-count is-live" id="nav-sessions" hidden>0</em></button>
+        <button class="nav-item" data-page="history"><svg><use href="#i-clock"/></svg><span>History</span></button>
+        <div class="nav-sep"></div>
+        <button class="nav-item" data-page="settings"><svg><use href="#i-sliders"/></svg><span>Settings</span></button>
+        <button class="nav-item" data-page="logs"><svg><use href="#i-terminal"/></svg><span>Logs</span></button>
+        <button class="nav-item" data-page="about"><svg><use href="#i-info"/></svg><span>About</span></button>
+        <button class="nav-item" data-page="help"><svg><use href="#i-help"/></svg><span>Help</span></button>
+      </nav>
+
+      <div class="rail-foot">
+        <div class="foot-row">
+          <span class="dot" id="foot-dot"></span>
+          <span id="foot-status">Starting</span>
+        </div>
+        <div class="foot-meta"><span id="foot-version">v1.0.0</span><span id="foot-catalog">catalog</span></div>
+      </div>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="page is-active" id="page-home">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow"><svg class="eyebrow-ico"><use href="#i-spark"/></svg><span id="home-eyebrow">Welcome</span></p>
+            <h1 id="home-title">Ready when you are</h1>
+            <p class="lede">Start a quest, keep Discord convinced the game is open, and get on with your day.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-primary" data-go="games"><svg><use href="#i-play"/></svg>Start a session</button>
+          </div>
+        </header>
+
+        <div class="stat-row">
+          <div class="glass stat">
+            <span class="stat-label">Running</span>
+            <strong class="stat-value" id="stat-running">0</strong>
+            <span class="stat-note" id="stat-running-note">No active sessions</span>
+          </div>
+          <div class="glass stat">
+            <span class="stat-label">Library</span>
+            <strong class="stat-value" id="stat-library">0</strong>
+            <span class="stat-note">Games you saved</span>
+          </div>
+          <div class="glass stat">
+            <span class="stat-label">Catalog</span>
+            <strong class="stat-value" id="stat-catalog">0</strong>
+            <span class="stat-note">Detectable games</span>
+          </div>
+          <div class="glass stat">
+            <span class="stat-label">Game files</span>
+            <strong class="stat-value" id="stat-disk">0 KB</strong>
+            <span class="stat-note" id="stat-disk-note">In the games folder</span>
+          </div>
+        </div>
+
+        <div class="home-grid">
+          <div class="glass panel span-2">
+            <div class="panel-head">
+              <h2>Running now</h2>
+              <button class="btn is-ghost is-small" data-go="sessions">All sessions</button>
+            </div>
+            <div class="run-list" id="home-running"></div>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>Quick actions</h2></div>
+            <div class="quick-grid">
+              <button class="quick" data-go="games"><svg><use href="#i-grid"/></svg><span>Browse games</span></button>
+              <button class="quick" data-go="library"><svg><use href="#i-library"/></svg><span>Open library</span></button>
+              <button class="quick" id="quick-folder"><svg><use href="#i-folder"/></svg><span>Game files</span></button>
+              <button class="quick" data-go="settings"><svg><use href="#i-sliders"/></svg><span>Settings</span></button>
+            </div>
+          </div>
+
+          <div class="glass panel span-2">
+            <div class="panel-head">
+              <h2>Jump back in</h2>
+              <span class="panel-note" id="recent-note">Recently started</span>
+            </div>
+            <div class="chip-row" id="home-recent"></div>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>How it works</h2></div>
+            <ol class="steps">
+              <li><b>Pick</b><span>A game and the executable Discord watches.</span></li>
+              <li><b>Start</b><span>Zycord opens a tiny stub under that name.</span></li>
+              <li><b>Wait</b><span>Discord credits the quest while it runs.</span></li>
+            </ol>
+            <button class="btn is-ghost is-small" data-go="help">Read the guide</button>
+          </div>
+        </div>
+
+        <div class="panel-head section-head">
+          <h2>Popular picks</h2>
+          <button class="btn is-ghost is-small" data-go="games">See all</button>
+        </div>
+        <div class="card-grid" id="home-popular"></div>
+      </section>
+
+      <section class="page" id="page-games">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Catalog</p>
+            <h1>Games</h1>
+            <p class="lede">Every game Discord can detect. Search, choose the executable, start a session.</p>
+          </div>
+        </header>
+
+        <div class="glass toolbar">
+          <div class="search-wrap">
+            <svg class="search-ico"><use href="#i-search"/></svg>
+            <input class="search" id="search" type="search" placeholder="Search by name or alias" autocomplete="off" spellcheck="false" aria-label="Search games">
+            <button class="search-clear" id="search-clear" hidden aria-label="Clear search"><svg><use href="#i-close"/></svg></button>
+          </div>
+          <select class="select" id="theme-filter" aria-label="Theme">
+            <option value="">Any theme</option>
+          </select>
+          <select class="select" id="sort" aria-label="Sort">
+            <option value="name">Name A to Z</option>
+            <option value="name-desc">Name Z to A</option>
+            <option value="exes">Most executables</option>
+          </select>
+        </div>
+
+        <div class="chip-row filters" id="filters">
+          <button class="chip is-on" data-filter="all">All games</button>
+          <button class="chip" data-filter="single">Single executable</button>
+          <button class="chip" data-filter="multi">Multiple executables</button>
+          <button class="chip" data-filter="launcher">Has launcher</button>
+        </div>
+
+        <div class="result-bar">
+          <span id="result-count">Loading catalog</span>
+          <span class="result-hint" id="result-hint"></span>
+        </div>
+
+        <div class="card-grid" id="game-grid"></div>
+        <div class="empty" id="games-empty" hidden>
+          <svg><use href="#i-search"/></svg>
+          <h3>No games match</h3>
+          <p>Try a shorter search, or clear the filters.</p>
+        </div>
+        <div class="load-more"><button class="btn is-ghost" id="load-more" hidden>Show more games</button></div>
+      </section>
+
+      <section class="page" id="page-library">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Saved</p>
+            <h1>Library</h1>
+            <p class="lede">Your saved games, ready to start in one click.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost is-danger" id="library-clear"><svg><use href="#i-trash"/></svg>Clear</button>
+          </div>
+        </header>
+        <div class="card-grid" id="library-grid"></div>
+        <div class="empty" id="library-empty">
+          <svg><use href="#i-library"/></svg>
+          <h3>Your library is empty</h3>
+          <p>Open a game in the catalog and add it to your library.</p>
+          <button class="btn is-primary" data-go="games">Browse games</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-favorites">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Starred</p>
+            <h1>Favourites</h1>
+            <p class="lede">The games you reach for most. Star any game from the catalog.</p>
+          </div>
+        </header>
+        <div class="card-grid" id="favorites-grid"></div>
+        <div class="empty" id="favorites-empty">
+          <svg><use href="#i-star"/></svg>
+          <h3>Nothing starred yet</h3>
+          <p>Star a game to pin it here.</p>
+          <button class="btn is-primary" data-go="games">Browse games</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-sessions">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Live</p>
+            <h1>Sessions</h1>
+            <p class="lede">Each running stub keeps Discord seeing a live game process.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost is-danger" id="stop-all"><svg><use href="#i-stop"/></svg>Stop all</button>
+          </div>
+        </header>
+        <div class="session-list" id="session-list"></div>
+        <div class="empty" id="sessions-empty">
+          <svg><use href="#i-bolt"/></svg>
+          <h3>No sessions running</h3>
+          <p>Start a game and it will appear here with a live timer.</p>
+          <button class="btn is-primary" data-go="games">Start a session</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-history">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Log</p>
+            <h1>History</h1>
+            <p class="lede">Every session Zycord started, with how long it ran.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost is-danger" id="history-clear"><svg><use href="#i-trash"/></svg>Clear</button>
+          </div>
+        </header>
+        <div class="glass table-wrap">
+          <table class="table">
+            <thead><tr><th>Game</th><th>Started</th><th>Duration</th><th>Ended</th></tr></thead>
+            <tbody id="history-body"></tbody>
+          </table>
+          <div class="empty is-inset" id="history-empty">
+            <svg><use href="#i-clock"/></svg>
+            <h3>No history yet</h3>
+            <p>Sessions you run will be listed here.</p>
+          </div>
+        </div>
+      </section>
+      <section class="page" id="page-settings">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Preferences</p>
+            <h1>Settings</h1>
+            <p class="lede">Everything is stored on this PC in your local app data folder.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost" id="settings-reset"><svg><use href="#i-refresh"/></svg>Reset</button>
+          </div>
+        </header>
+
+        <div class="settings-grid">
+          <div class="glass panel">
+            <div class="panel-head"><h2>Sessions</h2></div>
+            <label class="row">
+              <span><b>Show the session window</b><small>A small window with a timer while a game runs.</small></span>
+              <input type="checkbox" class="switch" data-setting="showSessionWindow">
+            </label>
+            <label class="row">
+              <span><b>Confirm before starting</b><small>Ask first, so a stray click cannot start a game.</small></span>
+              <input type="checkbox" class="switch" data-setting="confirmOnStart">
+            </label>
+            <label class="row">
+              <span><b>Confirm before stopping</b><small>Ask before a session is ended early.</small></span>
+              <input type="checkbox" class="switch" data-setting="confirmBeforeStop">
+            </label>
+            <label class="row">
+              <span><b>Auto stop</b><small>End every session automatically after this long. Zero means off.</small></span>
+              <span class="stepper">
+                <button type="button" data-step="-15" aria-label="Decrease">-</button>
+                <input type="number" id="auto-stop" min="0" max="240" step="15" value="0" aria-label="Auto stop minutes">
+                <button type="button" data-step="15" aria-label="Increase">+</button>
+                <em>min</em>
+              </span>
+            </label>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>Window</h2></div>
+            <label class="row">
+              <span><b>Minimise to the tray</b><small>Closing the window keeps Zycord and its sessions running.</small></span>
+              <input type="checkbox" class="switch" data-setting="minimiseToTray">
+            </label>
+            <label class="row">
+              <span><b>Start minimised</b><small>Open straight into the tray.</small></span>
+              <input type="checkbox" class="switch" data-setting="startMinimised">
+            </label>
+            <label class="row">
+              <span><b>Keep on top</b><small>Leave the window above other windows.</small></span>
+              <input type="checkbox" class="switch" data-setting="keepOnTop">
+            </label>
+            <label class="row">
+              <span><b>Reduce motion</b><small>Turn off the background animation.</small></span>
+              <input type="checkbox" class="switch" data-setting="reduceMotion">
+            </label>
+            <div class="row">
+              <span><b>Theme</b><small>Liquid glass, or a light frosted finish.</small></span>
+              <div class="segmented" id="theme-seg">
+                <button data-theme-value="glass" class="is-on">Glass</button>
+                <button data-theme-value="light">Light</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>Storage</h2></div>
+            <div class="row">
+              <span><b>Game files</b><small id="storage-note">Prepared stub files</small></span>
+              <strong class="row-value" id="storage-size">0 KB</strong>
+            </div>
+            <div class="row">
+              <span><b>Log files</b><small id="log-note">Diagnostics</small></span>
+              <strong class="row-value" id="log-size">0 KB</strong>
+            </div>
+            <div class="row-actions">
+              <button class="btn is-ghost is-small" id="open-data"><svg><use href="#i-folder"/></svg>Open folder</button>
+              <button class="btn is-ghost is-small" id="cleanup"><svg><use href="#i-trash"/></svg>Clear game files</button>
+            </div>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>Data</h2></div>
+            <div class="row">
+              <span><b>History and recents</b><small>Clear the session log and the recent list.</small></span>
+              <button class="btn is-ghost is-small" data-reset="history">Clear</button>
+            </div>
+            <div class="row">
+              <span><b>Library and favourites</b><small>Remove every saved game.</small></span>
+              <button class="btn is-ghost is-small" data-reset="library">Clear</button>
+            </div>
+            <div class="row">
+              <span><b>Settings</b><small>Return every preference to its default.</small></span>
+              <button class="btn is-ghost is-small" data-reset="settings">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-logs">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Diagnostics</p>
+            <h1>Logs</h1>
+            <p class="lede">A plain text record of what the launcher did. Nothing leaves this PC.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost is-small" id="log-refresh"><svg><use href="#i-refresh"/></svg>Refresh</button>
+            <button class="btn is-ghost is-small" id="log-copy"><svg><use href="#i-copy"/></svg>Copy</button>
+            <button class="btn is-ghost is-small" id="log-export"><svg><use href="#i-download"/></svg>Export</button>
+            <button class="btn is-ghost is-small is-danger" id="log-clear"><svg><use href="#i-trash"/></svg>Clear</button>
+          </div>
+        </header>
+        <div class="glass log-panel">
+          <div class="log-meta"><span id="log-file">Log file</span><span id="log-stats"></span></div>
+          <pre class="log" id="log-text" tabindex="0"></pre>
+        </div>
+      </section>
+
+      <section class="page" id="page-about">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">About</p>
+            <h1>Zycord</h1>
+            <p class="lede">A Discord quest and presence companion for Windows, built by Zynu.</p>
+          </div>
+        </header>
+
+        <div class="about-hero glass">
+          <img src="mark.svg" alt="Zycord" width="84" height="84">
+          <div>
+            <h2>Zycord <span class="pill" id="about-version">v1.0.0</span></h2>
+            <p>Quests and presence, without the guesswork. Zycord prepares a small stub under the executable name Discord expects, then keeps it running for as long as you need.</p>
+            <div class="about-actions">
+              <button class="btn is-primary" id="about-site"><svg><use href="#i-external"/></svg>Website</button>
+              <button class="btn is-ghost" id="about-repo"><svg><use href="#i-external"/></svg>GitHub</button>
+              <button class="btn is-ghost" id="about-folder"><svg><use href="#i-folder"/></svg>Data folder</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-grid">
+          <div class="glass panel">
+            <div class="panel-head"><h2>What it does</h2></div>
+            <ul class="ticks">
+              <li>Credits desktop-play quests through Discord's normal process detection.</li>
+              <li>Shows a live timer and an auto stop for every session.</li>
+              <li>Keeps a library, favourites and a full session history.</li>
+              <li>Writes nothing outside your local app data folder.</li>
+            </ul>
+          </div>
+          <div class="glass panel">
+            <div class="panel-head"><h2>Safety</h2></div>
+            <ul class="ticks">
+              <li>Paths are validated and re-checked before any file is written.</li>
+              <li>Sessions stop by process id, never by image name.</li>
+              <li>Closing Zycord stops every stub it started.</li>
+              <li>No account, no token and no network call to Discord.</li>
+            </ul>
+          </div>
+          <div class="glass panel">
+            <div class="panel-head"><h2>Build</h2></div>
+            <dl class="facts">
+              <div><dt>Version</dt><dd id="fact-version">1.0.0</dd></div>
+              <div><dt>Interface</dt><dd>WebView2</dd></div>
+              <div><dt>Catalog</dt><dd id="fact-catalog">games</dd></div>
+              <div><dt>Author</dt><dd>Zynu</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-help">
+        <header class="page-head">
+          <div>
+            <p class="eyebrow">Guide</p>
+            <h1>Help</h1>
+            <p class="lede">Everything you need in about two minutes.</p>
+          </div>
+        </header>
+
+        <div class="help-grid">
+          <div class="glass panel">
+            <div class="panel-head"><h2>Start a session</h2></div>
+            <ol class="steps is-numbered">
+              <li><b>Open Games</b><span>Search for the game that owns the quest.</span></li>
+              <li><b>Choose the executable</b><span>Most games have one. Pick the shipping build when there is a choice.</span></li>
+              <li><b>Start</b><span>Discord now sees the game running. Leave it for about fifteen minutes.</span></li>
+              <li><b>Stop</b><span>End the session from the Sessions tab when the quest is done.</span></li>
+            </ol>
+          </div>
+
+          <div class="glass panel">
+            <div class="panel-head"><h2>Questions</h2></div>
+            <details class="faq"><summary>Is anything sent to Discord?</summary><p>No. Zycord only runs a local process with a particular file name. Discord's own client does the detecting.</p></details>
+            <details class="faq"><summary>Why does the session window appear?</summary><p>It is a reminder that a stub is running. Turn it off in Settings to run hidden.</p></details>
+            <details class="faq"><summary>Do I need the game installed?</summary><p>No. The stub is a copy of a small file Zycord ships. It never touches your real game folder.</p></details>
+            <details class="faq"><summary>The quest still shows as not started</summary><p>Give Discord a minute, then open the quest page. Some quests need the game to be the foreground window; Zycord's session window helps with that.</p></details>
+            <details class="faq"><summary>Where are my files?</summary><p>Everything lives in your local app data folder under Zycord. Use the Data folder button on the About tab.</p></details>
+            <details class="faq"><summary>Can I run several games at once?</summary><p>Yes. Each session is independent and appears on the Sessions tab.</p></details>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-x" data-close aria-label="Close"><svg><use href="#i-close"/></svg></button>
+    <div class="modal-head">
+      <img class="modal-icon" id="modal-icon" alt="" width="56" height="56">
+      <div>
+        <h2 id="modal-title">Game</h2>
+        <p class="modal-sub" id="modal-sub"></p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="field-label">Executable</p>
+      <div class="exe-list" id="modal-exes"></div>
+      <div class="modal-tags" id="modal-tags"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn is-ghost" id="modal-fav"><svg><use href="#i-star"/></svg>Favourite</button>
+      <button class="btn is-ghost" id="modal-add"><svg><use href="#i-plus"/></svg>Add to library</button>
+      <button class="btn is-primary" id="modal-start"><svg><use href="#i-play"/></svg>Start session</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

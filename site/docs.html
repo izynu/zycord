@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation | Zycord</title>
+<meta name="description" content="How to use every section of Zycord, how to build it from source, how to rebuild the catalog, and fixes for the common failures.">
+<link rel="canonical" href="https://izynu.github.io/zycord/docs.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Documentation | Zycord">
+<meta property="og:description" content="How to use every section of Zycord, how to build it from source, how to rebuild the catalog, and fixes for the common failures.">
+<meta property="og:url" content="https://izynu.github.io/zycord/docs.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Documentation | Zycord">
+<meta name="twitter:description" content="How to use every section of Zycord, how to build it from source, how to rebuild the catalog, and fixes for the common failures.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html" class="is-active" aria-current="page">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Documentation</p>
+    <h1>Using Zycord, building it, and fixing the things that usually go wrong</h1>
+    <p class="lead">The launcher has ten sections. This page covers each one, then the build, the catalog generator, the self test and the common failures.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Using the launcher</h2>
+    </div>
+
+    <h3>Home</h3>
+    <p>
+      Running sessions, library count, catalog count and the size of the prepared
+      files, followed by recently started games and four quick actions. The
+      Start a session button opens Games.
+    </p>
+
+    <h3>Games</h3>
+    <p>
+      Search matches any part of a game name or one of its aliases, ignoring case.
+      The theme menu lists every theme in the catalog with its count. The filter
+      chips narrow results to all games, a single executable, multiple executables,
+      or games with a marked launcher process. Sort offers name A to Z, name Z to A,
+      or most executables first.
+    </p>
+    <p>
+      Selecting a game shows its application id and every executable Discord watches
+      for it. Where more than one is listed, choose the one that matches how you
+      would normally launch the game. Entries marked as a launcher are separate
+      processes some games run alongside the main one.
+    </p>
+
+    <h3>Library and Favourites</h3>
+    <p>
+      Saving a game records the game and the executable you chose, and it survives
+      restarts. Favourites are a separate starred list with their own count in the
+      rail. Neither copies the game; both are shortcuts to a session.
+    </p>
+
+    <h3>Sessions and History</h3>
+    <p>
+      Every running session is listed with its process id, elapsed time and any auto
+      stop remaining. A session can be extended by 15 minutes. Stop ends one session;
+      Stop all ends every session, with a confirmation step if you enabled it.
+      History keeps the last 250 sessions with start, stop, duration and reason.
+    </p>
+
+    <h3>Settings</h3>
+  <table class="spec">
+      <tr><th>Show the session window</th><td>A small window with a timer while a game runs. Turn it off and the stub runs with no window at all.</td></tr>
+      <tr><th>Confirm before starting</th><td>Ask first, so a stray click cannot start a game.</td></tr>
+      <tr><th>Confirm before stopping</th><td>Ask before a session is ended early.</td></tr>
+      <tr><th>Auto stop</th><td>End every session after this long, from 0 to 240 minutes in steps of 15. Zero means off.</td></tr>
+      <tr><th>Minimise to the tray</th><td>Closing the window keeps Zycord and its sessions running. Turn it off and closing the window stops every session.</td></tr>
+      <tr><th>Start minimised</th><td>Open straight into the tray.</td></tr>
+      <tr><th>Keep on top</th><td>Leave the window above other windows.</td></tr>
+      <tr><th>Reduce motion</th><td>Turn off the background animation in the launcher.</td></tr>
+      <tr><th>Theme</th><td>Glass, the default graphite finish, or Light.</td></tr>
+      <tr><th>Storage</th><td>Shows game file and log size, with buttons to open the data folder or clear game files.</td></tr>
+      <tr><th>Data</th><td>Clear history and recents, clear the library and favourites, or reset settings. Each is separate.</td></tr>
+  </table>
+    <h3>Logs</h3>
+    <p>
+      Shows the tail of today's log. Each day gets its own file in
+      <code class="inline">%LOCALAPPDATA%\Zycord\logs</code>, and a file rolls
+      over at 4 MB. The log records session starts and stops with process ids,
+      refused operations and errors. It never records anything about your Discord
+      account. You can refresh, copy, export or clear it.
+    </p>
+
+    <h3>About and Help</h3>
+    <p>
+      About shows the version, build facts and buttons for the data folder, the
+      website and the repository. Help is a short guide to starting a session and
+      the answers to the questions that come up most.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>Building from source</h2>
+        </div>
+        <p>
+          The build needs Windows, the .NET Framework 4 compiler that ships with it,
+          and Python 3 for the build script. No Visual Studio, no .NET SDK, no
+          MSBuild and no NuGet restore.
+        </p>
+        <pre class="code">git clone https://github.com/iZynu/zycord.git
+cd zycord
+python build.py</pre>
+        <p style="margin-top:12px">
+          The script compiles the stub and the launcher, copies the interface and the
+          WebView2 assemblies into <code class="inline">dist/</code>, then runs the
+          self test. A passing build ends with <code class="inline">RESULT: PASS</code>
+          and exits with code 0.
+        </p>
+        <h3>Build options</h3>
+        <pre class="code">python build.py             build, test and pack the release
+python build.py --no-test   skip the self test
+python build.py --no-zip    leave dist/ unpacked
+python build.py --clean     remove dist/ first</pre>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>The self test</h2>
+        </div>
+        <p>
+          <code class="inline">Zycord.exe --headless</code> boots the real interface
+          in a hidden window, waits for it to report ready, then exercises the
+          backend directly. It checks path validation against hostile inputs, settings
+          round trips, and a full session start and stop.
+        </p>
+        <p>
+          The report is written to
+          <code class="inline">%LOCALAPPDATA%\Zycord\logs\selftest.txt</code> and
+          printed to the console.
+        </p>
+        <h3>Rebuilding the catalog</h3>
+        <p>
+          The catalog is generated from Discord's public detectable list by
+          <code class="inline">scripts/build_catalog.py</code>. It keeps only entries
+          a Windows launcher can use, rejects entries that could escape a folder, and
+          writes a compressed catalog to <code class="inline">app/assets</code>.
+        </p>
+        <pre class="code">python scripts/build_catalog.py
+python scripts/build_catalog.py saved.json
+python scripts/build_catalog.py --out other.json.gz</pre>
+        <h3>Regenerating the brand assets</h3>
+        <p>
+          The mark, the favicon and every icon size come from one script, so they
+          cannot drift apart. It needs Pillow.
+        </p>
+        <pre class="code">python brand/make_icon.py</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Troubleshooting</h2>
+    </div>
+    <h3>The window is blank or the launcher closes immediately</h3>
+    <p>
+      This almost always means the WebView2 Runtime is missing or damaged. Install
+      the Evergreen Runtime from Microsoft, then run Zycord again. The launcher
+      writes the reason to today's log before it closes.
+    </p>
+    <h3>Discord does not show the game as running</h3>
+    <ul>
+      <li>Confirm Discord's desktop application is running on the same computer.</li>
+      <li>Try a different executable from the list for that game.</li>
+      <li>Restart Discord after starting the session. Detection is not instant.</li>
+      <li>Some games are detected by launcher process rather than the main one. Try the entry marked as a launcher.</li>
+    </ul>
+    <h3>A session will not stop</h3>
+    <p>
+      Stop it from the Sessions tab, then from the tray menu. If the process has
+      already exited, Zycord removes it from the list on the next refresh. A session
+      whose file was moved or deleted cannot be verified, so Zycord deliberately
+      refuses to terminate a process it cannot confirm.
+    </p>
+    <h3>Clear refuses to run</h3>
+    <p>
+      At least one session is still running. Stop it first. This is deliberate:
+      clearing would delete the file a running process is using.
+    </p>
+    <h3>Where do I report a problem</h3>
+    <p>
+      Open an issue at <a href="https://github.com/iZynu/zycord/issues">github.com/iZynu/zycord/issues</a>. Include the log from the Logs
+      tab; it is the fastest way to see what happened.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

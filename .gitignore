@@ -1,0 +1,33 @@
+# Build output
+dist/
+dist-zip/
+Zycord-*.zip
+SHA256.txt
+bin/
+obj/
+*.pdb
+
+# The stub is compiled from Stub.cs into dist/. A copy left beside the
+# source is build output and must not be committed.
+stub/*.exe
+
+# Keep the catalog and the brand images in the repository. These negations
+# exist so a broad rule added later cannot silently drop them.
+!app/assets/catalog.json.gz
+!brand/*.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local scratch
+_probe/
+.preview/
+_shot*.png
+*.log
+Thumbs.db
+desktop.ini
+
+# Local tooling
+.claude/

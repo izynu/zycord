@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zycord | A Windows launcher for Discord quest progress</title>
+<meta name="description" content="Zycord starts a small local stub under a game's executable name so Discord credits PLAY_ON_DESKTOP quests. 10,447 games, local only, no account, no telemetry.">
+<link rel="canonical" href="https://izynu.github.io/zycord/">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Zycord | A Windows launcher for Discord quest progress">
+<meta property="og:description" content="Zycord starts a small local stub under a game's executable name so Discord credits PLAY_ON_DESKTOP quests. 10,447 games, local only, no account, no telemetry.">
+<meta property="og:url" content="https://izynu.github.io/zycord/">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zycord | A Windows launcher for Discord quest progress">
+<meta name="twitter:description" content="Zycord starts a small local stub under a game's executable name so Discord credits PLAY_ON_DESKTOP quests. 10,447 games, local only, no account, no telemetry.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html" class="is-active" aria-current="page">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Windows launcher for Discord quests</p>
+      <h1>A game process Discord already recognises, started in one click.</h1>
+      <p class="hero-lede">
+        Zycord copies a small stub executable into
+        <code class="inline">%LOCALAPPDATA%\Zycord\games\&lt;app_id&gt;\</code>,
+        renames it to the executable Discord watches for a game, and starts it.
+        Discord credits PLAY_ON_DESKTOP quest progress while the stub runs. The
+        stub has no game code, no network code and never contacts Discord.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="download.html">Download for Windows</a>
+        <a class="btn btn-secondary" href="how-it-works.html">How the stub works</a>
+      </div>
+      <p class="hero-note">Windows 10 and 11, 64-bit. No installer, no account, no telemetry. Version 1.0.0.</p>
+    </div>
+    <div class="hero-visual">
+      <span class="hero-orbit" aria-hidden="true"></span>
+      <img class="hero-mark" src="assets/mark-512.png" alt="The Zycord mark: a light Z on a dark rounded square" width="512" height="512">
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+
+  <div class="stat-row">
+    <div class="stat"><span class="stat-n">10,447</span><span class="stat-l">games in the catalog</span></div>
+    <div class="stat"><span class="stat-n">11,151</span><span class="stat-l">executable entries</span></div>
+    <div class="stat"><span class="stat-n">20</span><span class="stat-l">launcher processes marked</span></div>
+    <div class="stat"><span class="stat-n">10,434</span><span class="stat-l">games with an icon</span></div>
+  </div>
+    <p class="muted" style="margin-top:14px;font-size:12.5px">
+      Counts are read from the catalog shipped with version 1.0.0. 20 of the executable entries are marked as launcher processes.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What Zycord does</h2>
+      <p>Five things, each with a clear boundary.</p>
+    </div>
+  <div class="grid">
+    <div class="card">
+      <span class="card-kicker">01</span>
+      <h3>Searches the catalog</h3>
+      <p>10,447 games with 11,151 executable entries, searchable by name, alias and theme. Filters narrow to single-executable, multi-executable or launcher games.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">02</span>
+      <h3>Prepares a session file</h3>
+      <p>Copies the about 35 KB stub into a per-game folder and gives it the filename Discord expects, including any subfolder the catalog records.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">03</span>
+      <h3>Starts and tracks it</h3>
+      <p>Starts the process and records its process id. The Sessions tab shows a live timer, and an optional auto stop ends it for you.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">04</span>
+      <h3>Keeps a local history</h3>
+      <p>Every session is recorded with its start, stop, duration and reason. Favourites and a saved library sit beside it in one settings file.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">05</span>
+      <h3>Cleans up</h3>
+      <p>One action removes every prepared game folder. It refuses while a session is running, so nothing is deleted while in use.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Start a session in four steps</h2>
+      <p>From opening the launcher to a running session takes a few seconds.</p>
+    </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div>
+        <h3>Open Games</h3>
+        <p>The catalog loads with the application, so search works immediately. Type a name, pick a theme, or filter by executable count.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div>
+        <h3>Choose the executable</h3>
+        <p>Most games register one executable. Where a game registers several, each is listed and launcher processes are marked.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div>
+        <h3>Start</h3>
+        <p>Zycord prepares the file, starts the process and shows its process id. A small window shows elapsed time unless you turn it off.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div>
+        <h3>Stop when done</h3>
+        <p>Stop from the Sessions tab, the session window or the tray menu. A typical PLAY_ON_DESKTOP quest needs about 15 minutes.</p>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What the launcher includes</h2>
+      <p>Ten sections, all local, all reachable from the left rail.</p>
+    </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Home</h3>
+      <p>Running sessions, library count, catalog count and prepared file size at a glance, plus recent games and quick actions.</p>
+    </div>
+    <div class="card">
+      <h3>Games</h3>
+      <p>The full catalog with search, theme filter, executable filter and three sort orders.</p>
+    </div>
+    <div class="card">
+      <h3>Library</h3>
+      <p>Saved games with the executable you chose, ready to start again.</p>
+    </div>
+    <div class="card">
+      <h3>Favourites</h3>
+      <p>Starred games kept separately from the library, with their own count in the rail.</p>
+    </div>
+    <div class="card">
+      <h3>Sessions</h3>
+      <p>Every running session with process id, elapsed time, auto stop remaining and an extend action.</p>
+    </div>
+    <div class="card">
+      <h3>History</h3>
+      <p>Up to 250 recorded sessions with start, stop, duration and whether they were stopped, exited or auto stopped.</p>
+    </div>
+    <div class="card">
+      <h3>Settings</h3>
+      <p>Session, window, storage and data controls, including theme, tray behaviour and a 0 to 240 minute auto stop.</p>
+    </div>
+    <div class="card">
+      <h3>Logs</h3>
+      <p>A per-day plain text log you can refresh, copy, export or clear. Nothing leaves the computer.</p>
+    </div>
+    <div class="card">
+      <h3>About</h3>
+      <p>Version, build facts and buttons for the data folder, the website and the repository.</p>
+    </div>
+    <div class="card">
+      <h3>Help</h3>
+      <p>A short guide to starting a session and answers to the questions that come up most.</p>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>What it does not do</h2>
+          <p>Deliberate omissions, not features waiting to be added.</p>
+        </div>
+        <ul class="muted">
+          <li>No sign-in, token or stored credential.</li>
+          <li>No patch, injection or read of the Discord client.</li>
+          <li>No network request from the launcher except Discord CDN icons.</li>
+          <li>No telemetry, analytics, crash reporting or update check.</li>
+          <li>No installer, background service or scheduled task.</li>
+        </ul>
+        <p style="margin-top:14px"><a href="safety.html">Read the safety page</a> for the full boundary.</p>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Requirements</h2>
+        </div>
+  <table class="spec">
+      <tr><th>Operating system</th><td>Windows 10 or Windows 11, 64-bit.</td></tr>
+      <tr><th>Runtime</th><td>Microsoft Edge WebView2 Runtime, included with Windows 11 and current Windows 10 updates.</td></tr>
+      <tr><th>Discord</th><td>The desktop application running on the same computer.</td></tr>
+      <tr><th>Disk</th><td>about 3.1 MB unpacked, plus about 35 KB per prepared game.</td></tr>
+      <tr><th>Privileges</th><td>None. Zycord runs as your user and never asks for elevation.</td></tr>
+  </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Before you use it</h2>
+    </div>
+  <div class="notice notice-warn">
+    <span class="notice-title">Discord has not documented or endorsed this use.</span>
+    Progress gained this way can be removed and accounts can be actioned. Zycord is built carefully, but it does not make the practice safe. Read the <a href="terms.html">terms</a> before you start a session.
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>Common questions</h2>
+        </div>
+        <div class="faq">
+          <details open>
+            <summary>Do I need the game installed?</summary>
+            <div class="answer"><p>No. Zycord starts a copy of its own stub with the game's executable name. Your real game folder is never touched.</p></div>
+          </details>
+          <details>
+            <summary>Is anything sent to Discord?</summary>
+            <div class="answer"><p>No. The launcher starts a local process. Discord's own client does the detection, and the stub makes no network call.</p></div>
+          </details>
+          <details>
+            <summary>How long does a quest take?</summary>
+            <div class="answer"><p>A typical PLAY_ON_DESKTOP quest needs about 15 minutes of the game appearing to run. Leave the session running and Discord credits it.</p></div>
+          </details>
+          <details>
+            <summary>Why does SmartScreen warn me?</summary>
+            <div class="answer"><p>The executable is not signed with a code-signing certificate. Choose More info and then Run anyway, or build from source.</p></div>
+          </details>
+        </div>
+        <p style="margin-top:14px"><a href="faq.html">All questions</a></p>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Latest release</h2>
+        </div>
+        <div class="road">
+          <div class="road-item">
+            <span class="road-dot is-shipped" aria-hidden="true"></span>
+            <div>
+              <h3>1.0.0 <span class="badge badge-live">Current</span></h3>
+              <p>WebView2 interface, process-id session tracking, a validated path pipeline, auto stop, history, favourites and a rewritten stub.</p>
+            </div>
+            <span class="road-when">released</span>
+          </div>
+          <div class="road-item">
+            <span class="road-dot is-next" aria-hidden="true"></span>
+            <div>
+              <h3>Catalog refresh</h3>
+              <p>Regenerate the catalog from Discord's public detectable list and ship it in a new build.</p>
+            </div>
+            <span class="road-when">next</span>
+          </div>
+          <div class="road-item">
+            <span class="road-dot is-later" aria-hidden="true"></span>
+            <div>
+              <h3>Portable settings export</h3>
+              <p>Move your library and favourites between machines without copying the whole data folder.</p>
+            </div>
+            <span class="road-when">later</span>
+          </div>
+        </div>
+        <p style="margin-top:14px"><a href="changelog.html">Changelog</a> and <a href="roadmap.html">roadmap</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Every page</h2>
+    </div>
+    <div class="grid-3">
+      <a class="card" href="features.html"><h3>Features</h3><p>Every control in the launcher, described.</p></a>
+      <a class="card" href="how-it-works.html"><h3>How it works</h3><p>Detection, path safety, process safety.</p></a>
+      <a class="card" href="screenshots.html"><h3>Screenshots</h3><p>The Games, Sessions and Settings sections.</p></a>
+      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.0.0, checksum and requirements.</p></a>
+      <a class="card" href="docs.html"><h3>Documentation</h3><p>Using, building and troubleshooting.</p></a>
+      <a class="card" href="faq.html"><h3>FAQ</h3><p>Straight answers, including the uncomfortable ones.</p></a>
+      <a class="card" href="safety.html"><h3>Safety</h3><p>What the stub does, and what it never does.</p></a>
+      <a class="card" href="changelog.html"><h3>Changelog</h3><p>What changed in 1.0.0.</p></a>
+      <a class="card" href="roadmap.html"><h3>Roadmap</h3><p>Shipped, next and later.</p></a>
+      <a class="card" href="privacy.html"><h3>Privacy</h3><p>Local-only data and no telemetry.</p></a>
+      <a class="card" href="terms.html"><h3>Terms</h3><p>Acceptable use and the warranty position.</p></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

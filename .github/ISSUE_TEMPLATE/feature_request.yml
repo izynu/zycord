@@ -1,0 +1,68 @@
+name: Feature request
+description: Suggest a change or a new capability for Zycord.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you write a request, read the boundaries in CONTRIBUTING.md. Some things are out of scope by design:
+        https://github.com/iZynu/zycord/blob/main/CONTRIBUTING.md#what-will-not-be-accepted
+
+        In short: no network calls to Discord, no reading or modifying the Discord client, no telemetry,
+        no auto-updater or remote catalog, and no stopping processes by image name.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is difficult or missing today? Describe the situation, not the solution.
+      placeholder: When I run several sessions at once, I cannot see which one has been running longest without reading each row.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What you would like
+      description: The change you have in mind. Be concrete about where it would live in the interface or the launcher.
+      placeholder: A sort control on the Sessions tab, with oldest first as one option.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other ways to solve the problem, including doing nothing.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the project does this touch?
+      options:
+        - Interface (app/renderer)
+        - Launcher (app/main)
+        - Session stub (stub)
+        - Catalog (scripts/build_catalog.py)
+        - Build (build.py)
+        - Website (site)
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I read the out-of-scope list in CONTRIBUTING.md and this request does not cross it.
+          required: true
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: This request needs no new network call, telemetry, or Discord account access.
+          required: true

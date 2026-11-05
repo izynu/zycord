@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety | Zycord</title>
+<meta name="description" content="What the Zycord stub does and does not do, every path it writes under %LOCALAPPDATA%\Zycord, and the path and process rules that protect your files.">
+<link rel="canonical" href="https://izynu.github.io/zycord/safety.html">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="assets/zycord.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/mark-256.png">
+<link rel="stylesheet" href="assets/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zycord">
+<meta property="og:title" content="Safety | Zycord">
+<meta property="og:description" content="What the Zycord stub does and does not do, every path it writes under %LOCALAPPDATA%\Zycord, and the path and process rules that protect your files.">
+<meta property="og:url" content="https://izynu.github.io/zycord/safety.html">
+<meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Safety | Zycord">
+<meta name="twitter:description" content="What the Zycord stub does and does not do, every path it writes under %LOCALAPPDATA%\Zycord, and the path and process rules that protect your files.">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <img src="assets/zycord.svg" alt="" width="30" height="30">
+      <span class="logo-text">
+        <span class="logo-name">Zycord</span>
+        <span class="logo-by">by Zynu</span>
+      </span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+          <a href="index.html">Overview</a>
+          <a href="features.html">Features</a>
+          <a href="how-it-works.html">How it works</a>
+          <a href="screenshots.html">Screenshots</a>
+          <a href="download.html">Download</a>
+          <a href="docs.html">Docs</a>
+          <a href="faq.html">FAQ</a>
+          <a href="safety.html" class="is-active" aria-current="page">Safety</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="roadmap.html">Roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Safety</p>
+    <h1>What the stub does, what it never does, and where every file goes</h1>
+    <p class="lead">The stub is a small C# process with no game code, no network code and no access to Discord. This page is the full boundary, written so you can check it against the source.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What the stub does</h2>
+    <p>Everything the session process is responsible for.</p>
+    </div>
+  <div class="grid">
+    <div class="card">
+      <span class="card-kicker">Process</span>
+      <h3>Holds its name</h3>
+      <p>It runs under the executable filename Discord watches for the chosen game, inside a per-game folder under your local app data.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Window</span>
+      <h3>A timer and an end button</h3>
+      <p>Unless you disable it, it shows a small window with the game name, elapsed time and an End session button.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Lifetime</span>
+      <h3>Follows the launcher</h3>
+      <p>It receives the launcher's process id and exits when that process exits, so a crash cannot leave it running.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Arguments</span>
+      <h3>Parsed explicitly</h3>
+      <p>--title, --app-id, --parent and --hidden are matched as whole arguments. Nothing is matched as a substring of the command line.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Files</span>
+      <h3>None</h3>
+      <p>The stub creates no files, reads no files and writes no files. It only holds its process open.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Network</span>
+      <h3>None</h3>
+      <p>It opens no socket and makes no request. It has no code to contact Discord.</p>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What it never does</h2>
+    <p>The deliberate omissions, which are as much a part of the design as the features.</p>
+    </div>
+  <div class="grid">
+    <div class="card">
+      <span class="card-kicker">Discord client</span>
+      <h3>No patch or injection</h3>
+      <p>Discord's installation, memory and files are not touched. Zycord does not read the client at all.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Credentials</span>
+      <h3>No token, no account</h3>
+      <p>There is no sign-in, no token capture and no stored credential of any kind.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Detection</span>
+      <h3>No spoofing of Discord</h3>
+      <p>The launcher does not talk to Discord or pretend to be it. It creates a local process and lets Discord's own client detect it.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Telemetry</span>
+      <h3>No collection</h3>
+      <p>No analytics, no crash reporting, no update check and no phone home. Nothing is measured.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Elevation</span>
+      <h3>No admin rights</h3>
+      <p>The launcher runs as your user and never asks to elevate. It installs no service and schedules no task.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Persistence</span>
+      <h3>No autostart</h3>
+      <p>Nothing is added to startup. Zycord runs only when you start it.</p>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <div class="section-head">
+          <h2>Every path it writes</h2>
+          <p>All of it sits under one folder you can delete.</p>
+        </div>
+  <table class="spec">
+      <tr><th>Root</th><td><code class="inline">%LOCALAPPDATA%\Zycord\</code></td></tr>
+      <tr><th>Settings</th><td><code class="inline">settings.json</code> holds preferences, library, favourites, recents, history and window bounds.</td></tr>
+      <tr><th>Prepared games</th><td><code class="inline">games\&lt;app_id&gt;\</code> holds one renamed copy of the stub per game started.</td></tr>
+      <tr><th>Logs</th><td><code class="inline">logs\zycord-YYYYMMDD.log</code> holds the day's plain text log.</td></tr>
+      <tr><th>WebView2</th><td><code class="inline">webview\</code> is the profile folder the interface renders in.</td></tr>
+  </table>
+      </div>
+      <div>
+        <div class="section-head">
+          <h2>Path rules</h2>
+          <p>Enforced before any file is written.</p>
+        </div>
+        <ul>
+          <li>The application id must be one to 25 digits.</li>
+          <li>The executable entry must be relative, with no drive letter and no parent segment.</li>
+          <li>Invalid filename characters are refused, and so is anything not ending in .exe.</li>
+          <li>The entry is limited to eight path segments.</li>
+          <li>After the path is built, it is resolved again and must still sit inside the games folder.</li>
+          <li>A catalog entry cannot cause a file to be written outside that folder.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Process rules</h2>
+    </div>
+    <p>
+      A session is stopped only after the launcher confirms that the process with the
+      recorded id still points at the exact file Zycord created for it. If the id has
+      been reused by another program, or the file has moved, nothing is terminated.
+      This is why Zycord never stops a process by image name.
+    </p>
+    <p>
+      Prepared files are removed only when no session is running. At startup, folders
+      left behind by a previous run are swept before any session exists, so the sweep
+      can never touch a file in use.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Network rules</h2>
+    </div>
+    <p>
+      The launcher makes no network request. The catalog is stored with the
+      application rather than downloaded. The only remote resource is the game icon
+      image, which the interface loads from Discord's icon CDN when the Games grid is
+      shown. The interface's content security policy allows images from that host and
+      nothing else, and blocks all other connections.
+    </p>
+    <p>
+      If you would rather not load icons at all, the interface falls back to a
+      lettered tile when an image fails, so the grid still works.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+  <div class="notice notice-warn">
+    <span class="notice-title">Account risk is not a safety feature.</span>
+    The safety rules above describe what Zycord does to your computer. They do not make the practice of simulating a running game acceptable to Discord. Read the <a href="terms.html">terms</a>.
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Check it yourself</h2>
+    </div>
+    <p>
+      The stub source, the launcher source and the build script are in the
+      repository. The stub is a single C# file; the launcher is a small set of files
+      in the same repository. Build it with <code class="inline">python build.py</code>
+      and compare the result, or read the source before you run anything.
+    </p>
+    <p><a href="https://github.com/iZynu/zycord">github.com/iZynu/zycord</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col foot-brand">
+        <a class="logo" href="index.html">
+          <img src="assets/zycord.svg" alt="" width="28" height="28">
+          <span class="logo-text">
+            <span class="logo-name">Zycord</span>
+            <span class="logo-by">by Zynu</span>
+          </span>
+        </a>
+        <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="screenshots.html">Screenshots</a>
+        <a href="roadmap.html">Roadmap</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="download.html">Download</a>
+        <a href="docs.html">Documentation</a>
+        <a href="faq.html">FAQ</a>
+        <a href="safety.html">Safety</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy policy</a>
+        <a href="terms.html">Terms and conditions</a>
+        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+      </div>
+      <div class="foot-col">
+        <h4>Source</h4>
+        <a href="https://github.com/iZynu/zycord" rel="noopener">GitHub repository</a>
+        <a href="https://github.com/iZynu/zycord/releases" rel="noopener">Releases</a>
+        <a href="https://github.com/iZynu/zycord/issues" rel="noopener">Report an issue</a>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
+      <span>MIT licensed. Copyright Zynu.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
