@@ -300,7 +300,7 @@ body.reduce-motion * { transition-duration: .01ms !important; animation-duration
   background: var(--ink-4);
   transition: background .2s, box-shadow .2s;
 }
-.dot.is-ok { background: var(--ok); box-shadow: 0 0 10px rgba(94, 231, 168, .6); }
+.dot.is-ok { background: var(--ok); box-shadow: 0 0 10px rgba(87, 184, 162, .6); }
 .dot.is-busy { background: var(--accent); box-shadow: 0 0 10px rgba(87, 184, 162, .7); }
 .dot.is-bad { background: var(--danger); box-shadow: 0 0 10px rgba(255, 122, 144, .6); }
 .foot-meta { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink-4); letter-spacing: .02em; }
@@ -553,7 +553,7 @@ html[data-theme="light"] .select option { background: #fff; color: #17171a; }
   background: var(--glass-2);
   box-shadow: 0 18px 36px -20px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .08);
 }
-.card.is-running { border-color: rgba(94, 231, 168, .45); }
+.card.is-running { border-color: rgba(87, 184, 162, .45); }
 
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -1028,8 +1028,8 @@ html[data-theme="light"] .segmented { background: rgba(255, 255, 255, .6); }
   left: 0; top: 3px;
   width: 14px; height: 14px;
   border-radius: 50%;
-  background: rgba(94, 231, 168, .16);
-  border: 1px solid rgba(94, 231, 168, .4);
+  background: rgba(87, 184, 162, .16);
+  border: 1px solid rgba(87, 184, 162, .4);
 }
 .ticks li::after {
   content: "";
@@ -1210,7 +1210,7 @@ html[data-theme="light"] .toast { background: rgba(255, 255, 255, .95); }
   background: var(--accent);
   flex: none;
 }
-.toast.is-ok::before { background: var(--ok); box-shadow: 0 0 8px rgba(94, 231, 168, .7); }
+.toast.is-ok::before { background: var(--ok); box-shadow: 0 0 8px rgba(87, 184, 162, .7); }
 .toast.is-error::before { background: var(--danger); box-shadow: 0 0 8px rgba(255, 122, 144, .7); }
 .toast.is-out { animation: toastOut .2s ease forwards; }
 
