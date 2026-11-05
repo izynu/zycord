@@ -48,7 +48,6 @@
     <div class="tb-drag" id="tb-drag">
       <img class="tb-mark" src="mark.svg" alt="" width="22" height="22">
       <span class="tb-name">Zycord</span>
-      <span class="tb-by">by Zynu</span>
       <span class="tb-state" id="tb-state" hidden>Session running</span>
     </div>
     <div class="tb-actions">
@@ -79,7 +78,7 @@
           <span class="dot" id="foot-dot"></span>
           <span id="foot-status">Starting</span>
         </div>
-        <div class="foot-meta"><span id="foot-version">v1.0.0</span><span id="foot-catalog">catalog</span></div>
+        <div class="foot-meta"><span id="foot-version">v1.1.0</span><span id="foot-catalog">catalog</span></div>
       </div>
     </aside>
 
@@ -169,7 +168,10 @@
           <div>
             <p class="eyebrow">Catalog</p>
             <h1>Games</h1>
-            <p class="lede">Every game Discord can detect. Search, choose the executable, start a session.</p>
+            <p class="lede">Every game Discord can detect, plus any you add yourself. Search, choose the executable, start a session.</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn is-ghost" id="custom-btn"><svg><use href="#i-plus"/></svg>Custom game</button>
           </div>
         </header>
 
@@ -194,6 +196,7 @@
           <button class="chip" data-filter="single">Single executable</button>
           <button class="chip" data-filter="multi">Multiple executables</button>
           <button class="chip" data-filter="launcher">Has launcher</button>
+          <button class="chip" data-filter="custom">Custom games</button>
         </div>
 
         <div class="result-bar">
@@ -414,14 +417,14 @@
           <div>
             <p class="eyebrow">About</p>
             <h1>Zycord</h1>
-            <p class="lede">A Discord quest and presence companion for Windows, built by Zynu.</p>
+            <p class="lede">A Discord quest and presence companion for Windows.</p>
           </div>
         </header>
 
         <div class="about-hero glass">
           <img src="mark.svg" alt="Zycord" width="84" height="84">
           <div>
-            <h2>Zycord <span class="pill" id="about-version">v1.0.0</span></h2>
+            <h2>Zycord <span class="pill" id="about-version">v1.1.0</span></h2>
             <p>Quests and presence, without the guesswork. Zycord prepares a small stub under the executable name Discord expects, then keeps it running for as long as you need.</p>
             <div class="about-actions">
               <button class="btn is-primary" id="about-site"><svg><use href="#i-external"/></svg>Website</button>
@@ -453,10 +456,9 @@
           <div class="glass panel">
             <div class="panel-head"><h2>Build</h2></div>
             <dl class="facts">
-              <div><dt>Version</dt><dd id="fact-version">1.0.0</dd></div>
+              <div><dt>Version</dt><dd id="fact-version">1.1.0</dd></div>
               <div><dt>Interface</dt><dd>WebView2</dd></div>
               <div><dt>Catalog</dt><dd id="fact-catalog">games</dd></div>
-              <div><dt>Author</dt><dd>Zynu</dd></div>
             </dl>
           </div>
         </div>
@@ -517,9 +519,36 @@
       <div class="modal-tags" id="modal-tags"></div>
     </div>
     <div class="modal-foot">
+      <button class="btn is-ghost is-danger" id="modal-remove" hidden><svg><use href="#i-trash"/></svg>Remove</button>
       <button class="btn is-ghost" id="modal-fav"><svg><use href="#i-star"/></svg>Favourite</button>
       <button class="btn is-ghost" id="modal-add"><svg><use href="#i-plus"/></svg>Add to library</button>
       <button class="btn is-primary" id="modal-start"><svg><use href="#i-play"/></svg>Start session</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="custom-modal" hidden>
+  <div class="modal-scrim" data-custom-close></div>
+  <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="custom-title">
+    <button class="modal-x" data-custom-close aria-label="Close"><svg><use href="#i-close"/></svg></button>
+    <div class="modal-head">
+      <div class="modal-icon is-empty" id="custom-icon">?</div>
+      <div>
+        <h2 id="custom-title">Add a custom game</h2>
+        <p class="modal-sub">For a title Discord does not list</p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <p class="field-label">Game name</p>
+      <input class="field" id="custom-name" type="text" maxlength="200" placeholder="My Game" autocomplete="off" spellcheck="false" aria-label="Game name">
+      <p class="field-label field-gap">Executable name</p>
+      <input class="field" id="custom-exe" type="text" maxlength="260" placeholder="bin/win64/MyGame.exe" autocomplete="off" spellcheck="false" aria-label="Executable name">
+      <p class="field-note">A relative path, not a full one. It must end in .exe, .bin, .dat, .dll, .des, .jbg, .game or .pae. Zycord copies its stub to that name inside its own folder.</p>
+      <p class="field-error" id="custom-error" hidden></p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn is-ghost" data-custom-close>Cancel</button>
+      <button class="btn is-primary" id="custom-save"><svg><use href="#i-plus"/></svg>Add game</button>
     </div>
   </div>
 </div>

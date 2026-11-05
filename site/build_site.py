@@ -17,16 +17,16 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 # Verified catalog figures, read from app/assets/catalog.json.gz.
-GAMES = "10,447"
-EXECUTABLES = "11,151"
+GAMES = "10,465"
+EXECUTABLES = "11,171"
 LAUNCHERS = "20"
-ICONS = "10,434"
+ICONS = "10,452"
 STUB_SIZE = "about 35 KB"
 RELEASE_SIZE = "about 3.1 MB"
-DOWNLOAD_SIZE = "0.93 MB"
+DOWNLOAD_SIZE = "0.95 MB"
 
 NAV = [
     ("index.html", "Overview"),
@@ -58,7 +58,7 @@ FOOT_SUPPORT = [
 FOOT_LEGAL = [
     ("privacy.html", "Privacy policy"),
     ("terms.html", "Terms and conditions"),
-    (REPO + "/blob/main/LICENSE", "MIT licence"),
+    (REPO + "/blob/HEAD/LICENSE", "MIT licence"),
 ]
 
 PAGES = [
@@ -128,7 +128,6 @@ def head(title, desc, active, canonical, robots=None):
       <img src="assets/zycord.svg" alt="" width="30" height="30">
       <span class="logo-text">
         <span class="logo-name">Zycord</span>
-        <span class="logo-by">by Zynu</span>
       </span>
     </a>
     <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -158,7 +157,6 @@ def foot():
           <img src="assets/zycord.svg" alt="" width="28" height="28">
           <span class="logo-text">
             <span class="logo-name">Zycord</span>
-            <span class="logo-by">by Zynu</span>
           </span>
         </a>
         <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
@@ -175,7 +173,7 @@ def foot():
     </div>
     <div class="foot-legal">
       <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
-      <span>MIT licensed. Copyright Zynu.</span>
+      <span>MIT licensed.</span>
     </div>
   </div>
 </footer>
@@ -308,10 +306,10 @@ def page_head(eyebrow, title, lead):
 
 STATS = """
   <div class="stat-row">
-    <div class="stat"><span class="stat-n">10,447</span><span class="stat-l">games in the catalog</span></div>
-    <div class="stat"><span class="stat-n">11,151</span><span class="stat-l">executable entries</span></div>
+    <div class="stat"><span class="stat-n">10,465</span><span class="stat-l">games in the catalog</span></div>
+    <div class="stat"><span class="stat-n">11,171</span><span class="stat-l">executable entries</span></div>
     <div class="stat"><span class="stat-n">20</span><span class="stat-l">launcher processes marked</span></div>
-    <div class="stat"><span class="stat-n">10,434</span><span class="stat-l">games with an icon</span></div>
+    <div class="stat"><span class="stat-n">10,452</span><span class="stat-l">games with an icon</span></div>
   </div>"""
 
 # --------------------------------------------------------------------- index
@@ -367,7 +365,7 @@ INDEX = (
 """
     + cards(
         [
-            ("01", "Searches the catalog", "10,447 games with 11,151 executable entries, searchable by name, alias and theme. Filters narrow to single-executable, multi-executable or launcher games."),
+            ("01", "Searches the catalog", "10,465 games with 11,171 executable entries, searchable by name, alias and theme. Filters narrow to single-executable, multi-executable, launcher or custom games, and any title you add yourself is searchable beside them."),
             ("02", "Prepares a session file", "Copies the " + STUB_SIZE + " stub into a per-game folder and gives it the filename Discord expects, including any subfolder the catalog records."),
             ("03", "Starts and tracks it", "Starts the process and records its process id. The Sessions tab shows a live timer, and an optional auto stop ends it for you."),
             ("04", "Keeps a local history", "Every session is recorded with its start, stop, duration and reason. Favourites and a saved library sit beside it in one settings file."),
@@ -1370,7 +1368,7 @@ FAQ = (
     )
     + qa(
         "Why is it called Zycord?",
-        "It is a launcher for Discord, built by Zynu. The name is a portmanteau, and the mark is a Z.",
+        "It is a launcher for Discord. The name is a portmanteau, and the mark is a Z.",
     )
     + qa(
         "Is it affiliated with Discord?",
@@ -1547,7 +1545,30 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.0.0 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Custom games</h3>
+<ul>
+  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it behaves like any other game from then on.</li>
+  <li>Custom entries appear in search, in the library, in favourites and in history, and they carry a Custom tag wherever they are shown.</li>
+  <li>A Custom games filter isolates them, and Remove takes the entry out of the catalog, the library, the favourites and the recents together.</li>
+  <li>Up to 200 custom entries. Names are unique, case-insensitively, and the executable goes through the same path validation as a catalog entry.</li>
+</ul>
+
+<h3>Catalog</h3>
+<ul>
+  <li>18 more games: 10,465 in total, with 11,171 executable entries and 10,452 icons.</li>
+  <li>The catalog now keeps the non-.exe entries Discord publishes, such as Aion's <code class="inline">aion.bin</code>, the Command &amp; Conquer <code class="inline">.dat</code> and <code class="inline">.game</code> files, and the YOU DON'T KNOW JACK <code class="inline">.jbg</code> builds. Windows starts a program under any extension, so these run exactly like the .exe entries.</li>
+  <li>Script types are still refused. A session can never be a <code class="inline">.bat</code>, <code class="inline">.cmd</code> or <code class="inline">.ps1</code>.</li>
+</ul>
+
+<h3>Packaging</h3>
+<ul>
+  <li>The release archive is now byte-identical across rebuilds of the same folder, so a checksum can be compared between machines.</li>
+</ul>
+
+<h2>1.0.0</h2>
 <p class="updated">Released 5 November 2026</p>
 <p>The first public release. Everything below shipped in it.</p>
 
@@ -1592,14 +1613,14 @@ CHANGELOG = f"""
 </ul>
 
 <h2>Earlier versions</h2>
-<p>There are none. Version 1.0.0 is the first release.</p>
-<p>The full history is kept in <a href="{REPO}/blob/main/CHANGELOG.md">CHANGELOG.md</a>, and each release is tagged at <a href="{REPO}/releases">github.com/iZynu/zycord/releases</a>.</p>
+<p>Version 1.0.0 was the first release.</p>
+<p>The full history is kept in <a href="{REPO}/blob/HEAD/CHANGELOG.md">CHANGELOG.md</a>, and each release is tagged at <a href="{REPO}/releases">github.com/iZynu/zycord/releases</a>.</p>
 """
 
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.",
+    "Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1616,6 +1637,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.1.0</h3>
+          <p>Custom games for any title Discord does not list, 18 more games in the catalog, and a release archive that is byte-identical across rebuilds.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
@@ -1953,11 +1982,11 @@ NOT_FOUND = (
       <a class="card" href="features.html"><h3>Features</h3><p>Catalog, sessions, library and settings.</p></a>
       <a class="card" href="how-it-works.html"><h3>How it works</h3><p>The four steps from a game to a quest.</p></a>
       <a class="card" href="screenshots.html"><h3>Screenshots</h3><p>The Games, Sessions and Settings sections.</p></a>
-      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.0.0 for Windows 10 and 11.</p></a>
+      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.1.0 for Windows 10 and 11.</p></a>
       <a class="card" href="docs.html"><h3>Documentation</h3><p>Every section, the build and the common failures.</p></a>
       <a class="card" href="faq.html"><h3>FAQ</h3><p>Straight answers, including the uncomfortable ones.</p></a>
       <a class="card" href="safety.html"><h3>Safety</h3><p>What the stub does and never does.</p></a>
-      <a class="card" href="changelog.html"><h3>Changelog</h3><p>What shipped in version 1.0.0.</p></a>
+      <a class="card" href="changelog.html"><h3>Changelog</h3><p>What shipped in each version.</p></a>
       <a class="card" href="roadmap.html"><h3>Roadmap</h3><p>Shipped, next, later and never.</p></a>
       <a class="card" href="privacy.html"><h3>Privacy</h3><p>Local-only data and no telemetry.</p></a>
       <a class="card" href="terms.html"><h3>Terms</h3><p>Acceptable use and the warranty position.</p></a>
@@ -1967,12 +1996,39 @@ NOT_FOUND = (
 """
 )
 
-page(
+write(
     "404.html",
-    "Page not found",
+    "Page not found | Zycord",
     "That page does not exist on the Zycord site. Links to every page, plus the overview and the documentation.",
     NOT_FOUND,
+    None,
+    "noindex",
 )
+
+# ------------------------------------------------------------------ sitemap
+
+# Every indexable page, in navigation order. The 404 is deliberately absent.
+INDEXABLE = [name for name in PAGES if name != "404.html"]
+
+urls = []
+for name in INDEXABLE:
+    loc = SITE_URL + "/" + ("" if name == "index.html" else name)
+    urls.append("  <url><loc>%s</loc></url>" % loc)
+
+sitemap = (
+    '<?xml version="1.0" encoding="UTF-8"?>\n'
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "\n".join(urls)
+    + "\n</urlset>\n"
+)
+with open(os.path.join(SITE, "sitemap.xml"), "w", encoding="utf-8", newline="\n") as handle:
+    handle.write(sitemap)
+print("wrote %-20s %6d bytes" % ("sitemap.xml", len(sitemap.encode("utf-8"))))
+
+robots = "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % SITE_URL
+with open(os.path.join(SITE, "robots.txt"), "w", encoding="utf-8", newline="\n") as handle:
+    handle.write(robots)
+print("wrote %-20s %6d bytes" % ("robots.txt", len(robots.encode("utf-8"))))
 
 missing = [name for name in PAGES if not os.path.exists(os.path.join(SITE, name))]
 if missing:

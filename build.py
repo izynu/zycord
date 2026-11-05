@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -217,9 +217,17 @@ def pack():
             names.append((full, "Zycord-%s/%s" % (VERSION, rel)))
 
     names.sort(key=lambda pair: pair[1])
+    # Fixed timestamps and attributes keep the archive byte-identical across
+    # rebuilds of the same dist/. The files inside still carry their own PE
+    # timestamps, so this makes the archive deterministic, not the binaries.
+    fixed = (1980, 1, 1, 0, 0, 0)
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for full, rel in names:
-            z.write(full, rel)
+            info = zipfile.ZipInfo(rel, date_time=fixed)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            with open(full, "rb") as handle:
+                z.writestr(info, handle.read())
 
     digest = hashlib.sha256()
     with open(archive, "rb") as handle:

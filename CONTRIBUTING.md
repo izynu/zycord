@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.0.0.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.1.0.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
@@ -169,7 +169,7 @@ These are deliberate boundaries, not a backlog.
 - **Copy that overstates what the tool does.** No unverifiable claims about detection, no promises that an account is safe, no invented statistics.
 - **Emoji in the interface, the documentation or commit messages.**
 - **Em dashes in prose or tables.** Use a comma, a colon or a full stop.
-- **A previous project name or author.** The product is Zycord, owned by iZynu.
+- **A previous project name or author.** The product is Zycord and the source strings are checked for both.
 - **A new dependency without a discussion first.** The build intentionally needs only the Windows compiler, Python and the vendored WebView2 assemblies.
 
 If you are unsure whether an idea crosses one of these lines, open an issue and ask before writing the code.

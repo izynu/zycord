@@ -86,8 +86,8 @@ the same change.
 - `curl -I https://your-domain` returns `200` and a `server: GitHub.com`
   header.
 - The address bar shows the padlock, and `http://` redirects to `https://`.
-- `https://your-domain/sitemap.xml` and `https://your-domain/robots.txt` load,
-  if the generator writes them.
+- `https://your-domain/sitemap.xml` and `https://your-domain/robots.txt` load.
+  The generator writes both on every run.
 - The Pages settings screen shows the domain with a green tick and
   "DNS check successful".
 

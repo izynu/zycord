@@ -165,6 +165,7 @@ namespace Zycord
             CheckPaths();
             CheckSettings();
             CheckLibrary();
+            CheckCustom();
             CheckSession();
             CheckLog();
 
@@ -183,6 +184,8 @@ namespace Zycord
                 "",
                 "noextension",
                 "game/run.bat",
+                "game/run.ps1",
+                "game/run.cmd",
                 "game\\..\\..\\evil.exe",
                 "\\\\\\\\server\\\\share\\\\x.exe"
             };
@@ -198,7 +201,11 @@ namespace Zycord
             {
                 "game.exe",
                 "bin/win64/game.exe",
-                "Game/Content/Binaries/Win64/Game-Win64-Shipping.exe"
+                "Game/Content/Binaries/Win64/Game-Win64-Shipping.exe",
+                "aion.bin",
+                "data/gameguard.des",
+                "command and conquer generals/game.dat",
+                "ydkj_vol1xl/ydkj32.jbg"
             };
             var accepted = 0;
             foreach (var g in good)
@@ -266,6 +273,55 @@ namespace Zycord
                 s.Library.AddRange(before);
                 s.Favorites.Clear();
                 s.Favorites.AddRange(beforeFavorites);
+                Store.Save();
+            }
+        }
+
+        private static void CheckCustom()
+        {
+            var s = Settings.Current;
+            var before = new List<SavedGame>(s.Custom);
+
+            try
+            {
+                var id = Store.NextCustomId();
+                if (Store.IsCustomId(id)) Pass("custom id is in the reserved series");
+                else Fail("custom id is not reserved: " + id);
+
+                var entry = Store.AddCustom(new SavedGame
+                {
+                    Id = id,
+                    Name = "Self Test Custom",
+                    Exe = "bin/selftest.bin",
+                    Icon = "",
+                    Added = DateTime.UtcNow.ToString("o")
+                });
+
+                var reloaded = Store.Load();
+                var found = reloaded.Custom.Find(delegate(SavedGame g) { return g.Id == entry.Id; });
+                if (found != null && found.Exe == "bin/selftest.bin") Pass("custom game round trip");
+                else Fail("custom game did not round trip");
+
+                s.Library.Add(new SavedGame { Id = entry.Id, Name = entry.Name, Exe = entry.Exe, Icon = "" });
+                s.Favorites.Add(entry.Id);
+                Store.Save();
+
+                Store.RemoveCustom(entry.Id);
+                var after = Store.Load();
+                var stillListed = after.Custom.Exists(delegate(SavedGame g) { return g.Id == entry.Id; });
+                var inLibrary = after.Library.Exists(delegate(SavedGame g) { return g.Id == entry.Id; });
+                var inFavorites = after.Favorites.Contains(entry.Id);
+                if (!stillListed && !inLibrary && !inFavorites) Pass("custom game removal clears every reference");
+                else Fail("custom game removal left a reference behind");
+            }
+            catch (Exception ex)
+            {
+                Fail("custom: " + ex.Message);
+            }
+            finally
+            {
+                s.Custom.Clear();
+                s.Custom.AddRange(before);
                 Store.Save();
             }
         }

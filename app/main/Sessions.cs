@@ -76,6 +76,15 @@ namespace Zycord
         private static readonly Regex UnsafeName =
             new Regex("[\\x00-\\x1F\\x7F]", RegexOptions.Compiled);
 
+        // Windows starts a PE image under any extension. Discord lists a few
+        // games whose Windows entry is not named .exe, and the stub runs
+        // correctly under each of them, so they are accepted. Script types
+        // are deliberately absent: a session must never be a .bat or .ps1.
+        private static readonly string[] AllowedExtensions = new[]
+        {
+            ".exe", ".bin", ".dat", ".dll", ".des", ".jbg", ".game", ".pae"
+        };
+
         public static bool IsAlive(int pid)
         {
             if (pid <= 0) return false;
@@ -128,9 +137,23 @@ namespace Zycord
             }
 
             if (clean.Count == 0) return null;
-            var last = clean[clean.Count - 1];
-            if (!last.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) return null;
             if (clean.Count > 8) return null;
+
+            var last = clean[clean.Count - 1];
+            var dot = last.LastIndexOf('.');
+            if (dot < 0) return null;
+
+            var extension = last.Substring(dot);
+            var allowed = false;
+            foreach (var candidate in AllowedExtensions)
+            {
+                if (string.Equals(extension, candidate, StringComparison.OrdinalIgnoreCase))
+                {
+                    allowed = true;
+                    break;
+                }
+            }
+            if (!allowed) return null;
 
             return string.Join("/", clean.ToArray());
         }

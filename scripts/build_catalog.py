@@ -38,6 +38,14 @@ BAD_CHARS = set('<>:"|?*')
 BAD_ICON_CHARS = set(['/', chr(92), '?', '&', '#'])
 BACKSLASH = chr(92)
 
+# Extensions Windows will start as a PE image. Discord lists a handful of
+# games whose Windows entry is not named .exe; Windows runs the stub under any
+# of these names, so they are kept rather than dropped. Script types are
+# deliberately absent: a session must never be a .bat or .ps1.
+ALLOWED_EXTENSIONS = (
+    ".exe", ".bin", ".dat", ".dll", ".des", ".jbg", ".game", ".pae",
+)
+
 
 def fetch(url):
     request = urllib.request.Request(url, headers={"User-Agent": "Zycord-Catalog/1.0"})
@@ -59,7 +67,9 @@ def safe_entry(name):
         return False
     if len(parts) > 8:
         return False
-    if not parts[-1].lower().endswith(".exe"):
+    last = parts[-1].lower()
+    dot = last.rfind(".")
+    if dot < 0 or last[dot:] not in ALLOWED_EXTENSIONS:
         return False
     return True
 

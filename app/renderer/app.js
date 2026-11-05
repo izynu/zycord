@@ -60,6 +60,7 @@
     theme: "",
     sort: "name",
     limit: 120,
+    custom: [],
     selected: null,
     selectedExe: null,
     started: 0
@@ -214,9 +215,19 @@
           var t = g.themes || [];
           for (var j = 0; j < t.length; j++) themes[t[j]] = (themes[t[j]] || 0) + 1;
         }
+        // Custom games join the catalog so search, the library and history
+        // all resolve them through the same lookups.
+        var games = data.games.slice();
+        var custom = state.custom || [];
+        for (var c = 0; c < custom.length; c++) {
+          var mine = customGame(custom[c]);
+          byId[mine.id] = mine;
+          games.push(mine);
+        }
+
         data.byId = byId;
         state.catalog = data;
-        state.games = data.games;
+        state.games = games;
 
         var list = Object.keys(themes).sort(function (a, b) { return themes[b] - themes[a]; });
         var select = $("#theme-filter");
@@ -250,6 +261,7 @@
         for (var j = 0; j < exes.length; j++) { if (exes[j].l) { hasLauncher = true; break; } }
         if (!hasLauncher) continue;
       }
+      if (state.filter === "custom" && !g.custom) continue;
 
       if (q) {
         var name = g.name.toLowerCase();
@@ -304,6 +316,7 @@
     var foot = el("div", "card-foot");
     var themes = game.themes || [];
     if (themes.length) foot.appendChild(el("span", "tag", themes[0]));
+    if (game.custom) foot.appendChild(el("span", "tag is-custom", "Custom"));
     if (running) {
       foot.appendChild(el("span", "tag", "Running"));
     } else if (libraryEntry(game.id)) {
@@ -374,7 +387,11 @@
     $("#modal-title").textContent = game.name;
 
     var saved = libraryEntry(game.id);
-    $("#modal-sub").textContent = saved ? "In your library - " + saved.exe : exes.length + " executable" + (exes.length === 1 ? "" : "s");
+    $("#modal-sub").textContent = saved
+      ? "In your library - " + saved.exe
+      : game.custom
+        ? "Custom game - " + (exes.length ? shortExe(exes[0].n) : "no executable")
+        : exes.length + " executable" + (exes.length === 1 ? "" : "s");
 
     var holder = $("#modal-icon");
     var fresh = gameIcon(game, 128, "modal-icon");
@@ -404,7 +421,7 @@
     tags.textContent = "";
     var themes = game.themes || [];
     for (var k = 0; k < themes.length; k++) tags.appendChild(el("span", "tag", themes[k]));
-    tags.appendChild(el("span", "tag", "App " + game.id));
+    tags.appendChild(el("span", "tag", game.custom ? "Custom game" : "App " + game.id));
 
     var running = sessionFor(game.id);
     var fav = $("#modal-fav");
@@ -412,6 +429,8 @@
     fav.appendChild(icon("i-star"));
     fav.appendChild(document.createTextNode(isFavorite(game.id) ? "Starred" : "Favourite"));
     fav.classList.toggle("is-on", isFavorite(game.id));
+
+    $("#modal-remove").hidden = !game.custom;
 
     var add = $("#modal-add");
     add.innerHTML = "";
@@ -468,6 +487,128 @@
       wrap.appendChild(card);
       document.body.appendChild(wrap);
       ok.focus();
+    });
+  }
+
+  // ---------------------------------------------------------- custom games
+
+  var CUSTOM_EXTENSIONS = [".exe", ".bin", ".dat", ".dll", ".des", ".jbg", ".game", ".pae"];
+
+  function customGame(row) {
+    return {
+      id: row.id,
+      name: row.name,
+      aliases: [],
+      themes: [],
+      icon: row.icon || "",
+      ex: [{ n: row.exe, l: 0 }],
+      custom: true
+    };
+  }
+
+  function openCustom() {
+    $("#custom-name").value = "";
+    $("#custom-exe").value = "";
+    $("#custom-icon").textContent = "?";
+    $("#custom-error").hidden = true;
+    $("#custom-error").textContent = "";
+    $("#custom-modal").hidden = false;
+    $("#custom-name").focus();
+  }
+
+  function closeCustom() {
+    $("#custom-modal").hidden = true;
+  }
+
+  function customError(message) {
+    var node = $("#custom-error");
+    node.textContent = message;
+    node.hidden = false;
+  }
+
+  function saveCustom() {
+    var name = $("#custom-name").value.trim();
+    var exe = $("#custom-exe").value.trim().split("\\").join("/");
+
+    if (!name) { customError("Give the game a name."); return; }
+    if (!exe) { customError("Enter the executable name."); return; }
+    if (exe.charAt(0) === "/" || /^[a-z]:/i.test(exe)) {
+      customError("Use a relative path, not a full one.");
+      return;
+    }
+    if (exe.split("/").indexOf("..") !== -1) {
+      customError("The path cannot contain two dots as a folder.");
+      return;
+    }
+    var dot = exe.lastIndexOf(".");
+    var extension = dot === -1 ? "" : exe.slice(dot).toLowerCase();
+    if (CUSTOM_EXTENSIONS.indexOf(extension) === -1) {
+      customError("The file must end in " + CUSTOM_EXTENSIONS.join(", ") + ".");
+      return;
+    }
+
+    var button = $("#custom-save");
+    button.disabled = true;
+    call("custom.add", { name: name, exe: exe }).then(function (row) {
+      var game = customGame(row);
+      state.custom.push(row);
+      state.catalog.byId[game.id] = game;
+      state.games.push(game);
+      closeCustom();
+      toast("Custom game added: " + game.name, "ok");
+      paintGames();
+    }).catch(function (e) {
+      customError(e.message);
+    }).then(function () {
+      button.disabled = false;
+    });
+  }
+
+  function removeCustomGame(game) {
+    ask("Remove this custom game?",
+      game.name + " will be removed from the catalog, your library and your favourites. A session already running is not affected.",
+      "Remove game").then(function (yes) {
+        if (!yes) return null;
+        return call("custom.remove", { id: game.id }).then(function () {
+          state.custom = state.custom.filter(function (c) { return c.id !== game.id; });
+          state.games = state.games.filter(function (g) { return g.id !== game.id; });
+          delete state.catalog.byId[game.id];
+          state.library = state.library.filter(function (g) { return g.id !== game.id; });
+          state.favorites = state.favorites.filter(function (id) { return id !== game.id; });
+          closeModal();
+          toast("Removed " + game.name);
+          paintGames();
+          paintLibrary();
+          paintFavorites();
+          paintNavCounts();
+        }).catch(function (e) { toast(e.message, "error"); });
+      });
+  }
+
+  function wireCustom() {
+    $("#custom-btn").addEventListener("click", openCustom);
+
+    $("#custom-modal").addEventListener("click", function (e) {
+      if (e.target.hasAttribute("data-custom-close") || e.target.closest("[data-custom-close]")) closeCustom();
+    });
+
+    $("#custom-save").addEventListener("click", saveCustom);
+
+    $("#custom-name").addEventListener("input", function () {
+      var value = $("#custom-name").value.trim();
+      $("#custom-icon").textContent = (value.charAt(0) || "?").toUpperCase();
+    });
+
+    $("#custom-name").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); $("#custom-exe").focus(); }
+    });
+
+    $("#custom-exe").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); saveCustom(); }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !$("#custom-modal").hidden) closeCustom();
     });
   }
 
@@ -776,8 +917,10 @@
     var results = searchGames();
     var shown = results.slice(0, state.limit);
 
-    $("#result-count").textContent = count(results.length) + " game" + (results.length === 1 ? "" : "s") +
+    var label = count(results.length) + " game" + (results.length === 1 ? "" : "s") +
       (state.query ? " matching \"" + state.query + "\"" : "");
+    if (!state.query && state.custom.length) label += " - " + state.custom.length + " custom";
+    $("#result-count").textContent = label;
     $("#result-hint").textContent = results.length > shown.length
       ? "Showing " + count(shown.length)
       : "";
@@ -1183,6 +1326,10 @@
     $("#modal-fav").addEventListener("click", function () {
       if (state.selected) toggleFavorite(state.selected.id);
     });
+
+    $("#modal-remove").addEventListener("click", function () {
+      if (state.selected) removeCustomGame(state.selected);
+    });
   }
 
   // ------------------------------------------------------------------ events
@@ -1247,6 +1394,7 @@
       state.favorites = data.favorites || [];
       state.recent = data.recent || [];
       state.history = data.history || [];
+      state.custom = data.custom || [];
       state.settings = data.settings || {};
 
       $("#foot-version").textContent = "v" + data.version;
@@ -1297,6 +1445,7 @@
     wireTitlebar();
     wireSearch();
     wireModal();
+    wireCustom();
     wireSettings();
     wireLogs();
 

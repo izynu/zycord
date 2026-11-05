@@ -4,6 +4,29 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-06
+
+### Added
+
+- A Custom game button on the Games page, for a title Discord does not list.
+  You give it a name and the executable name, and it behaves like any other
+  game: it is searchable, can be saved to the library, starred, started and
+  recorded in history. Custom entries carry a Custom tag, have their own
+  filter, and can be removed from the catalog, library, favourites and
+  recents in one action. Up to 200 entries, with unique names and the same
+  path validation a catalog entry gets.
+- 18 more games in the catalog, for 10,465 games, 11,171 executable entries
+  and 10,452 icons. The additions are the non-`.exe` entries Discord
+  publishes, such as `aion.bin`, the Command & Conquer `.dat` and `.game`
+  files and the YOU DON'T KNOW JACK `.jbg` builds. Windows starts a program
+  under any extension, so they run exactly like the `.exe` entries. Script
+  types stay refused.
+
+### Changed
+
+- The release archive uses fixed entry timestamps, so rebuilding the same
+  folder produces a byte-identical zip and an identical checksum.
+
 ## [1.0.0] - 2026-11-05
 
 First public release.
@@ -62,4 +85,5 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.0]: https://github.com/iZynu/zycord/releases/tag/v1.1.0
 [1.0.0]: https://github.com/iZynu/zycord/releases/tag/v1.0.0

@@ -133,7 +133,7 @@ Schema version 2:
 | `games[].ex[].n` | Executable path relative to the game folder, using forward slashes. |
 | `games[].ex[].l` | 1 when Discord marks the entry as a launcher, otherwise 0. |
 
-The current catalog holds 10,447 games, 11,151 executable entries, 20 launcher entries and 10,434 icon hashes. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything not ending in `.exe`. The gzip stream is written with `mtime=0`, so the same input produces a byte-identical archive.
+The current catalog holds 10,465 games, 11,171 executable entries, 20 launcher entries and 10,452 icon hashes. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything whose extension Windows would not start as a program: `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` and `.pae`. Script types are refused. The gzip stream is written with `mtime=0`, so the same input produces a byte-identical archive.
 
 ## Path safety
 
@@ -148,7 +148,7 @@ A catalog entry is untrusted input. `Sessions.SafeRelativeExe` reduces it to a s
 
 The launcher then builds `Path.Combine(games folder, app id, relative path)` and calls `IsInside` before writing. `IsInside` resolves both paths to full form and requires the candidate to start with the root plus a directory separator. The same check runs again after `Directory.CreateDirectory`, immediately before the stub is copied.
 
-The self test feeds ten hostile strings through the validator, including `../../windows/system32/cmd.exe`, `C:\Windows\notepad.exe`, `/etc/passwd`, `game//sub/../escape.exe`, `game\..\..\evil.exe` and a UNC path, and requires all ten to be refused. It also requires three valid paths to be accepted.
+The self test feeds twelve hostile strings through the validator, including `../../windows/system32/cmd.exe`, `C:\Windows\notepad.exe`, `/etc/passwd`, `game//sub/../escape.exe`, `game\..\..\evil.exe` and a UNC path, and requires all ten to be refused. It also requires seven valid paths to be accepted, four of them non-`.exe` entries that Discord publishes.
 
 ## The stub lifecycle
 
@@ -206,7 +206,7 @@ A log line is `YYYY-MM-DD HH:mm:ss.fff LEVEL message`, with the level one of `IN
 1. It creates a hidden, transparent form off screen and hosts a real WebView2 control in it.
 2. It creates the WebView2 environment, maps the interface folder to `zycord.local`, and navigates to `index.html`.
 3. The interface loads, calls `boot`, loads the catalog, and posts a `ready` probe when it has finished. The probe path is a separate message shape (`{ "selftest": "ready" }`) that carries no command.
-4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a real session starts, is tracked, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, and the log file is being written.
+4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a custom game round trips through storage and its removal clears every reference to it, a real session starts, is tracked, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, and the log file is being written.
 5. It restores every setting and library entry it touched, deletes the test game folder, writes the report to `%LOCALAPPDATA%\Zycord\logs\selftest.txt`, prints it, and exits.
 
 A 60 second timer fails the run at the stage it reached, so a hang in WebView2 cannot block a build indefinitely.
@@ -223,9 +223,9 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 6. `copy_docs` copies `LICENSE` and `README.md` into `dist/`.
 7. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
 8. `report` prints the size and file count of `dist/`.
-9. `pack` writes `Zycord-1.0.0.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+9. `pack` writes `Zycord-1.1.0.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.0.0`.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.0`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 ## What the design deliberately leaves out
 

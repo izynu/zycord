@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord. Version 1.0.0 is the first public release, with the launcher, catalog, sessions, packaging and security notes.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -31,7 +31,6 @@
       <img src="assets/zycord.svg" alt="" width="30" height="30">
       <span class="logo-text">
         <span class="logo-name">Zycord</span>
-        <span class="logo-by">by Zynu</span>
       </span>
     </a>
     <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
@@ -54,9 +53,32 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.0.0</p>
+    <p class="updated">Version 1.1.0</p>
 
-<h2>1.0.0 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Custom games</h3>
+<ul>
+  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it behaves like any other game from then on.</li>
+  <li>Custom entries appear in search, in the library, in favourites and in history, and they carry a Custom tag wherever they are shown.</li>
+  <li>A Custom games filter isolates them, and Remove takes the entry out of the catalog, the library, the favourites and the recents together.</li>
+  <li>Up to 200 custom entries. Names are unique, case-insensitively, and the executable goes through the same path validation as a catalog entry.</li>
+</ul>
+
+<h3>Catalog</h3>
+<ul>
+  <li>18 more games: 10,465 in total, with 11,171 executable entries and 10,452 icons.</li>
+  <li>The catalog now keeps the non-.exe entries Discord publishes, such as Aion's <code class="inline">aion.bin</code>, the Command &amp; Conquer <code class="inline">.dat</code> and <code class="inline">.game</code> files, and the YOU DON'T KNOW JACK <code class="inline">.jbg</code> builds. Windows starts a program under any extension, so these run exactly like the .exe entries.</li>
+  <li>Script types are still refused. A session can never be a <code class="inline">.bat</code>, <code class="inline">.cmd</code> or <code class="inline">.ps1</code>.</li>
+</ul>
+
+<h3>Packaging</h3>
+<ul>
+  <li>The release archive is now byte-identical across rebuilds of the same folder, so a checksum can be compared between machines.</li>
+</ul>
+
+<h2>1.0.0</h2>
 <p class="updated">Released 5 November 2026</p>
 <p>The first public release. Everything below shipped in it.</p>
 
@@ -101,8 +123,8 @@
 </ul>
 
 <h2>Earlier versions</h2>
-<p>There are none. Version 1.0.0 is the first release.</p>
-<p>The full history is kept in <a href="https://github.com/iZynu/zycord/blob/main/CHANGELOG.md">CHANGELOG.md</a>, and each release is tagged at <a href="https://github.com/iZynu/zycord/releases">github.com/iZynu/zycord/releases</a>.</p>
+<p>Version 1.0.0 was the first release.</p>
+<p>The full history is kept in <a href="https://github.com/iZynu/zycord/blob/HEAD/CHANGELOG.md">CHANGELOG.md</a>, and each release is tagged at <a href="https://github.com/iZynu/zycord/releases">github.com/iZynu/zycord/releases</a>.</p>
 
   </article>
 </div>
@@ -117,7 +139,6 @@
           <img src="assets/zycord.svg" alt="" width="28" height="28">
           <span class="logo-text">
             <span class="logo-name">Zycord</span>
-            <span class="logo-by">by Zynu</span>
           </span>
         </a>
         <p>A Windows launcher that starts a small session process for a game Discord already detects. Local only, no account, no telemetry.</p>
@@ -141,7 +162,7 @@
         <h4>Legal</h4>
         <a href="privacy.html">Privacy policy</a>
         <a href="terms.html">Terms and conditions</a>
-        <a href="https://github.com/iZynu/zycord/blob/main/LICENSE" rel="noopener">MIT licence</a>
+        <a href="https://github.com/iZynu/zycord/blob/HEAD/LICENSE" rel="noopener">MIT licence</a>
       </div>
       <div class="foot-col">
         <h4>Source</h4>
@@ -152,7 +173,7 @@
     </div>
     <div class="foot-legal">
       <span>Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.</span>
-      <span>MIT licensed. Copyright Zynu.</span>
+      <span>MIT licensed.</span>
     </div>
   </div>
 </footer>

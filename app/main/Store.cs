@@ -69,6 +69,10 @@ namespace Zycord
         public string Theme { get; set; }
 
         public List<SavedGame> Library { get; set; }
+
+        /// <summary>Games the user added by hand, for titles Discord does not list.</summary>
+        public List<SavedGame> Custom { get; set; }
+
         public List<string> Favorites { get; set; }
         public List<string> Recent { get; set; }
         public List<HistoryEntry> History { get; set; }
@@ -91,6 +95,7 @@ namespace Zycord
             AutoStopMinutes = 0;
             Theme = "glass";
             Library = new List<SavedGame>();
+            Custom = new List<SavedGame>();
             Favorites = new List<string>();
             Recent = new List<string>();
             History = new List<HistoryEntry>();
@@ -102,6 +107,7 @@ namespace Zycord
     internal static class Store
     {
         public const int MaxHistory = 250;
+        public const int MaxCustom = 200;
         public const int MaxRecent = 12;
 
         private static readonly object Gate = new object();
@@ -151,6 +157,14 @@ namespace Zycord
                 return g == null || string.IsNullOrEmpty(g.Id) || string.IsNullOrEmpty(g.Exe) ||
                        string.IsNullOrEmpty(g.Name);
             });
+
+            if (s.Custom == null) s.Custom = new List<SavedGame>();
+            s.Custom.RemoveAll(delegate(SavedGame g)
+            {
+                return g == null || !IsCustomId(g.Id) || string.IsNullOrEmpty(g.Name) ||
+                       Sessions.SafeRelativeExe(g.Exe) == null;
+            });
+            if (s.Custom.Count > MaxCustom) s.Custom.RemoveRange(MaxCustom, s.Custom.Count - MaxCustom);
 
             if (s.Favorites == null) s.Favorites = new List<string>();
             s.Favorites.RemoveAll(delegate(string id) { return string.IsNullOrEmpty(id); });
@@ -249,6 +263,75 @@ namespace Zycord
                     s.Recent.RemoveRange(MaxRecent, s.Recent.Count - MaxRecent);
             }
             SaveQuiet();
+        }
+
+        // ------------------------------------------------------------- custom
+
+        /// <summary>
+        /// Custom ids start with a 7 and are 19 digits long. Discord snowflakes
+        /// are 18 or 19 digits beginning with 1 or 2, and would not reach 7
+        /// until well past the lifetime of this application, so a custom entry
+        /// can never shadow a real application id.
+        /// </summary>
+        public static bool IsCustomId(string id)
+        {
+            if (string.IsNullOrEmpty(id) || id.Length != 19 || id[0] != '7') return false;
+            foreach (var c in id)
+            {
+                if (c < '0' || c > '9') return false;
+            }
+            return true;
+        }
+
+        /// <summary>The next unused custom id, in the reserved 7 series.</summary>
+        public static string NextCustomId()
+        {
+            var s = Settings.Current;
+            long highest = 0;
+            lock (Gate)
+            {
+                foreach (var g in s.Custom)
+                {
+                    long value;
+                    if (g != null && IsCustomId(g.Id) &&
+                        long.TryParse(g.Id.Substring(1), NumberStyles.None, CultureInfo.InvariantCulture, out value))
+                    {
+                        if (value > highest) highest = value;
+                    }
+                }
+            }
+            return "7" + (highest + 1).ToString("D18", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>Add or replace a custom game. Returns the stored entry.</summary>
+        public static SavedGame AddCustom(SavedGame game)
+        {
+            var s = Settings.Current;
+            lock (Gate)
+            {
+                s.Custom.RemoveAll(delegate(SavedGame g) { return g.Id == game.Id; });
+                s.Custom.Insert(0, game);
+                if (s.Custom.Count > MaxCustom)
+                    s.Custom.RemoveRange(MaxCustom, s.Custom.Count - MaxCustom);
+            }
+            SaveQuiet();
+            return game;
+        }
+
+        /// <summary>Remove a custom game and every reference to it elsewhere.</summary>
+        public static bool RemoveCustom(string appId)
+        {
+            var s = Settings.Current;
+            int removed;
+            lock (Gate)
+            {
+                removed = s.Custom.RemoveAll(delegate(SavedGame g) { return g.Id == appId; });
+                s.Library.RemoveAll(delegate(SavedGame g) { return g.Id == appId; });
+                s.Favorites.RemoveAll(delegate(string id) { return id == appId; });
+                s.Recent.RemoveAll(delegate(string id) { return id == appId; });
+            }
+            SaveQuiet();
+            return removed > 0;
         }
 
         public static bool ToggleFavorite(string appId)

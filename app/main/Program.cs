@@ -20,7 +20,6 @@ namespace Zycord
     internal static class AppInfo
     {
         public const string Name = "Zycord";
-        public const string Author = "Zynu";
         public const string Repo = "https://github.com/iZynu/zycord";
 
         public static string Version
@@ -32,7 +31,7 @@ namespace Zycord
                     var v = typeof(AppInfo).Assembly.GetName().Version;
                     return v.Major + "." + v.Minor + "." + v.Build;
                 }
-                catch { return "1.0.0"; }
+                catch { return "1.1.0"; }
             }
         }
     }

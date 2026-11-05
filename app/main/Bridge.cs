@@ -79,6 +79,9 @@ namespace Zycord
                 case "library.remove": RemoveFromLibrary(id, a); return;
                 case "library.clear": ClearLibrary(id); return;
 
+                case "custom.add": AddCustom(id, a); return;
+                case "custom.remove": RemoveCustom(id, a); return;
+
                 case "favorite.toggle": ToggleFavorite(id, a); return;
 
                 case "session.start": StartSession(id, a); return;
@@ -189,6 +192,7 @@ namespace Zycord
                 { "diskUse", Sessions.DiskUse() },
                 { "folders", Sessions.FolderCount() },
                 { "library", library },
+                { "custom", CustomJson(s) },
                 { "favorites", new List<string>(s.Favorites) },
                 { "recent", new List<string>(s.Recent) },
                 { "history", history },
@@ -305,6 +309,85 @@ namespace Zycord
             if (!IsAppId(appId)) { Reply(id, false, null, "That application id is not valid."); return; }
             var now = Store.ToggleFavorite(appId);
             Reply(id, true, new Dictionary<string, object> { { "favorite", now } }, null);
+        }
+
+        // --------------------------------------------------------------- custom
+
+        private static List<object> CustomJson(Settings s)
+        {
+            var list = new List<object>();
+            foreach (var g in s.Custom)
+            {
+                list.Add(new Dictionary<string, object>
+                {
+                    { "id", g.Id }, { "name", g.Name }, { "exe", g.Exe },
+                    { "icon", g.Icon ?? "" }, { "added", g.Added ?? "" }
+                });
+            }
+            return list;
+        }
+
+        private static void AddCustom(string id, Dictionary<string, object> a)
+        {
+            var name = Store.String(a, "name", "").Trim();
+            var exe = Store.String(a, "exe", "").Trim();
+            var icon = Store.String(a, "icon", "").Trim();
+
+            if (string.IsNullOrWhiteSpace(name)) { Reply(id, false, null, "A game name is required."); return; }
+            if (name.Length > 200) { Reply(id, false, null, "That game name is too long."); return; }
+
+            var safe = Sessions.SafeRelativeExe(exe);
+            if (safe == null)
+            {
+                Reply(id, false, null,
+                    "The executable must be a relative path ending in .exe, .bin, .dat, .dll, .des, .jbg, .game or .pae.");
+                return;
+            }
+
+            if (Settings.Current.Custom.Count >= Store.MaxCustom)
+            {
+                Reply(id, false, null, "The custom game list is full. Remove one before adding another.");
+                return;
+            }
+
+            // A name Discord already lists would be confusing to remove later,
+            // so a duplicate name is refused rather than silently shadowing.
+            var existing = Settings.Current.Custom.Find(
+                delegate(SavedGame g) { return string.Equals(g.Name, name, StringComparison.OrdinalIgnoreCase); });
+            if (existing != null)
+            {
+                Reply(id, false, null, "A custom game called " + existing.Name + " already exists.");
+                return;
+            }
+
+            var entry = new SavedGame
+            {
+                Id = Store.NextCustomId(),
+                Name = name,
+                Exe = safe,
+                Icon = icon,
+                Added = DateTime.UtcNow.ToString("o", System.Globalization.CultureInfo.InvariantCulture)
+            };
+            Store.AddCustom(entry);
+            Log.Info("custom game added: " + entry.Name + " (" + entry.Id + ")");
+
+            Reply(id, true, new Dictionary<string, object>
+            {
+                { "id", entry.Id }, { "name", entry.Name }, { "exe", entry.Exe },
+                { "icon", entry.Icon }, { "added", entry.Added }
+            }, null);
+        }
+
+        private static void RemoveCustom(string id, Dictionary<string, object> a)
+        {
+            var appId = Store.String(a, "id", "");
+            if (!Store.IsCustomId(appId)) { Reply(id, false, null, "That is not a custom game."); return; }
+
+            var removed = Store.RemoveCustom(appId);
+            if (!removed) { Reply(id, false, null, "That custom game is not in the list."); return; }
+
+            Log.Info("custom game removed: " + appId);
+            Reply(id, true, new Dictionary<string, object> { { "removed", true } }, null);
         }
 
         // -------------------------------------------------------------- sessions
@@ -453,6 +536,9 @@ namespace Zycord
                 case "library":
                     s.Library.Clear();
                     s.Favorites.Clear();
+                    break;
+                case "custom":
+                    s.Custom.Clear();
                     break;
                 case "settings":
                     var library = s.Library;

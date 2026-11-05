@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Before you write a request, read the boundaries in CONTRIBUTING.md. Some things are out of scope by design:
-        https://github.com/iZynu/zycord/blob/main/CONTRIBUTING.md#what-will-not-be-accepted
+        https://github.com/iZynu/zycord/blob/HEAD/CONTRIBUTING.md#what-will-not-be-accepted
 
         In short: no network calls to Discord, no reading or modifying the Discord client, no telemetry,
         no auto-updater or remote catalog, and no stopping processes by image name.
