@@ -100,7 +100,7 @@
       </details>      <details>
         <summary>Why is the catalog fixed instead of downloaded?</summary>
         <div class="answer">
-            <p>A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher makes no network request at all.</p>
+            <p>A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher never contacts Discord's API or gateway. The only remote request the interface makes is for game icons.</p>
             <p>The trade-off is real: games added to Discord's list after a release will not appear until the next release ships with an updated catalog.</p>
         </div>
       </details>      <details>

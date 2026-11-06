@@ -265,6 +265,12 @@ namespace Zycord
             var icon = Store.String(a, "icon", "");
 
             if (!IsAppId(appId)) { Reply(id, false, null, "That application id is not valid."); return; }
+            if (name.Length > 200) name = name.Substring(0, 200);
+            if (Sessions.UnsafeName.IsMatch(name))
+            {
+                Reply(id, false, null, "That game name contains characters that cannot be used.");
+                return;
+            }
             if (string.IsNullOrWhiteSpace(name)) { Reply(id, false, null, "A game name is required."); return; }
 
             var safe = Sessions.SafeRelativeExe(exe);
@@ -275,7 +281,7 @@ namespace Zycord
             s.Library.Insert(0, new SavedGame
             {
                 Id = appId,
-                Name = name.Length > 200 ? name.Substring(0, 200) : name,
+                Name = name,
                 Exe = safe,
                 Icon = icon,
                 Added = DateTime.UtcNow.ToString("o")
@@ -333,8 +339,12 @@ namespace Zycord
             var exe = Store.String(a, "exe", "").Trim();
             var icon = Store.String(a, "icon", "").Trim();
 
-            if (string.IsNullOrWhiteSpace(name)) { Reply(id, false, null, "A game name is required."); return; }
-            if (name.Length > 200) { Reply(id, false, null, "That game name is too long."); return; }
+            if (!Sessions.SafeName(name))
+            {
+                Reply(id, false, null,
+                    "A game name is required, at most 200 characters, and free of control characters.");
+                return;
+            }
 
             var safe = Sessions.SafeRelativeExe(exe);
             if (safe == null)

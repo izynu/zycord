@@ -11,19 +11,41 @@ Pages written: index, features, how-it-works, screenshots, download, docs,
 faq, safety, changelog, roadmap, privacy, terms and 404.
 """
 
+import gzip
+import json
 import os
+import re
 
 SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 
-# Verified catalog figures, read from app/assets/catalog.json.gz.
-GAMES = "10,465"
-EXECUTABLES = "11,171"
-LAUNCHERS = "20"
-ICONS = "10,452"
+
+def catalog_figures():
+    """Read the counts the site quotes straight from the shipped catalog.
+
+    The pages say the figures come from the catalog in the release, so they are
+    read from it rather than typed. A stale catalog fails the Pages workflow,
+    which regenerates the site and requires the result to match what is
+    committed.
+    """
+    path = os.path.join(os.path.dirname(SITE), "app", "assets", "catalog.json.gz")
+    with gzip.open(path, "rt", encoding="utf-8") as handle:
+        data = json.load(handle)
+    games = data.get("games") or []
+    executables = sum(len(g.get("ex") or []) for g in games)
+    launchers = sum(1 for g in games for e in (g.get("ex") or []) if e.get("l"))
+    icons = sum(1 for g in games if g.get("icon"))
+    return len(games), executables, launchers, icons
+
+
+_GAMES, _EXECUTABLES, _LAUNCHERS, _ICONS = catalog_figures()
+GAMES = format(_GAMES, ",")
+EXECUTABLES = format(_EXECUTABLES, ",")
+LAUNCHERS = format(_LAUNCHERS, ",")
+ICONS = format(_ICONS, ",")
 STUB_SIZE = "about 35 KB"
 RELEASE_SIZE = "about 3.1 MB"
 DOWNLOAD_SIZE = "0.95 MB"
@@ -85,6 +107,19 @@ def esc(text):
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace('"', "&quot;")
+    )
+
+
+# GitHub Pages serves 404.html for any unmatched path, at any depth, so a
+# document-relative link on that page resolves against the path that was
+# mistyped. Every other page is only ever served at its own name.
+RELATIVE_ATTR = re.compile(r'(?<= )(?P<attr>(?:href|src))="(?P<url>(?!https?:|mailto:|#|//)[^"]*)"')
+
+
+def absolutise(html):
+    """Rewrite document-relative href and src values to absolute site URLs."""
+    return RELATIVE_ATTR.sub(
+        lambda m: '%s="%s/%s"' % (m.group("attr"), SITE_URL, m.group("url")), html
     )
 
 
@@ -184,7 +219,7 @@ def foot():
 """
 
 
-def write(filename, title, desc, body, active=None, robots=None):
+def write(filename, title, desc, body, active=None, robots=None, absolute=False):
     active = active or filename
     canonical = SITE_URL + "/" + ("" if filename == "index.html" else filename)
     html = (
@@ -194,6 +229,8 @@ def write(filename, title, desc, body, active=None, robots=None):
         + "\n</main>\n"
         + foot()
     )
+    if absolute:
+        html = absolutise(html)
     path = os.path.join(SITE, filename)
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(html)
@@ -304,12 +341,12 @@ def page_head(eyebrow, title, lead):
 </section>"""
 
 
-STATS = """
+STATS = f"""
   <div class="stat-row">
-    <div class="stat"><span class="stat-n">10,465</span><span class="stat-l">games in the catalog</span></div>
-    <div class="stat"><span class="stat-n">11,171</span><span class="stat-l">executable entries</span></div>
-    <div class="stat"><span class="stat-n">20</span><span class="stat-l">launcher processes marked</span></div>
-    <div class="stat"><span class="stat-n">10,452</span><span class="stat-l">games with an icon</span></div>
+    <div class="stat"><span class="stat-n">{GAMES}</span><span class="stat-l">games in the catalog</span></div>
+    <div class="stat"><span class="stat-n">{EXECUTABLES}</span><span class="stat-l">executable entries</span></div>
+    <div class="stat"><span class="stat-n">{LAUNCHERS}</span><span class="stat-l">launcher processes marked</span></div>
+    <div class="stat"><span class="stat-n">{ICONS}</span><span class="stat-l">games with an icon</span></div>
   </div>"""
 
 # --------------------------------------------------------------------- index
@@ -351,7 +388,9 @@ INDEX = (
     <p class="muted" style="margin-top:14px;font-size:12.5px">
       Counts are read from the catalog shipped with version """
     + VERSION
-    + """. 20 of the executable entries are marked as launcher processes.
+    + """. """
+    + LAUNCHERS
+    + """ of the executable entries are marked as launcher processes.
     </p>
   </div>
 </section>
@@ -838,9 +877,10 @@ HOW = (
     <p>
       The catalog was built once from Discord's public detectable application
       endpoint and is stored with the application. The launcher does not refresh it,
-      so it makes no network request and does not depend on anyone's server staying
-      online. The trade-off is real: games added to Discord's list after a release
-      will not appear until a new release ships with an updated catalog.
+      so it never depends on anyone's server staying online. The only remote request
+      the interface makes is for game icons. The trade-off is real: games added to
+      Discord's list after a release will not appear until a new release ships with
+      an updated catalog.
     </p>
   </div>
 </section>
@@ -896,7 +936,7 @@ SHOTS = (
     + cards(
         [
             ("Games", "A local catalog", "The grid is rendered from the catalog file shipped with the application. No server is queried to fill it."),
-            ("Sessions", "Process ids, not names", "The id beside each session is the one Zycord started and the one it will verify before stopping anything."),
+            ("Sessions", "One stub per game", "Each row is a session Zycord started. Before stopping anything it confirms the process still points at the file it created."),
             ("Settings", "Stored on this PC", "Every switch writes to the settings file in your local app data folder. Nothing is synced anywhere."),
         ]
     )
@@ -1345,7 +1385,7 @@ FAQ = (
     )
     + qa(
         "Why is the catalog fixed instead of downloaded?",
-        "A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher makes no network request at all.",
+        "A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher never contacts Discord's API or gateway. The only remote request the interface makes is for game icons.",
         "The trade-off is real: games added to Discord's list after a release will not appear until the next release ships with an updated catalog.",
     )
     + qa(
@@ -1466,7 +1506,7 @@ SAFETY = (
         <ul>
           <li>The application id must be one to 25 digits.</li>
           <li>The executable entry must be relative, with no drive letter and no parent segment.</li>
-          <li>Invalid filename characters are refused, and so is anything not ending in .exe.</li>
+          <li>Invalid filename characters are refused, and the extension must be one of the eight the validator accepts: .exe, .bin, .dat, .dll, .des, .jbg, .game or .pae.</li>
           <li>The entry is limited to eight path segments.</li>
           <li>After the path is built, it is resolved again and must still sit inside the games folder.</li>
           <li>A catalog entry cannot cause a file to be written outside that folder.</li>
@@ -1501,10 +1541,10 @@ SAFETY = (
       <h2>Network rules</h2>
     </div>
     <p>
-      The launcher makes no network request. The catalog is stored with the
-      application rather than downloaded. The only remote resource is the game icon
-      image, which the interface loads from Discord's icon CDN when the Games grid is
-      shown. The interface's content security policy allows images from that host and
+      The launcher does not contact Discord's API or gateway. The catalog is stored
+      with the application rather than downloaded. The only remote resource is the
+      game icon image, which the interface loads from Discord's icon CDN when the
+      Games grid is shown. The interface's content security policy allows images from that host and
       nothing else, and blocks all other connections.
     </p>
     <p>
@@ -1555,7 +1595,27 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.1 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.2 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>Stop all on the Sessions page now ends every session. The button was present and did nothing.</li>
+  <li>History shows how each session ended. The Reason column was in the table but never filled.</li>
+  <li>Auto stop rounds a typed value to the nearest fifteen minutes, so the documented step is the step that applies.</li>
+  <li>Game names containing control characters are refused in the custom game dialog and in the library, not only when a session starts.</li>
+  <li>Links on the not-found page resolve from any mistyped path, instead of only from the site root.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>Statements that the launcher makes no network request were corrected. The interface does load game icons from Discord's CDN, and several pages said otherwise.</li>
+  <li>The claim that nothing is written outside the data folder now notes the log export you choose a location for.</li>
+  <li>The path rules name all eight extensions the validator accepts, instead of describing the rule as .exe only.</li>
+  <li>The self test figure for 1.0.0 now matches the checks that release ran.</li>
+</ul>
+
+<h2>1.1.1</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Custom games</h3>
@@ -1627,7 +1687,7 @@ CHANGELOG = f"""
 
 <h3>Packaging</h3>
 <ul>
-  <li><code class="inline">python build.py</code> compiles the launcher and the stub with the .NET Framework compiler that ships with Windows, runs a 25 check self test against a real WebView2 host, and writes <code class="inline">Zycord-1.0.0.zip</code> with <code class="inline">SHA256.txt</code>.</li>
+  <li><code class="inline">python build.py</code> compiles the launcher and the stub with the .NET Framework compiler that ships with Windows, runs a 23 check self test against a real WebView2 host, and writes <code class="inline">Zycord-1.0.0.zip</code> with <code class="inline">SHA256.txt</code>.</li>
   <li>The zip you download is 0.93 MB. Unpacked, the release folder is about 3.1 MB across 12 files, including the WebView2 assemblies.</li>
 </ul>
 
@@ -1646,7 +1706,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.",
+    "Every notable change in Zycord, from the first public release to the corrections shipped in 1.1.2.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1663,6 +1723,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.1.2</h3>
+          <p>Stop all wired up, the end reason shown in history, the auto stop step enforced, one name rule across the app, and the network and write claims corrected.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
@@ -1715,7 +1783,7 @@ ROADMAP = (
         <span class="road-dot is-later"></span>
         <div>
           <h3>Requests from the issue tracker</h3>
-          <p>Ideas are considered one at a time against the rule that the launcher stays local and makes no network request. Open an issue to propose one.</p>
+          <p>Ideas are considered one at a time against the rule that the launcher stays local and contacts no Discord API or gateway. Open an issue to propose one.</p>
         </div>
         <span class="road-when">Later</span>
       </div>
@@ -1798,14 +1866,14 @@ PRIVACY = f"""
 <h3>What it does not access</h3>
 <ul>
   <li>Discord's installation, files, memory or credentials.</li>
-  <li>Your browser history, documents, or any file outside its own data folder.</li>
+  <li>Your browser history, documents, or any file outside its own data folder, apart from a log you export yourself.</li>
   <li>Your network, microphone, camera or location.</li>
 </ul>
 
 <h3>Network access</h3>
 <p>
-  The application makes no network requests. The game catalog is stored with the
-  application rather than downloaded. Game icons shown in the interface are loaded
+  The only network request the application makes is for game icons. The game
+  catalog is stored with the application rather than downloaded. Game icons shown in the interface are loaded
   from <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer,
   using only the icon hash stored in the catalog. That request fetches a public
   image and sends no information about you or your sessions.
@@ -2016,7 +2084,7 @@ NOT_FOUND = (
       <a class="card" href="features.html"><h3>Features</h3><p>Catalog, sessions, library and settings.</p></a>
       <a class="card" href="how-it-works.html"><h3>How it works</h3><p>The four steps from a game to a quest.</p></a>
       <a class="card" href="screenshots.html"><h3>Screenshots</h3><p>The Games, Sessions and Settings sections.</p></a>
-      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.1.1 for Windows 10 and 11.</p></a>
+      <a class="card" href="download.html"><h3>Download</h3><p>Version """ + VERSION + """ for Windows 10 and 11.</p></a>
       <a class="card" href="docs.html"><h3>Documentation</h3><p>Every section, the build and the common failures.</p></a>
       <a class="card" href="faq.html"><h3>FAQ</h3><p>Straight answers, including the uncomfortable ones.</p></a>
       <a class="card" href="safety.html"><h3>Safety</h3><p>What the stub does and never does.</p></a>
@@ -2037,6 +2105,7 @@ write(
     NOT_FOUND,
     None,
     "noindex",
+    absolute=True,
 )
 
 # ------------------------------------------------------------------ sitemap

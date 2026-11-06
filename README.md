@@ -4,9 +4,9 @@
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-[Download 1.1.1](https://github.com/iZynu/zycord/releases/download/v1.1.1/Zycord-1.1.1.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
+[Download 1.1.2](https://github.com/iZynu/zycord/releases/download/v1.1.2/Zycord-1.1.2.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
 
-![Version 1.1.1](https://img.shields.io/badge/version-1.1.1-0b0f14?style=flat-square)
+![Version 1.1.2](https://img.shields.io/badge/version-1.1.2-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 0.9 MB](https://img.shields.io/badge/download-0.9%20MB-0b0f14?style=flat-square)
@@ -65,7 +65,7 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 ## Install
 
-1. Download `Zycord-1.1.1.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
+1. Download `Zycord-1.1.2.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
 2. Extract it to a folder you can write to, for example `C:\Users\you\Apps\Zycord`.
 3. Run `Zycord.exe`.
 4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
@@ -83,7 +83,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.1.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.2.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |
@@ -130,7 +130,7 @@ No. Discord must be running on the same computer to detect the process and credi
 
 ### Why is the catalog fixed instead of downloaded?
 
-A launcher that fetches its data at startup has to trust whoever serves it, and depends on a server staying online. The catalog is generated at build time and shipped with the application, so the launcher makes no network request. The trade-off is that games added to Discord's list after a release will not appear until the next release ships with an updated catalog.
+A launcher that fetches its data at startup has to trust whoever serves it, and depends on a server staying online. The catalog is generated at build time and shipped with the application, so it never depends on a server. The only network request the interface makes is for game icons from Discord's CDN. The trade-off is that games added to Discord's list after a release will not appear until the next release ships with an updated catalog.
 
 ### Why does Windows SmartScreen warn me?
 

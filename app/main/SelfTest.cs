@@ -214,6 +214,14 @@ namespace Zycord
                 else Fail("safe path rejected: " + g);
             }
             if (accepted == good.Length) Pass("path validation accepts all " + good.Length + " valid inputs");
+
+            if (Sessions.SafeName("Good Name")
+                && !Sessions.SafeName("Bad\u0007Name")
+                && !Sessions.SafeName(new string('x', 201))
+                && !Sessions.SafeName("   "))
+                Pass("game names reject control characters, blanks and overlong names");
+            else
+                Fail("game name validation is wrong");
         }
 
         private static void CheckSettings()

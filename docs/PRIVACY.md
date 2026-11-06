@@ -28,12 +28,12 @@ Settings are written atomically, so an interrupted save cannot leave a truncated
 ### What it does not access
 
 - Discord's installation, files, memory or credentials.
-- Your browser history, documents, or any file outside its own data folder.
+- Your browser history, documents, or any file outside its own data folder, apart from a log you export yourself.
 - Your network, microphone, camera or location.
 
 ### Network access
 
-The application makes no network requests. The game catalog is stored with the application rather than downloaded. Game icons shown in the interface are loaded from `cdn.discordapp.com` by the WebView2 renderer, using only the icon hash stored in the catalog. That request fetches a public image and sends no information about you or your sessions.
+The only network request the application makes is for game icons. The game catalog is stored with the application rather than downloaded, and nothing contacts Discord's API or gateway. Game icons shown in the interface are loaded from `cdn.discordapp.com` by the WebView2 renderer, using only the icon hash stored in the catalog. That request fetches a public image and sends no information about you or your sessions.
 
 ### Discord
 

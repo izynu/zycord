@@ -91,14 +91,14 @@
 <h3>What it does not access</h3>
 <ul>
   <li>Discord's installation, files, memory or credentials.</li>
-  <li>Your browser history, documents, or any file outside its own data folder.</li>
+  <li>Your browser history, documents, or any file outside its own data folder, apart from a log you export yourself.</li>
   <li>Your network, microphone, camera or location.</li>
 </ul>
 
 <h3>Network access</h3>
 <p>
-  The application makes no network requests. The game catalog is stored with the
-  application rather than downloaded. Game icons shown in the interface are loaded
+  The only network request the application makes is for game icons. The game
+  catalog is stored with the application rather than downloaded. Game icons shown in the interface are loaded
   from <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer,
   using only the icon hash stored in the catalog. That request fetches a public
   image and sends no information about you or your sessions.

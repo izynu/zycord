@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to the corrections shipped in 1.1.2.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to the corrections shipped in 1.1.2.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the corrections shipped in 1.1.2.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,9 +53,29 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.1.1</p>
+    <p class="updated">Version 1.1.2</p>
 
-<h2>1.1.1 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.2 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>Stop all on the Sessions page now ends every session. The button was present and did nothing.</li>
+  <li>History shows how each session ended. The Reason column was in the table but never filled.</li>
+  <li>Auto stop rounds a typed value to the nearest fifteen minutes, so the documented step is the step that applies.</li>
+  <li>Game names containing control characters are refused in the custom game dialog and in the library, not only when a session starts.</li>
+  <li>Links on the not-found page resolve from any mistyped path, instead of only from the site root.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>Statements that the launcher makes no network request were corrected. The interface does load game icons from Discord's CDN, and several pages said otherwise.</li>
+  <li>The claim that nothing is written outside the data folder now notes the log export you choose a location for.</li>
+  <li>The path rules name all eight extensions the validator accepts, instead of describing the rule as .exe only.</li>
+  <li>The self test figure for 1.0.0 now matches the checks that release ran.</li>
+</ul>
+
+<h2>1.1.1</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Custom games</h3>
@@ -127,7 +147,7 @@
 
 <h3>Packaging</h3>
 <ul>
-  <li><code class="inline">python build.py</code> compiles the launcher and the stub with the .NET Framework compiler that ships with Windows, runs a 25 check self test against a real WebView2 host, and writes <code class="inline">Zycord-1.0.0.zip</code> with <code class="inline">SHA256.txt</code>.</li>
+  <li><code class="inline">python build.py</code> compiles the launcher and the stub with the .NET Framework compiler that ships with Windows, runs a 23 check self test against a real WebView2 host, and writes <code class="inline">Zycord-1.0.0.zip</code> with <code class="inline">SHA256.txt</code>.</li>
   <li>The zip you download is 0.93 MB. Unpacked, the release folder is about 3.1 MB across 12 files, including the WebView2 assemblies.</li>
 </ul>
 

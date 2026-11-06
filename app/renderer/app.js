@@ -751,6 +751,40 @@
     return startSession(game, pick);
   }
 
+  // ---------------------------------------------------------- stop all
+
+  function wireSessions() {
+    var all = $("#stop-all");
+    if (!all) return;
+
+    all.addEventListener("click", function () {
+      var n = state.sessions.length;
+      if (!n) {
+        toast("No sessions are running.");
+        return;
+      }
+
+      var go = function () {
+        return call("session.stopAll").then(function (data) {
+          var stopped = data && data.stopped ? data.stopped : 0;
+          toast(stopped === 1 ? "1 session stopped" : stopped + " sessions stopped");
+          return refreshSessions();
+        }).catch(function (e) { toast(e.message, "error"); });
+      };
+
+      if (state.settings.confirmBeforeStop) {
+        return ask(
+          "Stop every session?",
+          n === 1
+            ? "One session will no longer be visible to Discord."
+            : n + " sessions will no longer be visible to Discord.",
+          "Stop all"
+        ).then(function (yes) { return yes ? go() : null; });
+      }
+      return go();
+    });
+  }
+
   function stopSession(id) {
     var session = sessionFor(id);
     var name = session ? session.name : "this session";
@@ -854,6 +888,9 @@
     var list = $("#session-list");
     list.textContent = "";
     $("#sessions-empty").hidden = state.sessions.length > 0;
+
+    var stopAll = $("#stop-all");
+    if (stopAll) stopAll.disabled = state.sessions.length === 0;
 
     state.sessions.forEach(function (s) {
       var row = el("div", "session");
@@ -1054,6 +1091,16 @@
     $("#favorites-empty").hidden = games.length > 0;
   }
 
+  // The backend records exactly three reasons when a session retires:
+  // "stopped" when it was ended from the interface, "auto" when the auto stop
+  // timer expired, and "exited" when the process ended on its own.
+  function reasonLabel(reason) {
+    if (reason === "auto") return "auto stop";
+    if (reason === "stopped") return "stopped";
+    if (reason === "exited") return "exited";
+    return "unknown";
+  }
+
   function paintHistory() {
     var body = $("#history-body");
     body.textContent = "";
@@ -1072,7 +1119,11 @@
 
       tr.appendChild(el("td", "cell-num", stamp(h.started)));
       tr.appendChild(el("td", "cell-num", duration(h.seconds)));
-      tr.appendChild(el("td", "cell-num", h.reason === "autostop" ? "auto stop" : stamp(h.stopped)));
+      tr.appendChild(el("td", "cell-num", stamp(h.stopped)));
+
+      var tdReason = document.createElement("td");
+      tdReason.appendChild(el("span", "tag", reasonLabel(h.reason)));
+      tr.appendChild(tdReason);
 
       body.appendChild(tr);
     });
@@ -1139,6 +1190,9 @@
       var v = parseInt(auto.value, 10);
       if (isNaN(v)) v = 0;
       v = Math.max(0, Math.min(240, v));
+      // The interface steps in fifteens and the documentation says so, so a
+      // typed value is rounded to the nearest step rather than kept as typed.
+      if (v > 0) v = Math.max(15, Math.round(v / 15) * 15);
       auto.value = v;
       state.settings.autoStopMinutes = v;
       saveSettings({ autoStopMinutes: v });
@@ -1548,6 +1602,7 @@
     wireCustom();
     wireSettings();
     wireLogs();
+    wireSessions();
 
     setInterval(tickClocks, 1000);
     setInterval(function () {

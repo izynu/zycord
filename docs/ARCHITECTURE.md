@@ -224,10 +224,10 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 6. `copy_docs` copies `LICENSE` and `README.md` into `dist/`.
 7. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
 8. `report` prints the size and file count of `dist/`.
-9. `pack` writes `Zycord-1.1.1.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+9. `pack` writes `Zycord-1.1.2.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.1`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.2`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 ## What the design deliberately leaves out
 
-There is no updater, no network client, no analytics and no crash reporter. The catalog is shipped rather than fetched. Those are choices, not gaps: each one would add a dependency the launcher does not need, and each one would be a way for the application to behave differently from what is in this repository.
+There is no updater, no HTTP client in the launcher, no analytics and no crash reporter. The catalog is shipped rather than fetched. Those are choices, not gaps: each one would add a dependency the launcher does not need, and each one would be a way for the application to behave differently from what is in this repository.

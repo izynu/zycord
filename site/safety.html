@@ -162,7 +162,7 @@
         <ul>
           <li>The application id must be one to 25 digits.</li>
           <li>The executable entry must be relative, with no drive letter and no parent segment.</li>
-          <li>Invalid filename characters are refused, and so is anything not ending in .exe.</li>
+          <li>Invalid filename characters are refused, and the extension must be one of the eight the validator accepts: .exe, .bin, .dat, .dll, .des, .jbg, .game or .pae.</li>
           <li>The entry is limited to eight path segments.</li>
           <li>After the path is built, it is resolved again and must still sit inside the games folder.</li>
           <li>A catalog entry cannot cause a file to be written outside that folder.</li>
@@ -197,10 +197,10 @@
       <h2>Network rules</h2>
     </div>
     <p>
-      The launcher makes no network request. The catalog is stored with the
-      application rather than downloaded. The only remote resource is the game icon
-      image, which the interface loads from Discord's icon CDN when the Games grid is
-      shown. The interface's content security policy allows images from that host and
+      The launcher does not contact Discord's API or gateway. The catalog is stored
+      with the application rather than downloaded. The only remote resource is the
+      game icon image, which the interface loads from Discord's icon CDN when the
+      Games grid is shown. The interface's content security policy allows images from that host and
       nothing else, and blocks all other connections.
     </p>
     <p>

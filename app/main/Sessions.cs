@@ -86,8 +86,19 @@ namespace Zycord
         // The display name only reaches the session window title and the stub's
         // --title argument. It never becomes part of a file path, so any
         // printable character is allowed; only control characters are refused.
-        private static readonly Regex UnsafeName =
+        internal static readonly Regex UnsafeName =
             new Regex("[\\x00-\\x1F\\x7F]", RegexOptions.Compiled);
+
+        /// <summary>
+        /// True when a name can be used as a window title: present, at most
+        /// 200 characters, and free of control characters.
+        /// </summary>
+        public static bool SafeName(string name)
+        {
+            return !string.IsNullOrWhiteSpace(name)
+                && name.Length <= 200
+                && !UnsafeName.IsMatch(name);
+        }
 
         // Windows starts a PE image under any extension. Discord lists a few
         // games whose Windows entry is not named .exe, and the stub runs
@@ -180,7 +191,7 @@ namespace Zycord
         {
             if (!SafeAppId.IsMatch(appId ?? ""))
                 return Error("That application id is not valid.");
-            if (string.IsNullOrWhiteSpace(name) || name.Length > 200 || UnsafeName.IsMatch(name))
+            if (!SafeName(name))
                 return Error("That game name cannot be used as a window title.");
 
             var relative = SafeRelativeExe(exeEntry);

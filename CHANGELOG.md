@@ -4,6 +4,32 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-11-06
+
+### Fixed
+
+- Stop all on the Sessions page now ends every session. The button was
+  present and did nothing.
+- History shows how each session ended. The table had no Reason column, and
+  the reason was never rendered.
+- Auto stop rounds a typed value to the nearest fifteen minutes, so the
+  documented step is the step that applies.
+- Game names containing control characters are refused in the custom game
+  dialog and in the library, not only when a session starts.
+- Links on the not-found page resolve from any mistyped path, instead of
+  only from the site root.
+
+### Changed
+
+- Statements that the launcher makes no network request were corrected. The
+  interface does load game icons from Discord's CDN, and several pages said
+  otherwise.
+- The claim that nothing is written outside the data folder now notes the log
+  export you choose a location for.
+- The path rules name all eight extensions the validator accepts, instead of
+  describing the rule as .exe only.
+- The self test figure for 1.0.0 now matches the checks that release ran.
+
 ## [1.1.1] - 2026-11-06
 
 ### Added
@@ -103,7 +129,7 @@ First public release.
 ### Packaging
 
 - `python build.py` compiles the launcher and the stub with the .NET Framework
-  compiler that ships with Windows, runs a 25 check self test against a real
+  compiler that ships with Windows, runs a 23 check self test against a real
   WebView2 host, and writes `Zycord-1.0.0.zip` with `SHA256.txt`.
 - Release folder is about 3.1 MB in 12 files, including the WebView2
   assemblies.
@@ -118,6 +144,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.2]: https://github.com/iZynu/zycord/releases/tag/v1.1.2
 [1.1.1]: https://github.com/iZynu/zycord/releases/tag/v1.1.1
 [1.1.0]: https://github.com/iZynu/zycord/releases/tag/v1.1.0
 [1.0.0]: https://github.com/iZynu/zycord/releases/tag/v1.0.0

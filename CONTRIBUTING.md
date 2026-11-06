@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.1.1.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.1.2.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
@@ -162,7 +162,7 @@ Keep a commit to one change. A pull request that mixes a refactor with a behavio
 
 These are deliberate boundaries, not a backlog.
 
-- **Anything that contacts Discord.** No gateway connection, no API calls, no self-bot, no token handling, no Rich Presence SDK link. The launcher makes no network request, and that stays true.
+- **Anything that contacts Discord.** No gateway connection, no API calls, no self-bot, no token handling, no Rich Presence SDK link. The launcher does not contact Discord's API or gateway, and that stays true. The interface fetching game icons from Discord's CDN is the one exception, and it is documented as such.
 - **Anything that reads or modifies the Discord client.** No injection, no patching, no memory reading, no file scraping.
 - **Telemetry, analytics or crash reporting of any kind.** There is no server and there will not be one.
 - **An auto-updater or a remote catalog fetch.** The catalog is shipped so the application has no remote dependency.
