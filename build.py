@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -66,6 +66,14 @@ VENDOR_FILES = [
 ]
 
 UI_FILES = ["index.html", "app.css", "app.js", "mark.svg"]
+
+# Documents copied into the release folder. They are shipped on their own,
+# without docs/ or the rest of the repository, so a link inside them that
+# points at a repository file has to be an absolute URL.
+SHIPPED_DOCS = ("LICENSE", "README.md")
+
+# Markdown links, and href and src values in inline HTML.
+LINK = re.compile(r'\]\(([^)\s]+)\)|(?:href|src)="([^"]+)"')
 
 # Strings that must never appear in a release. The project was rebuilt from
 # scratch under a new name; this check keeps a stray copy-paste from undoing it.
@@ -201,7 +209,7 @@ def copy_vendor():
 
 
 def copy_docs():
-    for name in ("LICENSE", "README.md"):
+    for name in SHIPPED_DOCS:
         src = os.path.join(ROOT, name)
         if os.path.isfile(src):
             copy_text(src, os.path.join(DIST, name))
@@ -210,7 +218,7 @@ def copy_docs():
 def check_line_endings():
     """Fail the build if a copied text file still carries CRLF."""
     paths = [os.path.join(DIST, "ui", n) for n in UI_FILES]
-    paths += [os.path.join(DIST, n) for n in ("LICENSE", "README.md")]
+    paths += [os.path.join(DIST, n) for n in SHIPPED_DOCS]
     hits = []
     for path in paths:
         if not os.path.isfile(path):
@@ -222,6 +230,42 @@ def check_line_endings():
         for hit in hits:
             print("  CRLF " + hit)
         raise SystemExit("line ending check failed: text files must use LF")
+
+
+def check_shipped_links():
+    """Fail the build if a shipped document links to a file it does not ship.
+
+    The release folder holds README.md on its own, without docs/, the
+    contributing guide or the security policy, so a repository-relative link
+    points at nothing in the download. A link that resolves inside dist/ is
+    left alone, which is why LICENSE may stay relative.
+    """
+    dead = []
+    for name in SHIPPED_DOCS:
+        path = os.path.join(DIST, name)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        for match in LINK.finditer(text):
+            target = match.group(1) or match.group(2)
+            if target.startswith(("http://", "https://", "mailto:", "#", "/")):
+                continue
+            clean = target.split("#")[0]
+            if not clean:
+                continue
+            resolved = os.path.normpath(os.path.join(DIST, clean))
+            inside = resolved.startswith(DIST + os.sep)
+            if not inside or not os.path.exists(resolved):
+                dead.append("%s -> %s" % (name, target))
+    if dead:
+        for hit in dead:
+            print("  DEAD " + hit)
+        raise SystemExit(
+            "shipped link check failed: a shipped document links to a file "
+            "that is not in the release. Use an absolute URL for a "
+            "repository file."
+        )
 
 
 def self_test():
@@ -305,6 +349,7 @@ def main():
     copy_ui()
     copy_docs()
     check_line_endings()
+    check_shipped_links()
 
     if not args.no_test:
         self_test()

@@ -20,12 +20,14 @@ worked out later.
 ## Step 1: add the domain in GitHub
 
 Open the repository, then **Settings**, then **Pages**, then **Custom domain**.
-Enter the domain and save. GitHub writes a `CNAME` file at the root of the
-published site and starts issuing a certificate.
+Enter the domain and save.
 
-Do not create `site/CNAME` by hand while the generator is in use. The workflow
-uploads the `site` folder as-is, and a hand-written file there would be
-overwritten on the next regeneration unless it is added to the generator.
+This site is built by a workflow, not by GitHub's own Jekyll build. That matters
+for one reason: **no `CNAME` file is created, and any `CNAME` in the uploaded
+artifact is ignored.** The domain lives in the repository settings, not in a
+file. Do not add `site/CNAME` and do not expect the generator to write one. If
+the settings ever move, the REST endpoint is
+`PUT /repos/iZynu/zycord/pages` with a `cname` field.
 
 ## Step 2: point DNS at GitHub Pages
 
@@ -34,6 +36,9 @@ For a subdomain such as `zycord.example.com`, add one record:
 | Type | Name | Value |
 | --- | --- | --- |
 | CNAME | `zycord` | `izynu.github.io` |
+
+The target is the account name, not the repository: `izynu.github.io`, never
+`izynu.github.io/zycord`.
 
 For the bare domain such as `example.com`, add four A records and four AAAA
 records:
@@ -49,8 +54,9 @@ records:
 | AAAA | `@` | `2606:50c0:8002::153` |
 | AAAA | `@` | `2606:50c0:8003::153` |
 
-If a wildcard CNAME already exists on the domain, remove it, because it
-conflicts with the certificate check.
+If the domain also serves something else, point only the name you are moving at
+GitHub Pages. A wildcard CNAME on the same name conflicts with the certificate
+check.
 
 ## Step 3: wait, then enforce HTTPS
 
@@ -60,34 +66,40 @@ certificate once the records resolve. When the certificate is ready, tick
 
 ## Step 4: update the places that carry the address
 
-These are the only files that name the site address. Change them together, then
-regenerate and commit:
+The generator writes the canonical URL, the Open Graph and Twitter tags, the
+sitemap and the robots file from one constant. Five files outside it are edited
+by hand. Change all six together:
 
-- `site/build_site.py`: the `SITE` constant used for canonical links and
-  `og:url`.
-- `app/renderer/app.js`: the About tab button that opens the site.
-- `README.md`: the website link near the top.
-- `site/assets/site.js`: no change needed.
-- `docs/CUSTOM-DOMAIN.md`: this file, if the workflow is kept as a record.
+| File | What to change |
+| --- | --- |
+| `site/build_site.py` | `SITE_URL`, the constant every generated page reads. |
+| `README.md` | The website link near the top, and the policy link under Privacy. |
+| `app/renderer/app.js` | The About tab button that opens the site. |
+| `docs/PRIVACY.md` | The address named in the first paragraph and the mirror link. |
+| `docs/TERMS.md` | The mirror link to the website terms. |
+| `.github/ISSUE_TEMPLATE/bug_report.yml` | The FAQ and documentation links at the top of the form. |
 
-After editing, run:
+Then regenerate and commit:
 
-```
+```bash
 python site/build_site.py
 python build.py
 ```
 
-The Pages workflow regenerates the site and fails if the committed HTML does
-not match the generator output, so the regenerated files must be committed in
-the same change.
+The generator refuses to finish if any of the five files above still names a
+different address, so a half-applied change fails instead of shipping. The
+Pages workflow regenerates the site and fails if the committed HTML does not
+match the generator output, so the regenerated files must be committed in the
+same change.
 
 ## Checking it worked
 
 - `curl -I https://your-domain` returns `200` and a `server: GitHub.com`
   header.
 - The address bar shows the padlock, and `http://` redirects to `https://`.
-- `https://your-domain/sitemap.xml` and `https://your-domain/robots.txt` load.
-  The generator writes both on every run.
+- `https://your-domain/sitemap.xml` and `https://your-domain/robots.txt` load,
+  and the sitemap lists the new domain rather than the old one.
+- A mistyped path returns the Zycord not-found page, not GitHub's default.
 - The Pages settings screen shows the domain with a green tick and
   "DNS check successful".
 

@@ -4,6 +4,29 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2026-11-06
+
+### Fixed
+
+- The README inside the download links only to files that are in it. It pointed
+  at `docs/`, `CONTRIBUTING.md` and `SECURITY.md`, none of which the archive
+  carries, so thirteen of its fourteen links went nowhere. Repository files are
+  now absolute URLs, which render the same on GitHub, and the build fails if a
+  shipped document links to something the release does not contain.
+
+### Documentation
+
+- The custom domain procedure described a `CNAME` file and a `SITE` constant
+  that do not exist. GitHub Pages builds this site from a workflow, where the
+  domain is set in the repository settings and any `CNAME` in the artifact is
+  ignored. The procedure now says so, and names every file that carries the
+  address.
+- The site generator fails if a file that should name the site address still
+  names a different one, so a domain change cannot be half applied.
+- The contributing guide said the Pages workflow runs on a push to `main`. The
+  default branch is `master`. It also now names the checks the build runs, so a
+  contributor who trips one knows what failed.
+
 ## [1.1.3] - 2026-11-06
 
 ### Fixed
@@ -160,6 +183,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.4]: https://github.com/iZynu/zycord/releases/tag/v1.1.4
 [1.1.3]: https://github.com/iZynu/zycord/releases/tag/v1.1.3
 [1.1.2]: https://github.com/iZynu/zycord/releases/tag/v1.1.2
 [1.1.1]: https://github.com/iZynu/zycord/releases/tag/v1.1.1

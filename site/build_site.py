@@ -20,7 +20,19 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.3"
+VERSION = "1.1.4"
+
+
+# Files outside this generator that name the site address, relative to the
+# repository root. A domain change edits SITE_URL first, and the check below
+# then fails on every file still carrying the old address.
+ORIGIN_FILES = (
+    "README.md",
+    os.path.join("app", "renderer", "app.js"),
+    os.path.join("docs", "PRIVACY.md"),
+    os.path.join("docs", "TERMS.md"),
+    os.path.join(".github", "ISSUE_TEMPLATE", "bug_report.yml"),
+)
 
 
 def catalog_figures():
@@ -235,6 +247,33 @@ def write(filename, title, desc, body, active=None, robots=None, absolute=False)
     with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(html)
     print("wrote %-20s %6d bytes" % (filename, len(html.encode("utf-8"))))
+
+
+def check_origin_consistency():
+    """Fail if a file that should name the site address does not name it.
+
+    The address appears in this generator and in five files outside it. The
+    canonical URL, the Open Graph tags, the sitemap and the robots file all
+    follow SITE_URL, but the README, the About tab and the policy pages are
+    edited by hand. Changing the domain in one place only is the mistake this
+    check exists to catch.
+    """
+    root = os.path.dirname(SITE)
+    stale = []
+    for rel in ORIGIN_FILES:
+        path = os.path.join(root, rel)
+        if not os.path.isfile(path):
+            stale.append(rel + " (missing)")
+            continue
+        with open(path, encoding="utf-8") as handle:
+            if SITE_URL not in handle.read():
+                stale.append(rel)
+    if stale:
+        for rel in stale:
+            print("  STALE " + rel)
+        raise SystemExit(
+            "site address check failed: update every file above to " + SITE_URL
+        )
 
 
 def doc(filename, title, desc, updated, body):
@@ -1595,7 +1634,21 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.3 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.4 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The README inside the download no longer links to files it does not ship. It pointed at <code class="inline">docs/</code>, <code class="inline">CONTRIBUTING.md</code> and <code class="inline">SECURITY.md</code>, none of which are in the archive, so thirteen of its fourteen links went nowhere. Repository files are now absolute URLs, and the build fails if a shipped document links to something the release does not contain.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The custom domain procedure described a CNAME file and a constant that do not exist. It now matches how GitHub Pages builds this site from a workflow, and the site generator fails if a file naming the site address still names the old one.</li>
+  <li>The contributing guide said the Pages workflow runs on a push to <code class="inline">main</code>. The default branch is <code class="inline">master</code>. It also now names the checks the build runs, so a contributor who trips one knows what failed.</li>
+</ul>
+
+<h2>1.1.3</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>
@@ -1719,7 +1772,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to the line ending fix shipped in 1.1.3.",
+    "Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1736,6 +1789,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.1.4</h3>
+          <p>Every link in the shipped README resolves, and the custom domain procedure matches the way the site is actually published.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
@@ -2153,6 +2214,8 @@ robots = "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % SITE_URL
 with open(os.path.join(SITE, "robots.txt"), "w", encoding="utf-8", newline="\n") as handle:
     handle.write(robots)
 print("wrote %-20s %6d bytes" % ("robots.txt", len(robots.encode("utf-8"))))
+
+check_origin_consistency()
 
 missing = [name for name in PAGES if not os.path.exists(os.path.join(SITE, name))]
 if missing:

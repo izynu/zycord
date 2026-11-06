@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord, from the first public release to the line ending fix shipped in 1.1.3.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord, from the first public release to the line ending fix shipped in 1.1.3.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the line ending fix shipped in 1.1.3.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,9 +53,23 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.1.3</p>
+    <p class="updated">Version 1.1.4</p>
 
-<h2>1.1.3 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.4 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The README inside the download no longer links to files it does not ship. It pointed at <code class="inline">docs/</code>, <code class="inline">CONTRIBUTING.md</code> and <code class="inline">SECURITY.md</code>, none of which are in the archive, so thirteen of its fourteen links went nowhere. Repository files are now absolute URLs, and the build fails if a shipped document links to something the release does not contain.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The custom domain procedure described a CNAME file and a constant that do not exist. It now matches how GitHub Pages builds this site from a workflow, and the site generator fails if a file naming the site address still names the old one.</li>
+  <li>The contributing guide said the Pages workflow runs on a push to <code class="inline">main</code>. The default branch is <code class="inline">master</code>. It also now names the checks the build runs, so a contributor who trips one knows what failed.</li>
+</ul>
+
+<h2>1.1.3</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>

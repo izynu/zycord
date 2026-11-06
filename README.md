@@ -1,19 +1,19 @@
 <div align="center">
 
-<a href="docs/banner.svg"><img src="docs/banner.gif" alt="Zycord banner" width="1000"></a>
+<a href="https://github.com/iZynu/zycord/blob/HEAD/docs/banner.svg"><img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/banner.gif" alt="Zycord banner" width="1000"></a>
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-[Download 1.1.3](https://github.com/iZynu/zycord/releases/download/v1.1.3/Zycord-1.1.3.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
+[Download 1.1.4](https://github.com/iZynu/zycord/releases/download/v1.1.4/Zycord-1.1.4.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
 
-![Version 1.1.3](https://img.shields.io/badge/version-1.1.3-0b0f14?style=flat-square)
+![Version 1.1.4](https://img.shields.io/badge/version-1.1.4-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 0.9 MB](https://img.shields.io/badge/download-0.9%20MB-0b0f14?style=flat-square)
 
 </div>
 
-If the animated banner does not load, open [docs/banner.svg](docs/banner.svg).
+If the animated banner does not load, open [docs/banner.svg](https://github.com/iZynu/zycord/blob/HEAD/docs/banner.svg).
 
 ## What it is
 
@@ -27,7 +27,7 @@ Discord quests of the desktop-play type ask you to play a game for a set time. T
 
 Zycord does the part Discord checks and nothing else. It starts a process with the expected executable name in a plausible folder. It does not run the game, and it does not pretend to.
 
-> **Before you use it.** This is not a use Discord has documented or endorsed. Quest progress gained this way can be removed, and accounts can be actioned. Zycord exists because the mechanism is simple and other tools in this space are unreliable. It does not make the practice safe. Read [docs/TERMS.md](docs/TERMS.md) before you start a session.
+> **Before you use it.** This is not a use Discord has documented or endorsed. Quest progress gained this way can be removed, and accounts can be actioned. Zycord exists because the mechanism is simple and other tools in this space are unreliable. It does not make the practice safe. Read [docs/TERMS.md](https://github.com/iZynu/zycord/blob/HEAD/docs/TERMS.md) before you start a session.
 
 ## Features
 
@@ -53,19 +53,19 @@ The interface has ten sections: Home, Games, Library, Favourites, Sessions, Hist
 5. A typical quest needs about 15 minutes. Leave the session running, then stop it.
 6. Stopping confirms the process still points at the file Zycord created before terminating it, so a real game with the same name is never touched.
 
-The stub contains no game code and no network code. It never contacts Discord. The full design is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+The stub contains no game code and no network code. It never contacts Discord. The full design is in [docs/ARCHITECTURE.md](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md).
 
 ## Screenshots
 
-![The Zycord launcher](docs/screenshot.png)
+![The Zycord launcher](https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/screenshot.png)
 
 | Games | Sessions | Settings |
 | --- | --- | --- |
-| <img src="docs/shot-games.png" alt="The Games tab" width="320"> | <img src="docs/shot-sessions.png" alt="The Sessions tab" width="320"> | <img src="docs/shot-settings.png" alt="The Settings tab" width="320"> |
+| <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-games.png" alt="The Games tab" width="320"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-sessions.png" alt="The Sessions tab" width="320"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-settings.png" alt="The Settings tab" width="320"> |
 
 ## Install
 
-1. Download `Zycord-1.1.3.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
+1. Download `Zycord-1.1.4.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
 2. Extract it to a folder you can write to, for example `C:\Users\you\Apps\Zycord`.
 3. Run `Zycord.exe`.
 4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
@@ -83,7 +83,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.3.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.4.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |
@@ -148,7 +148,7 @@ About 3.1 MB for the application, plus about 36 KB for each prepared game. The S
 
 Zycord collects nothing. There is no analytics, no crash reporting, no update check and no server. Settings, logs and prepared game files live in `%LOCALAPPDATA%\Zycord`. The application never asks for Discord credentials and never contacts Discord.
 
-The full policy is in [docs/PRIVACY.md](docs/PRIVACY.md), and on the website at [izynu.github.io/zycord/privacy.html](https://izynu.github.io/zycord/privacy.html).
+The full policy is in [docs/PRIVACY.md](https://github.com/iZynu/zycord/blob/HEAD/docs/PRIVACY.md), and on the website at [izynu.github.io/zycord/privacy.html](https://izynu.github.io/zycord/privacy.html).
 
 ## License
 
@@ -156,6 +156,6 @@ Zycord is released under the MIT License. See [LICENSE](LICENSE).
 
 ## Contributing
 
-Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the build, the self test, code style and what will not be accepted. Report bugs and request features through the [issue templates](https://github.com/iZynu/zycord/issues/new/choose). Report security problems privately, as described in [SECURITY.md](SECURITY.md).
+Contributions are welcome. Read [CONTRIBUTING.md](https://github.com/iZynu/zycord/blob/HEAD/CONTRIBUTING.md) for the build, the self test, code style and what will not be accepted. Report bugs and request features through the [issue templates](https://github.com/iZynu/zycord/issues/new/choose). Report security problems privately, as described in [SECURITY.md](https://github.com/iZynu/zycord/blob/HEAD/SECURITY.md).
 
 Zycord is an independent project. It is not affiliated with, endorsed by, or sponsored by Discord Inc.

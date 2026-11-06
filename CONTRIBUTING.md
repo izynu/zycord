@@ -20,12 +20,18 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.1.3.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.1.4.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
 
 A full build takes a few seconds on a normal machine. The self test adds a few more because it boots WebView2.
+
+The build also refuses to finish if a check fails:
+
+- `check_sources` fails on an identifier from an earlier project.
+- `check_line_endings` fails if a copied text file still contains CRLF.
+- `check_shipped_links` fails if `README.md` or `LICENSE` links to a file the release folder does not contain. Both ship on their own, without `docs/`, so a link to a repository file has to be an absolute URL.
 
 ## Run the self test
 
@@ -117,7 +123,7 @@ The site header and footer are defined once in `site/build_site.py` and written 
 python site/build_site.py
 ```
 
-It writes all thirteen pages, including `404.html`. The Pages workflow runs the same script on a push to `main` and fails if the committed pages differ from the generated ones. Run it before you commit any change under `site/`.
+It writes all thirteen pages, including `404.html`. The Pages workflow runs the same script on a push to `master` and fails if the committed pages differ from the generated ones. It also fails if a file that names the site address still names a different one, which catches a domain change applied in only some of the places it appears. Run it before you commit any change under `site/`.
 
 ## Rebuild the catalog
 
