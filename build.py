@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [

@@ -46,6 +46,7 @@
 
   var state = {
     catalog: null,
+    byExe: null,
     games: [],
     library: [],
     favorites: [],
@@ -209,11 +210,22 @@
       .then(function (data) {
         var byId = Object.create(null);
         var themes = Object.create(null);
+        // Discord compares the running process against the file name, so the
+        // catalog is indexed by file name as well as by application id. One
+        // name can belong to many games, so every bucket is a list.
+        var byExe = Object.create(null);
         for (var i = 0; i < data.games.length; i++) {
           var g = data.games[i];
           byId[g.id] = g;
           var t = g.themes || [];
           for (var j = 0; j < t.length; j++) themes[t[j]] = (themes[t[j]] || 0) + 1;
+          var names = g.ex || [];
+          for (var e = 0; e < names.length; e++) {
+            var file = baseName(names[e].n);
+            if (!file) continue;
+            if (!byExe[file]) byExe[file] = [];
+            byExe[file].push(g.name);
+          }
         }
         // Custom games join the catalog so search, the library and history
         // all resolve them through the same lookups.
@@ -227,6 +239,7 @@
 
         data.byId = byId;
         state.catalog = data;
+        state.byExe = byExe;
         state.games = games;
 
         var list = Object.keys(themes).sort(function (a, b) { return themes[b] - themes[a]; });
@@ -316,7 +329,12 @@
     var foot = el("div", "card-foot");
     var themes = game.themes || [];
     if (themes.length) foot.appendChild(el("span", "tag", themes[0]));
-    if (game.custom) foot.appendChild(el("span", "tag is-custom", "Custom"));
+    if (game.custom) {
+      foot.appendChild(el("span", "tag is-custom", "Custom"));
+      if (exes.length && !isDetected(exes[0].n)) {
+        foot.appendChild(el("span", "tag is-warn", "Not detected"));
+      }
+    }
     if (running) {
       foot.appendChild(el("span", "tag", "Running"));
     } else if (libraryEntry(game.id)) {
@@ -359,6 +377,31 @@
     if (!path) return "";
     var parts = path.split("/");
     return parts[parts.length - 1];
+  }
+
+  // Windows accepts both separators and the catalog stores forward slashes,
+  // so the file name is taken from the last segment of either form.
+  var SEP = String.fromCharCode(92);
+
+  function baseName(path) {
+    if (!path) return "";
+    var text = String(path);
+    var at = Math.max(text.lastIndexOf("/"), text.lastIndexOf(SEP));
+    return (at === -1 ? text : text.slice(at + 1)).toLowerCase();
+  }
+
+  // Games whose detectable list carries this executable name. Returns null
+  // while the catalog is still loading, so nothing is claimed too early.
+  function detectLookup(path) {
+    if (!state.byExe) return null;
+    var file = baseName(path);
+    if (!file) return null;
+    return state.byExe[file] || [];
+  }
+
+  function isDetected(path) {
+    var hits = detectLookup(path);
+    return hits === null || hits.length > 0;
   }
 
   function renderGrid(target, games, emptyNode) {
@@ -422,6 +465,9 @@
     var themes = game.themes || [];
     for (var k = 0; k < themes.length; k++) tags.appendChild(el("span", "tag", themes[k]));
     tags.appendChild(el("span", "tag", game.custom ? "Custom game" : "App " + game.id));
+    if (game.custom && exes.length && !isDetected(exes[0].n)) {
+      tags.appendChild(el("span", "tag is-warn", "Not detected"));
+    }
 
     var running = sessionFor(game.id);
     var fav = $("#modal-fav");
@@ -506,10 +552,55 @@
     };
   }
 
+  // The custom dialog checks the typed file name against the same list the
+  // catalog was built from. Discord compares the running process name, so a
+  // name that is not in that list cannot appear as activity.
+  function resetDetect() {
+    var node = $("#custom-status");
+    node.hidden = true;
+    node.textContent = "";
+    node.className = "field-status";
+  }
+
+  function paintDetect() {
+    var exe = $("#custom-exe").value.trim();
+    if (!exe) { resetDetect(); return; }
+
+    var node = $("#custom-status");
+    var parts = exe.split(SEP).join("/").split("/");
+    var shown = parts[parts.length - 1];
+    var hits = detectLookup(exe);
+
+    node.textContent = "";
+    node.hidden = false;
+
+    if (hits === null) {
+      node.className = "field-status";
+      node.appendChild(icon("i-info"));
+      node.appendChild(el("span", null, "The catalog is still loading."));
+      return;
+    }
+
+    if (hits.length) {
+      var list = hits.slice(0, 3).join(", ");
+      if (hits.length > 3) list += " and " + (hits.length - 3) + " more";
+      node.className = "field-status is-ok";
+      node.appendChild(icon("i-check"));
+      node.appendChild(el("span", null, "Discord lists " + shown + " for " + list + "."));
+      return;
+    }
+
+    node.className = "field-status is-warn";
+    node.appendChild(icon("i-alert"));
+    node.appendChild(el("span", null,
+      "Discord does not list " + shown + ". A session will run, but it will not show as activity."));
+  }
+
   function openCustom() {
     $("#custom-name").value = "";
     $("#custom-exe").value = "";
     $("#custom-icon").textContent = "?";
+    resetDetect();
     $("#custom-error").hidden = true;
     $("#custom-error").textContent = "";
     $("#custom-modal").hidden = false;
@@ -593,6 +684,7 @@
     });
 
     $("#custom-save").addEventListener("click", saveCustom);
+    $("#custom-exe").addEventListener("input", paintDetect);
 
     $("#custom-name").addEventListener("input", function () {
       var value = $("#custom-name").value.trim();
@@ -616,15 +708,19 @@
 
   function startSession(game, exe) {
     if (!exe) { toast("Choose an executable first.", "error"); return Promise.resolve(); }
+    var detected = isDetected(exe);
 
     var go = function () {
       return call("session.start", {
-        id: game.id, name: game.name, exe: exe, icon: game.icon || ""
+        id: game.id, name: game.name, exe: exe, icon: game.icon || "", detected: detected
       }).then(function (data) {
         if (data.already) {
           toast(game.name + " is already running.");
         } else {
           toast("Session started: " + game.name, "ok");
+          if (!detected) {
+            toast("Discord does not list " + shortExe(exe) + ", so it will not show as activity.", "error");
+          }
         }
         return refreshSessions();
       }).catch(function (e) {
@@ -633,8 +729,12 @@
     };
 
     if (state.settings.confirmOnStart) {
-      return ask("Start a session?", "Zycord will run a small stub named " + shortExe(exe) +
-        " so Discord sees " + game.name + " as open.", "Start session").then(function (yes) {
+      var body = detected
+        ? "Zycord will run a small stub named " + shortExe(exe) +
+          " so Discord sees " + game.name + " as open."
+        : "Zycord will run a small stub named " + shortExe(exe) +
+          ". Discord does not list that file name, so it will not show as activity.";
+      return ask("Start a session?", body, "Start session").then(function (yes) {
         return yes ? go() : null;
       });
     }

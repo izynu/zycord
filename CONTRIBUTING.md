@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.1.0.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.1.1.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
@@ -47,10 +47,12 @@ The test covers:
 
 - WebView2 startup and navigation to the interface;
 - the presence of the stub, the four interface files and the catalog;
-- path validation against ten hostile inputs and three valid ones;
+- path validation against twelve hostile inputs and seven valid ones, four of them non-`.exe` entries;
 - settings round trip and auto stop clamping;
 - library round trip and the favourite toggle;
 - a real session start, duplicate start, stop and history entry;
+- a session that records a file name Discord does not list;
+- a custom game round trip and its removal from every list;
 - the log file being written.
 
 It restores every setting and library entry it touches and deletes the game folder it creates. If you add a backend feature, add a check for it to `app/main/SelfTest.cs` rather than testing by hand.
@@ -115,7 +117,7 @@ The site header and footer are defined once in `site/build_site.py` and written 
 python site/build_site.py
 ```
 
-It writes all ten pages, including `404.html`. The Pages workflow runs the same script on a push to `main` and fails if the committed pages differ from the generated ones. Run it before you commit any change under `site/`.
+It writes all thirteen pages, including `404.html`. The Pages workflow runs the same script on a push to `main` and fails if the committed pages differ from the generated ones. Run it before you commit any change under `site/`.
 
 ## Rebuild the catalog
 

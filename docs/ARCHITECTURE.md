@@ -53,7 +53,7 @@ The interface never touches the filesystem or the process table. Every operation
 A request is one JSON object:
 
 ```json
-{ "id": "c17", "cmd": "session.start", "args": { "id": "1091500", "name": "Cyberpunk 2077", "exe": "bin/x64/Cyberpunk2077.exe", "icon": "..." } }
+{ "id": "c17", "cmd": "session.start", "args": { "id": "1091500", "name": "Cyberpunk 2077", "exe": "bin/x64/Cyberpunk2077.exe", "detected": true, "icon": "..." } }
 ```
 
 A reply carries the same id:
@@ -80,6 +80,7 @@ Commands, grouped as `Bridge.cs` dispatches them:
 | `boot` | One reply with version, paths, settings, library, favourites, recents and history. Sent once when the interface starts. |
 | `settings.save` | Write settings, clamp the auto stop to 0 to 240, apply the theme. |
 | `library.add`, `library.remove`, `library.clear` | Change the saved games. |
+| `custom.add`, `custom.remove` | Add or remove a custom game. A custom id starts with `7` and is 19 digits, so it can never collide with a Discord application id. |
 | `favorite.toggle` | Add or remove a favourite. |
 | `session.start`, `session.stop`, `session.stopAll`, `session.list`, `session.extend` | Session lifecycle. |
 | `history.list`, `history.clear` | Session history. |
@@ -100,9 +101,9 @@ Schema version 2:
 ```json
 {
   "schema": 2,
-  "generated": "2026-11-05",
+  "generated": "2026-11-06",
   "source": "https://discord.com/api/applications/detectable",
-  "count": 10447,
+  "count": 10465,
   "games": [
     {
       "id": "1091500",
@@ -143,12 +144,12 @@ A catalog entry is untrusted input. `Sessions.SafeRelativeExe` reduces it to a s
 - a leading slash, a NUL, a `..` segment, or a colon is refused;
 - empty segments and `.` are dropped;
 - any character in `Path.GetInvalidFileNameChars()` is refused;
-- the last segment must end in `.exe`, case-insensitively;
+- the last segment must end in `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` or `.pae`, case-insensitively;
 - more than 8 segments is refused.
 
 The launcher then builds `Path.Combine(games folder, app id, relative path)` and calls `IsInside` before writing. `IsInside` resolves both paths to full form and requires the candidate to start with the root plus a directory separator. The same check runs again after `Directory.CreateDirectory`, immediately before the stub is copied.
 
-The self test feeds twelve hostile strings through the validator, including `../../windows/system32/cmd.exe`, `C:\Windows\notepad.exe`, `/etc/passwd`, `game//sub/../escape.exe`, `game\..\..\evil.exe` and a UNC path, and requires all ten to be refused. It also requires seven valid paths to be accepted, four of them non-`.exe` entries that Discord publishes.
+The self test feeds twelve hostile strings through the validator, including `../../windows/system32/cmd.exe`, `C:\Windows\notepad.exe`, `/etc/passwd`, `game//sub/../escape.exe`, `game\..\..\evil.exe` and a UNC path, and requires all twelve to be refused. It also requires seven valid paths to be accepted, four of them non-`.exe` entries that Discord publishes.
 
 ## The stub lifecycle
 
@@ -156,7 +157,7 @@ The self test feeds twelve hostile strings through the validator, including `../
 
 1. The launcher validates the application id and executable entry.
 2. It creates `%LOCALAPPDATA%\Zycord\games\<app_id>\<relative path>` and copies `stub.exe` there under the expected filename.
-3. It starts that copy with `--title "<game>" --app-id <id> --parent <launcher pid>`, and adds `--hidden` when the session window setting is off.
+3. It starts that copy with `--title "<game>" --app-id <id> --parent <launcher pid>`, adds `--undetected` when the executable name is not one Discord lists, and adds `--hidden` when the session window setting is off.
 4. The stub parses its arguments, shows a small window with the game name and a timer, or runs with no window in hidden mode, and waits.
 5. Discord's process scan sees the expected name in a plausible location and treats the game as running.
 6. On stop, the launcher confirms the process with the recorded id still points at the file it created, then terminates it. If the id has been reused by another program, nothing is killed.
@@ -206,7 +207,7 @@ A log line is `YYYY-MM-DD HH:mm:ss.fff LEVEL message`, with the level one of `IN
 1. It creates a hidden, transparent form off screen and hosts a real WebView2 control in it.
 2. It creates the WebView2 environment, maps the interface folder to `zycord.local`, and navigates to `index.html`.
 3. The interface loads, calls `boot`, loads the catalog, and posts a `ready` probe when it has finished. The probe path is a separate message shape (`{ "selftest": "ready" }`) that carries no command.
-4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a custom game round trips through storage and its removal clears every reference to it, a real session starts, is tracked, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, and the log file is being written.
+4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a custom game round trips through storage and its removal clears every reference to it, a real session starts, is tracked, records the detection flag, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, and the log file is being written.
 5. It restores every setting and library entry it touched, deletes the test game folder, writes the report to `%LOCALAPPDATA%\Zycord\logs\selftest.txt`, prints it, and exits.
 
 A 60 second timer fails the run at the stage it reached, so a hang in WebView2 cannot block a build indefinitely.
@@ -223,9 +224,9 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 6. `copy_docs` copies `LICENSE` and `README.md` into `dist/`.
 7. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
 8. `report` prints the size and file count of `dist/`.
-9. `pack` writes `Zycord-1.1.0.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+9. `pack` writes `Zycord-1.1.1.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.0`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.1`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 ## What the design deliberately leaves out
 

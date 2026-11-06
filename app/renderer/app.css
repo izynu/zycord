@@ -1269,6 +1269,23 @@ html[data-theme="light"] .field { background: rgba(255, 255, 255, .6); }
 .field-error[hidden] { display: none; }
 
 .tag.is-custom { color: var(--accent-2); border-color: rgba(87, 184, 162, .35); }
+.tag.is-warn { color: var(--ink-2); border-color: rgba(224, 105, 122, .38); }
+
+.field-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.field-status[hidden] { display: none; }
+.field-status svg { width: 13px; height: 13px; margin-top: 2px; color: var(--ink-4); }
+.field-status.is-ok { color: var(--accent-2); }
+.field-status.is-ok svg { color: var(--accent-2); }
+.field-status.is-warn { color: var(--ink-2); }
+.field-status.is-warn svg { color: var(--danger); }
 
 #modal-remove { flex: 0 0 auto; }
 #modal-remove[hidden] { display: none; }

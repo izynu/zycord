@@ -398,7 +398,8 @@ namespace Zycord
             var name = Store.String(a, "name", "");
             var exe = Store.String(a, "exe", "");
             var icon = Store.String(a, "icon", "");
-            Reply(id, true, Sessions.Start(appId, name, exe, icon), null);
+            var detected = Store.Bool(a, "detected", true);
+            Reply(id, true, Sessions.Start(appId, name, exe, icon, detected), null);
         }
 
         private static void Extend(string id, Dictionary<string, object> a)

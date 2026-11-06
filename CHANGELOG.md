@@ -4,6 +4,39 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-11-06
+
+### Added
+
+- The custom game dialog checks the executable name you type against the same
+  detectable list the catalog is built from, and says what it finds before you
+  add the game. A name Discord lists is accepted and named. A name it does not
+  list is accepted with a warning that the session will run but will not appear
+  as activity.
+- A Not detected tag on custom game cards and in the game details modal when
+  the file name is not one Discord lists.
+
+### Changed
+
+- The session window reports whether the file name is one Discord lists,
+  instead of claiming detection for every session. The launcher passes the
+  answer to the stub, and the stub prints the matching sentence.
+- Starting a game whose file name Discord does not list shows a warning once
+  the session starts, and the confirmation prompt states the same beforehand.
+
+### Fixed
+
+- Custom games were described as behaving like any other game. Discord credits
+  a session only when the running process name is on its detectable list, so a
+  custom game with an invented name runs but cannot appear as activity. The
+  interface, the changelog and the website now say so.
+- The contributing guide and the architecture notes listed a ten input, three
+  valid path test and ten site pages. The test has twelve hostile inputs and
+  seven valid ones, and the site has thirteen pages.
+- The path rules were documented as accepting only `.exe`. The validator
+  accepts eight extensions, including the `.bin`, `.dat` and `.jbg` entries
+  Discord publishes.
+
 ## [1.1.0] - 2026-11-06
 
 ### Added
@@ -85,5 +118,6 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.1]: https://github.com/iZynu/zycord/releases/tag/v1.1.1
 [1.1.0]: https://github.com/iZynu/zycord/releases/tag/v1.1.0
 [1.0.0]: https://github.com/iZynu/zycord/releases/tag/v1.0.0

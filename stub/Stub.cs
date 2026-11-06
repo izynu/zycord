@@ -106,6 +106,10 @@ namespace Zycord
         public int ParentPid;
         public bool Hidden;
 
+        // Set when the launcher already knows Discord does not list this file
+        // name, so the window can say so instead of claiming detection.
+        public bool Undetected;
+
         public static Options Parse(string[] argv)
         {
             var o = new Options();
@@ -130,6 +134,10 @@ namespace Zycord
                          string.Equals(a, "--tray", StringComparison.OrdinalIgnoreCase))
                 {
                     o.Hidden = true;
+                }
+                else if (string.Equals(a, "--undetected", StringComparison.OrdinalIgnoreCase))
+                {
+                    o.Undetected = true;
                 }
                 else if (!a.StartsWith("--", StringComparison.Ordinal))
                 {
@@ -191,10 +199,13 @@ namespace Zycord
 
             _hint = new Label
             {
-                Text = "Session active. Discord can detect this game.",
+                Text = opts.Undetected
+                    ? "Session active. Discord does not list this file name."
+                    : "Session active. Discord can detect this game.",
                 ForeColor = Ink2,
                 Location = new Point(22, 70),
-                Size = new Size(360, 20)
+                Size = new Size(360, 20),
+                AutoEllipsis = true
             };
 
             _elapsed = new Label

@@ -95,7 +95,7 @@
 
     <h3>Sessions and History</h3>
     <p>
-      Every running session is listed with its process id, elapsed time and any auto
+      Every running session is listed with its executable, elapsed time and any auto
       stop remaining. A session can be extended by 15 minutes. Stop ends one session;
       Stop all ends every session, with a confirmation step if you enabled it.
       History keeps the last 250 sessions with start, stop, duration and reason.
@@ -213,6 +213,7 @@ python scripts/build_catalog.py --out other.json.gz</pre>
       <li>Try a different executable from the list for that game.</li>
       <li>Restart Discord after starting the session. Detection is not instant.</li>
       <li>Some games are detected by launcher process rather than the main one. Try the entry marked as a launcher.</li>
+      <li>For a custom game, check that the executable name is one Discord lists. The custom dialog checks it as you type, and a name it marks as not detected cannot appear as activity.</li>
     </ul>
     <h3>A session will not stop</h3>
     <p>

@@ -50,7 +50,7 @@ body:
     attributes:
       label: Zycord version
       description: The version shown on the About tab, or the output of `Zycord.exe --version`.
-      placeholder: 1.1.0
+      placeholder: 1.1.1
     validations:
       required: true
 

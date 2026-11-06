@@ -78,7 +78,7 @@
           <span class="dot" id="foot-dot"></span>
           <span id="foot-status">Starting</span>
         </div>
-        <div class="foot-meta"><span id="foot-version">v1.1.0</span><span id="foot-catalog">catalog</span></div>
+        <div class="foot-meta"><span id="foot-version">v1.1.1</span><span id="foot-catalog">catalog</span></div>
       </div>
     </aside>
 
@@ -424,7 +424,7 @@
         <div class="about-hero glass">
           <img src="mark.svg" alt="Zycord" width="84" height="84">
           <div>
-            <h2>Zycord <span class="pill" id="about-version">v1.1.0</span></h2>
+            <h2>Zycord <span class="pill" id="about-version">v1.1.1</span></h2>
             <p>Quests and presence, without the guesswork. Zycord prepares a small stub under the executable name Discord expects, then keeps it running for as long as you need.</p>
             <div class="about-actions">
               <button class="btn is-primary" id="about-site"><svg><use href="#i-external"/></svg>Website</button>
@@ -456,7 +456,7 @@
           <div class="glass panel">
             <div class="panel-head"><h2>Build</h2></div>
             <dl class="facts">
-              <div><dt>Version</dt><dd id="fact-version">1.1.0</dd></div>
+              <div><dt>Version</dt><dd id="fact-version">1.1.1</dd></div>
               <div><dt>Interface</dt><dd>WebView2</dd></div>
               <div><dt>Catalog</dt><dd id="fact-catalog">games</dd></div>
             </dl>
@@ -489,6 +489,7 @@
             <details class="faq"><summary>Is anything sent to Discord?</summary><p>No. Zycord only runs a local process with a particular file name. Discord's own client does the detecting.</p></details>
             <details class="faq"><summary>Why does the session window appear?</summary><p>It is a reminder that a stub is running. Turn it off in Settings to run hidden.</p></details>
             <details class="faq"><summary>Do I need the game installed?</summary><p>No. The stub is a copy of a small file Zycord ships. It never touches your real game folder.</p></details>
+            <details class="faq"><summary>Will a custom game show as activity?</summary><p>Only if Discord already lists the file name you enter. The custom dialog checks it against the same list the catalog comes from and says what it finds before you add the game.</p></details>
             <details class="faq"><summary>The quest still shows as not started</summary><p>Give Discord a minute, then open the quest page. Some quests need the game to be the foreground window; Zycord's session window helps with that.</p></details>
             <details class="faq"><summary>Where are my files?</summary><p>Everything lives in your local app data folder under Zycord. Use the Data folder button on the About tab.</p></details>
             <details class="faq"><summary>Can I run several games at once?</summary><p>Yes. Each session is independent and appears on the Sessions tab.</p></details>
@@ -535,7 +536,7 @@
       <div class="modal-icon is-empty" id="custom-icon">?</div>
       <div>
         <h2 id="custom-title">Add a custom game</h2>
-        <p class="modal-sub">For a title Discord does not list</p>
+        <p class="modal-sub">For a title that is not in the catalog</p>
       </div>
     </div>
     <div class="modal-body">
@@ -544,6 +545,7 @@
       <p class="field-label field-gap">Executable name</p>
       <input class="field" id="custom-exe" type="text" maxlength="260" placeholder="bin/win64/MyGame.exe" autocomplete="off" spellcheck="false" aria-label="Executable name">
       <p class="field-note">A relative path, not a full one. It must end in .exe, .bin, .dat, .dll, .des, .jbg, .game or .pae. Zycord copies its stub to that name inside its own folder.</p>
+      <p class="field-status" id="custom-status" hidden></p>
       <p class="field-error" id="custom-error" hidden></p>
     </div>
     <div class="modal-foot">

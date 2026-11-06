@@ -32,6 +32,18 @@ namespace Zycord
         public DateTime? DeadlineUtc { get; set; }
         public bool HistoryRecorded { get; set; }
 
+        private bool _detected = true;
+
+        /// <summary>
+        /// Whether the executable name is one Discord lists. False means the
+        /// stub runs but Discord will not treat it as the game being open.
+        /// </summary>
+        public bool Detected
+        {
+            get { return _detected; }
+            set { _detected = value; }
+        }
+
         public bool Running { get { return Sessions.IsAlive(Pid); } }
 
         public int Seconds
@@ -51,7 +63,8 @@ namespace Zycord
                 { "pid", Pid },
                 { "running", running },
                 { "startedUtc", StartedUtc.ToString("o") },
-                { "seconds", running ? (int)Math.Max(0, (DateTime.UtcNow - StartedUtc).TotalSeconds) : 0 }
+                { "seconds", running ? (int)Math.Max(0, (DateTime.UtcNow - StartedUtc).TotalSeconds) : 0 },
+                { "detected", Detected }
             };
             if (DeadlineUtc.HasValue)
             {
@@ -163,7 +176,7 @@ namespace Zycord
             get { return Path.Combine(Paths.ExeDir, "stub.exe"); }
         }
 
-        public static Dictionary<string, object> Start(string appId, string name, string exeEntry, string icon)
+        public static Dictionary<string, object> Start(string appId, string name, string exeEntry, string icon, bool detected)
         {
             if (!SafeAppId.IsMatch(appId ?? ""))
                 return Error("That application id is not valid.");
@@ -219,7 +232,7 @@ namespace Zycord
                         UseShellExecute = false,
                         WorkingDirectory = targetDir,
                         CreateNoWindow = true,
-                        Arguments = BuildArguments(name, appId)
+                        Arguments = BuildArguments(name, appId, detected)
                     };
 
                     var proc = Process.Start(psi);
@@ -234,7 +247,8 @@ namespace Zycord
                         ExePath = target,
                         RelativeExe = relative,
                         Pid = proc.Id,
-                        StartedUtc = DateTime.UtcNow
+                        StartedUtc = DateTime.UtcNow,
+                        Detected = detected
                     };
 
                     if (settings.AutoStopMinutes > 0)
@@ -257,11 +271,12 @@ namespace Zycord
             }
         }
 
-        private static string BuildArguments(string name, string appId)
+        private static string BuildArguments(string name, string appId, bool detected)
         {
             var safe = (name ?? "").Replace("\"", "'");
             var args = "--title \"" + safe + "\" --app-id " + appId +
                        " --parent " + Process.GetCurrentProcess().Id;
+            if (!detected) args += " --undetected";
             if (!Settings.Current.ShowSessionWindow) args += " --hidden";
             return args;
         }

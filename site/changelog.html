@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,14 +53,30 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.1.0</p>
+    <p class="updated">Version 1.1.1</p>
 
-<h2>1.1.0 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.1 <span class="badge badge-live">Current</span></h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Custom games</h3>
 <ul>
-  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it behaves like any other game from then on.</li>
+  <li>The custom game dialog checks the executable name against the same detectable list the catalog is built from, and says what it finds before you add the game.</li>
+  <li>A custom game whose file name is not on that list is still accepted, with a warning that the session will run but will not appear as activity. It carries a Not detected tag wherever it is shown.</li>
+  <li>The session window reports whether the file name is one Discord lists, instead of claiming detection for every session.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The custom game list was described as behaving like any other game. Discord credits a session only when the running process name is on its detectable list, and this page now says so.</li>
+  <li>The path rules list all eight extensions the validator accepts, and the self test figures match the checks it runs.</li>
+</ul>
+
+<h2>1.1.0</h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Custom games</h3>
+<ul>
+  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it is searchable, savable and startable like any other game.</li>
   <li>Custom entries appear in search, in the library, in favourites and in history, and they carry a Custom tag wherever they are shown.</li>
   <li>A Custom games filter isolates them, and Remove takes the entry out of the catalog, the library, the favourites and the recents together.</li>
   <li>Up to 200 custom entries. Names are unique, case-insensitively, and the executable goes through the same path validation as a catalog entry.</li>

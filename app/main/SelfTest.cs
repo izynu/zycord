@@ -337,7 +337,7 @@ namespace Zycord
                 s.ShowSessionWindow = false;
                 s.AutoStopMinutes = 0;
 
-                var start = Sessions.Start("0", "Self Test", "bin/selftest.exe", "");
+                var start = Sessions.Start("0", "Self Test", "bin/selftest.exe", "", true);
                 if (!Convert.ToBoolean(start["ok"]))
                 {
                     Fail("session start: " + Store.String(start, "error", "unknown"));
@@ -348,7 +348,10 @@ namespace Zycord
                 if (Sessions.Snapshot().Count == 1) Pass("session tracked");
                 else Fail("session count was " + Sessions.Snapshot().Count);
 
-                var again = Sessions.Start("0", "Self Test", "bin/selftest.exe", "");
+                if (Sessions.Snapshot()[0].Detected) Pass("session records the detection flag");
+                else Fail("session did not record the detection flag");
+
+                var again = Sessions.Start("0", "Self Test", "bin/selftest.exe", "", true);
                 if (Convert.ToBoolean(again["already"])) Pass("duplicate start is idempotent");
                 else Fail("duplicate start did not report already");
 
@@ -361,6 +364,21 @@ namespace Zycord
 
                 if (Settings.Current.History.Count == beforeHistory + 1) Pass("history recorded");
                 else Fail("history entry was not written");
+
+                // A name Discord does not list must still start, and the
+                // session must carry the flag that says so.
+                var quiet = Sessions.Start("0", "Self Test", "bin/selftest.exe", "", false);
+                if (!Convert.ToBoolean(quiet["ok"]))
+                {
+                    Fail("undetected start: " + Store.String(quiet, "error", "unknown"));
+                }
+                else
+                {
+                    var rows = Sessions.Snapshot();
+                    if (rows.Count == 1 && !rows[0].Detected) Pass("undetected start is recorded");
+                    else Fail("undetected start was not recorded");
+                    Sessions.Stop("0");
+                }
             }
             catch (Exception ex)
             {

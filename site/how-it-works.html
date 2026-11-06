@@ -77,6 +77,11 @@
           content. Zycord therefore does not need the game, only a process that
           satisfies the same check.
         </p>
+        <p>
+          A file name that is not on the list cannot match, whatever else is true of
+          it. That is why a custom game appears as activity only when its executable
+          name is one Discord already lists.
+        </p>
       </div>
       <div>
         <div class="section-head">
@@ -115,7 +120,7 @@
       <div class="step-n">2</div>
       <div>
         <h3>Reduce the catalog entry to a relative path</h3>
-        <p>Backslashes are normalised, empty and dot segments dropped, and the result rejected if it is absolute, contains a drive letter, contains a parent segment, has an invalid character, is longer than eight segments, or does not end in .exe.</p>
+        <p>Backslashes are normalised, empty and dot segments dropped, and the result rejected if it is absolute, contains a drive letter, contains a parent segment, has an invalid character, is longer than eight segments, or does not end in one of the eight extensions Windows starts as a program.</p>
       </div>
     </div>
     <div class="step">

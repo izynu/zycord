@@ -17,7 +17,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 
 # Verified catalog figures, read from app/assets/catalog.json.gz.
 GAMES = "10,465"
@@ -387,7 +387,7 @@ INDEX = (
         [
             ("1", "Open Games", "The catalog loads with the application, so search works immediately. Type a name, pick a theme, or filter by executable count."),
             ("2", "Choose the executable", "Most games register one executable. Where a game registers several, each is listed and launcher processes are marked."),
-            ("3", "Start", "Zycord prepares the file, starts the process and shows its process id. A small window shows elapsed time unless you turn it off."),
+            ("3", "Start", "Zycord prepares the file, starts the process and records its process id. A small window shows elapsed time unless you turn it off."),
             ("4", "Stop when done", "Stop from the Sessions tab, the session window or the tray menu. A typical PLAY_ON_DESKTOP quest needs about 15 minutes."),
         ]
     )
@@ -408,7 +408,7 @@ INDEX = (
             ("", "Games", "The full catalog with search, theme filter, executable filter and three sort orders."),
             ("", "Library", "Saved games with the executable you chose, ready to start again."),
             ("", "Favourites", "Starred games kept separately from the library, with their own count in the rail."),
-            ("", "Sessions", "Every running session with process id, elapsed time, auto stop remaining and an extend action."),
+            ("", "Sessions", "Every running session with its name, executable, elapsed time, auto stop remaining and an extend action."),
             ("", "History", "Up to 250 recorded sessions with start, stop, duration and whether they were stopped, exited or auto stopped."),
             ("", "Settings", "Session, window, storage and data controls, including theme, tray behaviour and a 0 to 240 minute auto stop."),
             ("", "Logs", "A per-day plain text log you can refresh, copy, export or clear. Nothing leaves the computer."),
@@ -602,7 +602,7 @@ FEATURES = (
         "One process per game, tracked by id from start to stop.",
         cards(
             [
-                ("Start", "One click", "Pick a game and an executable, then start. Zycord prepares the file, starts the process and reports its process id."),
+                ("Start", "One click", "Pick a game and an executable, then start. Zycord prepares the file, starts the process and records its process id."),
                 ("Timer", "Live elapsed time", "The Sessions tab and the session window both show elapsed time, updated while the session runs."),
                 ("Auto stop", "1 to 240 minutes", "Set in steps of 15 minutes. Zero disables it. A running session can be extended by 15 minutes from the session list."),
                 ("Stop", "One or all", "Stop a single session, or stop all with a confirmation step if you enabled it in Settings."),
@@ -698,6 +698,11 @@ HOW = (
           content. Zycord therefore does not need the game, only a process that
           satisfies the same check.
         </p>
+        <p>
+          A file name that is not on the list cannot match, whatever else is true of
+          it. That is why a custom game appears as activity only when its executable
+          name is one Discord already lists.
+        </p>
       </div>
       <div>
         <div class="section-head">
@@ -728,7 +733,7 @@ HOW = (
     + steps(
         [
             ("1", "Validate the application id", "It must be one to 25 digits. Anything else is refused before a path is built."),
-            ("2", "Reduce the catalog entry to a relative path", "Backslashes are normalised, empty and dot segments dropped, and the result rejected if it is absolute, contains a drive letter, contains a parent segment, has an invalid character, is longer than eight segments, or does not end in .exe."),
+            ("2", "Reduce the catalog entry to a relative path", "Backslashes are normalised, empty and dot segments dropped, and the result rejected if it is absolute, contains a drive letter, contains a parent segment, has an invalid character, is longer than eight segments, or does not end in one of the eight extensions Windows starts as a program."),
             ("3", "Build the target inside the games folder", "The path is %LOCALAPPDATA%\\Zycord\\games\\&lt;app_id&gt;\\ plus the validated relative path."),
             ("4", "Re-check containment", "The resolved target must still sit strictly inside the games folder, or the start is refused."),
             ("5", "Copy and start", "The stub is copied over any previous copy for that game, then started with the game name and application id as arguments."),
@@ -855,7 +860,7 @@ SHOTS = (
     page_head(
         "Screenshots",
         "The launcher as it looks in version " + VERSION,
-        "Captures of the three sections you will use most: browsing the catalog, watching sessions, and changing settings. The window is shown at its default 1180 by 780 size.",
+        "Captures of the three sections you will use most: browsing the catalog, watching sessions, and changing settings. The window is shown at 1280 by 820.",
     )
     + """
 <section class="section">
@@ -863,19 +868,19 @@ SHOTS = (
     <div class="shots">
       <figure class="shot">
         <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Zycord, Games</span></div>
-        <img src="assets/shot-games.png" alt="The Games section: a search field, theme filter, sort menu and executable filters above a grid of game cards, each with an icon, name and executable count." width="1180" height="780" loading="lazy">
+        <img src="assets/shot-games.png" alt="The Games section: a search field, theme filter, sort menu and executable filters above a grid of game cards, each with an icon, name and executable count." width="1280" height="820" loading="lazy">
         <figcaption>Games. Search, filter and sort """ + GAMES + """ games, then start one from its card.</figcaption>
       </figure>
 
       <figure class="shot">
         <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Zycord, Sessions</span></div>
-        <img src="assets/shot-sessions.png" alt="The Sessions section: a list of running sessions, each with the game name, executable, process id, elapsed timer and buttons to extend or stop." width="1180" height="780" loading="lazy">
-        <figcaption>Sessions. Every running stub with its process id, elapsed time and auto stop state.</figcaption>
+        <img src="assets/shot-sessions.png" alt="The Sessions section: a list of running sessions, each with the game name, executable, elapsed timer, auto stop state and buttons to extend or stop." width="1280" height="820" loading="lazy">
+        <figcaption>Sessions. Every running stub with its executable, elapsed time and auto stop state.</figcaption>
       </figure>
 
       <figure class="shot">
         <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Zycord, Settings</span></div>
-        <img src="assets/shot-settings.png" alt="The Settings section: panels for sessions, window behaviour, storage size and data clearing, with switches, an auto stop stepper and a theme choice." width="1180" height="780" loading="lazy">
+        <img src="assets/shot-settings.png" alt="The Settings section: panels for sessions, window behaviour, storage size and data clearing, with switches, an auto stop stepper and a theme choice." width="1280" height="820" loading="lazy">
         <figcaption>Settings. Session, window, storage and data controls in one place.</figcaption>
       </figure>
     </div>
@@ -1126,7 +1131,7 @@ DOCS = (
 
     <h3>Sessions and History</h3>
     <p>
-      Every running session is listed with its process id, elapsed time and any auto
+      Every running session is listed with its executable, elapsed time and any auto
       stop remaining. A session can be extended by 15 minutes. Stop ends one session;
       Stop all ends every session, with a confirmation step if you enabled it.
       History keeps the last 250 sessions with start, stop, duration and reason.
@@ -1250,6 +1255,7 @@ python scripts/build_catalog.py --out other.json.gz</pre>
       <li>Try a different executable from the list for that game.</li>
       <li>Restart Discord after starting the session. Detection is not instant.</li>
       <li>Some games are detected by launcher process rather than the main one. Try the entry marked as a launcher.</li>
+      <li>For a custom game, check that the executable name is one Discord lists. The custom dialog checks it as you type, and a name it marks as not detected cannot appear as activity.</li>
     </ul>
     <h3>A session will not stop</h3>
     <p>
@@ -1320,6 +1326,10 @@ FAQ = (
     + qa(
         "Do I need the game installed?",
         "No. That is the point. Zycord starts a copy of its own stub with the executable name Discord watches, not the game itself.",
+    )
+    + qa(
+        "Will a custom game show as activity?",
+        "Only when the executable name is one Discord already lists. Discord compares the running process name against its detectable list, so a name that is not on that list cannot match. The custom game dialog checks the name as you type and says whether it will be detected before you add it.",
     )
     + qa(
         "Does it work if Discord is closed?",
@@ -1545,12 +1555,28 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.0 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.1 <span class="badge badge-live">Current</span></h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Custom games</h3>
 <ul>
-  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it behaves like any other game from then on.</li>
+  <li>The custom game dialog checks the executable name against the same detectable list the catalog is built from, and says what it finds before you add the game.</li>
+  <li>A custom game whose file name is not on that list is still accepted, with a warning that the session will run but will not appear as activity. It carries a Not detected tag wherever it is shown.</li>
+  <li>The session window reports whether the file name is one Discord lists, instead of claiming detection for every session.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The custom game list was described as behaving like any other game. Discord credits a session only when the running process name is on its detectable list, and this page now says so.</li>
+  <li>The path rules list all eight extensions the validator accepts, and the self test figures match the checks it runs.</li>
+</ul>
+
+<h2>1.1.0</h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Custom games</h3>
+<ul>
+  <li>A Custom game button on the Games page adds a title Discord does not list. You give it a name and the executable name, and it is searchable, savable and startable like any other game.</li>
   <li>Custom entries appear in search, in the library, in favourites and in history, and they carry a Custom tag wherever they are shown.</li>
   <li>A Custom games filter isolates them, and Remove takes the entry out of the catalog, the library, the favourites and the recents together.</li>
   <li>Up to 200 custom entries. Names are unique, case-insensitively, and the executable goes through the same path validation as a catalog entry.</li>
@@ -1620,7 +1646,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to the custom game list and the wider catalog in 1.1.0.",
+    "Every notable change in Zycord, from the first public release to the detection check for custom games in 1.1.1.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1640,8 +1666,16 @@ ROADMAP = (
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
+          <h3>Version 1.1.1</h3>
+          <p>Detection checking in the custom game dialog, a session window that reports detection honestly, and documentation corrected to match.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
           <h3>Version 1.1.0</h3>
-          <p>Custom games for any title Discord does not list, 18 more games in the catalog, and a release archive that is byte-identical across rebuilds.</p>
+          <p>Custom games, 18 more games in the catalog, and a release archive that is byte-identical across rebuilds.</p>
         </div>
         <span class="road-when">Shipped</span>
       </div>
@@ -1982,7 +2016,7 @@ NOT_FOUND = (
       <a class="card" href="features.html"><h3>Features</h3><p>Catalog, sessions, library and settings.</p></a>
       <a class="card" href="how-it-works.html"><h3>How it works</h3><p>The four steps from a game to a quest.</p></a>
       <a class="card" href="screenshots.html"><h3>Screenshots</h3><p>The Games, Sessions and Settings sections.</p></a>
-      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.1.0 for Windows 10 and 11.</p></a>
+      <a class="card" href="download.html"><h3>Download</h3><p>Version 1.1.1 for Windows 10 and 11.</p></a>
       <a class="card" href="docs.html"><h3>Documentation</h3><p>Every section, the build and the common failures.</p></a>
       <a class="card" href="faq.html"><h3>FAQ</h3><p>Straight answers, including the uncomfortable ones.</p></a>
       <a class="card" href="safety.html"><h3>Safety</h3><p>What the stub does and never does.</p></a>
