@@ -224,11 +224,13 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 6. `copy_docs` copies `LICENSE` and `README.md` into `dist/` through the same `copy_text`.
 7. `check_line_endings` fails the build if any copied text file still contains CRLF.
 8. `check_shipped_links` fails the build if `README.md` or `LICENSE` links to a file the release folder does not contain. Both are shipped on their own, without `docs/`, `CONTRIBUTING.md` or `SECURITY.md`, so a repository-relative link points at nothing in the download.
-9. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
-10. `report` prints the size and file count of `dist/`.
-11. `pack` writes `Zycord-1.1.4.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+9. `check_version_refs` fails the build if the README download link or version badge names a release other than the one being built.
+10. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
+11. `report` prints the size and file count of `dist/`.
+12. `pack` writes `Zycord-1.1.5.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+13. `check_download_size` fails the build if the size in the README download badge is not the size of the archive `pack` just wrote.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.4`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.5`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 Text is copied with LF line endings and the build refuses to pack a file that still contains CRLF. A checkout made with `core.autocrlf=true` on Windows carries CRLF in the working tree, which is what the release workflow gets on `windows-latest`, so without this step every text file in the download would differ from its repository blob by one byte per line. `.gitattributes` pins `eol=lf` for the same reason, and marks images, assemblies and the compressed catalog as binary so they are never rewritten.
 

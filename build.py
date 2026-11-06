@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.1.4"
+VERSION = "1.1.5"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -74,6 +74,17 @@ SHIPPED_DOCS = ("LICENSE", "README.md")
 
 # Markdown links, and href and src values in inline HTML.
 LINK = re.compile(r'\]\(([^)\s]+)\)|(?:href|src)="([^"]+)"')
+
+# The download size in the README badge, as a shields.io path segment.
+# The release build compares it with the archive it just packed, so a
+# figure typed by hand cannot drift from the file it describes.
+BADGE_SIZE = re.compile(r'badge/download-([0-9.]+)%20MB-')
+
+# The download link and the version badge in the README. A version bump
+# edits VERSION first, and these checks then fail on any README that still
+# names the previous release.
+RELEASE_LINK = re.compile(r'releases/download/v([0-9.]+)/Zycord-([0-9.]+)\.zip')
+VERSION_BADGE = re.compile(r'badge/version-([0-9.]+)-')
 
 # Strings that must never appear in a release. The project was rebuilt from
 # scratch under a new name; this check keeps a stray copy-paste from undoing it.
@@ -268,6 +279,63 @@ def check_shipped_links():
         )
 
 
+def check_version_refs():
+    # Fail the build if the README names a release other than this one.
+    # The download link, the version badge and the file names in the install
+    # steps all state the version. A missed bump ships a README that points
+    # at the previous archive, which is a dead link on the repository page.
+    path = os.path.join(DIST, "README.md")
+    if not os.path.isfile(path):
+        return
+    with open(path, encoding="utf-8") as handle:
+        text = handle.read()
+    link = RELEASE_LINK.search(text)
+    if not link:
+        raise SystemExit(
+            "version check failed: README.md has no download link. "
+            "Add one so the version can be checked against this build."
+        )
+    tag_version, file_version = link.group(1), link.group(2)
+    if tag_version != VERSION or file_version != VERSION:
+        raise SystemExit(
+            "version check failed: README.md links to v%s/Zycord-%s.zip, "
+            "this build is %s." % (tag_version, file_version, VERSION)
+        )
+    badge = VERSION_BADGE.search(text)
+    if badge and badge.group(1) != VERSION:
+        raise SystemExit(
+            "version check failed: README.md version badge says %s, "
+            "this build is %s." % (badge.group(1), VERSION)
+        )
+    print("  README names this release: v%s" % VERSION)
+
+
+def check_download_size():
+    # Fail the build if the README badge disagrees with the packed archive.
+    # The badge, the download page and the build output all state the size of
+    # the download. They disagreed once, and the badge is the one a reader
+    # sees first, so it is checked against the archive rather than trusted.
+    path = os.path.join(DIST, "README.md")
+    archive = os.path.join(ROOT, ARCHIVE)
+    if not os.path.isfile(path) or not os.path.isfile(archive):
+        return
+    with open(path, encoding="utf-8") as handle:
+        match = BADGE_SIZE.search(handle.read())
+    if not match:
+        raise SystemExit(
+            "download size check failed: README.md has no download badge. "
+            "Add one so the figure can be checked against the archive."
+        )
+    stated = match.group(1)
+    actual = "%.2f" % (os.path.getsize(archive) / (1024 * 1024))
+    if stated != actual:
+        raise SystemExit(
+            "download size check failed: README.md says %s MB, the archive "
+            "is %s MB. Update the badge to match the file." % (stated, actual)
+        )
+    print("  download size matches the archive: %s MB" % stated)
+
+
 def self_test():
     exe = os.path.join(DIST, "Zycord.exe")
     print("running self test")
@@ -350,6 +418,7 @@ def main():
     copy_docs()
     check_line_endings()
     check_shipped_links()
+    check_version_refs()
 
     if not args.no_test:
         self_test()
@@ -357,6 +426,7 @@ def main():
     report()
     if not args.no_zip:
         pack()
+        check_download_size()
     return 0
 
 

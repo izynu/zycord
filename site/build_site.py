@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.4"
+VERSION = "1.1.5"
 
 
 # Files outside this generator that name the site address, relative to the
@@ -58,9 +58,43 @@ GAMES = format(_GAMES, ",")
 EXECUTABLES = format(_EXECUTABLES, ",")
 LAUNCHERS = format(_LAUNCHERS, ",")
 ICONS = format(_ICONS, ",")
+
+
+def download_size():
+    # Read the download size from the README badge. The release build checks
+    # that badge against the archive it packed, so the figure here is the one
+    # a reader sees on the repository page rather than a second copy that
+    # drifts away from it.
+    path = os.path.join(os.path.dirname(SITE), "README.md")
+    with open(path, encoding="utf-8") as handle:
+        match = re.search(r"badge/download-([0-9.]+)%20MB-", handle.read())
+    if not match:
+        raise SystemExit("download size check failed: no download badge in README.md")
+    return match.group(1) + " MB"
+
+
+def release_version():
+    # Read the release version from the README download link. The build
+    # checks that link against its own VERSION, so this generator and the
+    # build script cannot name different releases.
+    path = os.path.join(os.path.dirname(SITE), "README.md")
+    with open(path, encoding="utf-8") as handle:
+        match = re.search(r"releases/download/v([0-9.]+)/Zycord-", handle.read())
+    if not match:
+        raise SystemExit("version check failed: no download link in README.md")
+    return match.group(1)
+
+
 STUB_SIZE = "about 36 KB"
 RELEASE_SIZE = "about 3.1 MB"
-DOWNLOAD_SIZE = "0.95 MB"
+DOWNLOAD_SIZE = download_size()
+
+README_VERSION = release_version()
+if README_VERSION != VERSION:
+    raise SystemExit(
+        "version check failed: README.md names %s, this generator names %s. "
+        "Bump both." % (README_VERSION, VERSION)
+    )
 
 NAV = [
     ("index.html", "Overview"),
@@ -588,7 +622,7 @@ INDEX = (
               <h3>"""
     + VERSION
     + """ <span class="badge badge-live">Current</span></h3>
-              <p>WebView2 interface, process-id session tracking, a validated path pipeline, auto stop, history, favourites and a rewritten stub.</p>
+              <p>WebView2 interface, process-id session tracking, a validated path pipeline, auto stop, history and favourites. The changelog lists what changed in this release.</p>
             </div>
             <span class="road-when">released</span>
           </div>
@@ -1634,7 +1668,21 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.4 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.5 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The download size is given to the same precision everywhere. The README badge said 0.9 MB while the download page and the build output said 0.95 MB. Both now say 0.95 MB, which is the archive rounded to two decimal places.</li>
+  <li>The landing page described the current release with the work of 1.0.0 under a 1.1.5 label. It now describes the launcher without naming work from a particular version.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The site reads the download size from the README badge instead of keeping its own copy, so the two cannot drift apart. The release build fails if the badge and the archive it just packed disagree, and if the README names a release other than the one being built.</li>
+</ul>
+
+<h2>1.1.4</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>
@@ -1772,7 +1820,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.",
+    "Every notable change in Zycord, from the first public release to 1.1.5.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1789,6 +1837,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.1.5</h3>
+          <p>The download size is the same figure in the README badge, the download page and the build output, and the release build refuses to build when the README names a different release or a different size.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>

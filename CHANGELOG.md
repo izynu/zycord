@@ -4,6 +4,24 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-11-06
+
+### Fixed
+
+- The download size is given to the same precision everywhere. The README badge
+  said 0.9 MB while the download page and the build output said 0.95 MB. Both
+  now say 0.95 MB, which is the archive rounded to two decimal places.
+- The landing page described the current release with the work of 1.0.0 under
+  a 1.1.5 label. It now describes the launcher without naming work from a
+  particular version, so it does not go stale each release.
+
+### Documentation
+
+- The site reads the download size from the README badge instead of keeping its
+  own copy, so the two cannot drift apart. The release build fails if the badge
+  and the archive it just packed disagree, and if the README names a release
+  other than the one being built.
+
 ## [1.1.4] - 2026-11-06
 
 ### Fixed
@@ -183,6 +201,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.5]: https://github.com/iZynu/zycord/releases/tag/v1.1.5
 [1.1.4]: https://github.com/iZynu/zycord/releases/tag/v1.1.4
 [1.1.3]: https://github.com/iZynu/zycord/releases/tag/v1.1.3
 [1.1.2]: https://github.com/iZynu/zycord/releases/tag/v1.1.2

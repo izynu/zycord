@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to 1.1.5.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to 1.1.5.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to the shipped README fix in 1.1.4.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to 1.1.5.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,9 +53,23 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.1.4</p>
+    <p class="updated">Version 1.1.5</p>
 
-<h2>1.1.4 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.5 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The download size is given to the same precision everywhere. The README badge said 0.9 MB while the download page and the build output said 0.95 MB. Both now say 0.95 MB, which is the archive rounded to two decimal places.</li>
+  <li>The landing page described the current release with the work of 1.0.0 under a 1.1.5 label. It now describes the launcher without naming work from a particular version.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The site reads the download size from the README badge instead of keeping its own copy, so the two cannot drift apart. The release build fails if the badge and the archive it just packed disagree, and if the README names a release other than the one being built.</li>
+</ul>
+
+<h2>1.1.4</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>

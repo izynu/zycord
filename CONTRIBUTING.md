@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.1.4.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.1.5.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
@@ -32,6 +32,8 @@ The build also refuses to finish if a check fails:
 - `check_sources` fails on an identifier from an earlier project.
 - `check_line_endings` fails if a copied text file still contains CRLF.
 - `check_shipped_links` fails if `README.md` or `LICENSE` links to a file the release folder does not contain. Both ship on their own, without `docs/`, so a link to a repository file has to be an absolute URL.
+- `check_download_size` fails if the size in the README download badge is not the size of the archive the build just wrote.
+- `check_version_refs` fails if the README download link or version badge names a release other than the one being built.
 
 ## Run the self test
 
