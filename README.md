@@ -4,9 +4,9 @@
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-[Download 1.1.2](https://github.com/iZynu/zycord/releases/download/v1.1.2/Zycord-1.1.2.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
+[Download 1.1.3](https://github.com/iZynu/zycord/releases/download/v1.1.3/Zycord-1.1.3.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
 
-![Version 1.1.2](https://img.shields.io/badge/version-1.1.2-0b0f14?style=flat-square)
+![Version 1.1.3](https://img.shields.io/badge/version-1.1.3-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 0.9 MB](https://img.shields.io/badge/download-0.9%20MB-0b0f14?style=flat-square)
@@ -48,7 +48,7 @@ The interface has ten sections: Home, Games, Library, Favourites, Sessions, Hist
 
 1. You choose a game and an executable in the Games tab.
 2. Zycord validates the executable entry: no absolute paths, no drive letters, no `..`, and a target Windows starts as a program (`.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` or `.pae`).
-3. It copies `stub.exe` (about 35 KB) to `%LOCALAPPDATA%\Zycord\games\<app_id>\<relative exe path>` and starts it.
+3. It copies `stub.exe` (about 36 KB) to `%LOCALAPPDATA%\Zycord\games\<app_id>\<relative exe path>` and starts it.
 4. Discord matches the running process against its detectable list and treats the game as running, which is what desktop-play quests key off. A file name that is not on that list cannot match, so a custom game with an invented name runs but never appears as activity.
 5. A typical quest needs about 15 minutes. Leave the session running, then stop it.
 6. Stopping confirms the process still points at the file Zycord created before terminating it, so a real game with the same name is never touched.
@@ -65,7 +65,7 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 ## Install
 
-1. Download `Zycord-1.1.2.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
+1. Download `Zycord-1.1.3.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
 2. Extract it to a folder you can write to, for example `C:\Users\you\Apps\Zycord`.
 3. Run `Zycord.exe`.
 4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
@@ -83,7 +83,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.2.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.3.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |
@@ -142,7 +142,7 @@ No. Zycord records the process id it started and, before stopping anything, conf
 
 ### How much disk does it use?
 
-About 3.1 MB for the application, plus about 35 KB for each prepared game. The Settings tab shows the exact figure and clears it on demand.
+About 3.1 MB for the application, plus about 36 KB for each prepared game. The Settings tab shows the exact figure and clears it on demand.
 
 ## Privacy
 

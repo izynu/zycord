@@ -1,0 +1,22 @@
+# Normalise line endings in the repository and in every checkout.
+#
+# Without this, Git for Windows writes CRLF into the working tree when
+# core.autocrlf is true, and the release workflow runs on windows-latest with
+# exactly that setting. The compiled archive then carries CRLF text files that
+# differ from the blobs in the repository, so the published download cannot be
+# checked against the source it was built from.
+#
+# Text is stored and checked out with LF on every platform. The binary types
+# below are excluded, so images, assemblies and the compressed catalog are
+# never rewritten.
+* text=auto eol=lf
+
+*.gif binary
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.dll binary
+*.exe binary
+*.gz binary
+*.zip binary

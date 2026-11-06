@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 
 def catalog_figures():
@@ -46,7 +46,7 @@ GAMES = format(_GAMES, ",")
 EXECUTABLES = format(_EXECUTABLES, ",")
 LAUNCHERS = format(_LAUNCHERS, ",")
 ICONS = format(_ICONS, ",")
-STUB_SIZE = "about 35 KB"
+STUB_SIZE = "about 36 KB"
 RELEASE_SIZE = "about 3.1 MB"
 DOWNLOAD_SIZE = "0.95 MB"
 
@@ -1398,7 +1398,7 @@ FAQ = (
     )
     + qa(
         "How much disk does it use?",
-        "About 3.1 MB unpacked for the application, and about 35 KB for each prepared game. The Settings tab shows the exact figure and clears it on demand.",
+        "About 3.1 MB unpacked for the application, and about 36 KB for each prepared game. The Settings tab shows the exact figure and clears it on demand.",
     )
     + qa(
         "Does it support Rich Presence?",
@@ -1595,7 +1595,20 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.2 <span class="badge badge-live">Current</span></h2>
+<h2>1.1.3 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 6 November 2026</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The published archive now carries the same text files as the repository. The release workflow runs on Windows, where Git wrote CRLF into the checkout, so every text file in the download differed from its source by one byte per line. Line endings are now pinned to LF, and the build fails if a copied file still contains CRLF.</li>
+</ul>
+
+<h3>Documentation</h3>
+<ul>
+  <li>The size of the session stub is given as about 36 KB. The binary is 36,864 bytes, and several pages said 35 KB.</li>
+</ul>
+
+<h2>1.1.2</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>
@@ -1706,7 +1719,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to the corrections shipped in 1.1.2.",
+    "Every notable change in Zycord, from the first public release to the line ending fix shipped in 1.1.3.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1723,6 +1736,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.1.3</h3>
+          <p>The release archive carries the same line endings as the repository, so the download can be checked against the source it was built from.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>

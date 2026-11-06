@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -159,11 +159,26 @@ def build_launcher():
     print("  Zycord.exe  %d bytes" % os.path.getsize(out))
 
 
+def copy_text(src, dst):
+    """Copy a text file with LF line endings.
+
+    A checkout made with core.autocrlf=true on Windows carries CRLF, and
+    copying it verbatim makes every text file in the release differ from the
+    repository by one byte per line. Writing LF keeps the download checkable
+    against the source it was built from.
+    """
+    with open(src, "rb") as handle:
+        data = handle.read()
+    with open(dst, "wb") as handle:
+        handle.write(data.replace(b"\r\n", b"\n"))
+    shutil.copystat(src, dst)
+
+
 def copy_ui():
     ui = os.path.join(DIST, "ui")
     os.makedirs(ui, exist_ok=True)
     for name in UI_FILES:
-        shutil.copy2(os.path.join(RENDERER, name), os.path.join(ui, name))
+        copy_text(os.path.join(RENDERER, name), os.path.join(ui, name))
 
     # Ship the catalog as plain JSON so the interface can fetch it directly.
     import gzip
@@ -172,7 +187,7 @@ def copy_ui():
     dst = os.path.join(ui, "catalog.json")
     with gzip.open(src, "rb") as f:
         data = json.loads(f.read().decode("utf-8"))
-    with open(dst, "w", encoding="utf-8") as f:
+    with open(dst, "w", encoding="utf-8", newline="\n") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
     print("  ui/  %d games" % data["count"])
 
@@ -189,7 +204,24 @@ def copy_docs():
     for name in ("LICENSE", "README.md"):
         src = os.path.join(ROOT, name)
         if os.path.isfile(src):
-            shutil.copy2(src, os.path.join(DIST, name))
+            copy_text(src, os.path.join(DIST, name))
+
+
+def check_line_endings():
+    """Fail the build if a copied text file still carries CRLF."""
+    paths = [os.path.join(DIST, "ui", n) for n in UI_FILES]
+    paths += [os.path.join(DIST, n) for n in ("LICENSE", "README.md")]
+    hits = []
+    for path in paths:
+        if not os.path.isfile(path):
+            continue
+        with open(path, "rb") as handle:
+            if b"\r\n" in handle.read():
+                hits.append(os.path.relpath(path, ROOT))
+    if hits:
+        for hit in hits:
+            print("  CRLF " + hit)
+        raise SystemExit("line ending check failed: text files must use LF")
 
 
 def self_test():
@@ -272,6 +304,7 @@ def main():
     copy_vendor()
     copy_ui()
     copy_docs()
+    check_line_endings()
 
     if not args.no_test:
         self_test()

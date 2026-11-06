@@ -220,13 +220,16 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 2. `build_stub` compiles `stub/Stub.cs` to `dist/stub.exe` with the brand icon, as a 64-bit Windows executable.
 3. `build_launcher` compiles the eight files in `app/main` to `dist/Zycord.exe`, referencing `System`, `System.Drawing`, `System.Windows.Forms`, `System.Web.Extensions` and the WebView2 managed assemblies in `vendor/`.
 4. `copy_vendor` copies the two WebView2 managed DLLs and `WebView2Loader.dll` into `dist/`.
-5. `copy_ui` copies `index.html`, `app.css`, `app.js` and `mark.svg` into `dist/ui`, and decompresses the catalog into `dist/ui/catalog.json`.
-6. `copy_docs` copies `LICENSE` and `README.md` into `dist/`.
-7. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
-8. `report` prints the size and file count of `dist/`.
-9. `pack` writes `Zycord-1.1.2.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+5. `copy_ui` copies `index.html`, `app.css`, `app.js` and `mark.svg` into `dist/ui` through `copy_text`, which writes LF line endings, and decompresses the catalog into `dist/ui/catalog.json`.
+6. `copy_docs` copies `LICENSE` and `README.md` into `dist/` through the same `copy_text`.
+7. `check_line_endings` fails the build if any copied text file still contains CRLF.
+8. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
+9. `report` prints the size and file count of `dist/`.
+10. `pack` writes `Zycord-1.1.3.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.2`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.3`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+
+Text is copied with LF line endings and the build refuses to pack a file that still contains CRLF. A checkout made with `core.autocrlf=true` on Windows carries CRLF in the working tree, which is what the release workflow gets on `windows-latest`, so without this step every text file in the download would differ from its repository blob by one byte per line. `.gitattributes` pins `eol=lf` for the same reason, and marks images, assemblies and the compressed catalog as binary so they are never rewritten.
 
 ## What the design deliberately leaves out
 

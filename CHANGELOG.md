@@ -4,6 +4,22 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-11-06
+
+### Fixed
+
+- The published archive now carries the same text files as the repository.
+  The release workflow runs on Windows, where Git wrote CRLF into the
+  checkout, so every text file in the download differed from its source by
+  one byte per line. A `.gitattributes` pins LF on every platform, the build
+  copies text with LF, and the build fails if a copied file still contains
+  CRLF.
+
+### Documentation
+
+- The size of the session stub is given as about 36 KB. The binary is 36,864
+  bytes, and several pages said 35 KB.
+
 ## [1.1.2] - 2026-11-06
 
 ### Fixed
@@ -144,6 +160,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.1.3]: https://github.com/iZynu/zycord/releases/tag/v1.1.3
 [1.1.2]: https://github.com/iZynu/zycord/releases/tag/v1.1.2
 [1.1.1]: https://github.com/iZynu/zycord/releases/tag/v1.1.1
 [1.1.0]: https://github.com/iZynu/zycord/releases/tag/v1.1.0
