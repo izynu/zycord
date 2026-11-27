@@ -34,6 +34,8 @@ The interface files are served from a virtual host. `SetVirtualHostNameToFolderM
   |        v                  v                  v             |
   |   Sessions.cs        Store.cs            Program.cs        |
   |   paths, pids        settings.json       paths, logs       |
+  |                                           Updates.cs        |
+  |                                           release check     |
   +--------+------------------+------------------+-------------+
            |                  |                  |
            v                  v                  v
@@ -72,6 +74,7 @@ Push messages are not replies. They carry an `event` name and `data`, and are se
 | `window` | The window is maximised or restored | `{ "maximised": true or false }` |
 | `autostop` | The auto stop timer ended one or more sessions | Array of application ids |
 | `navigate` | A tray menu item asks for a page | Page name |
+| `update` | The startup or manual update check finishes | `{ "state", "version", "current", "download", "page", "error" }` |
 
 Commands, grouped as `Bridge.cs` dispatches them:
 
@@ -89,6 +92,8 @@ Commands, grouped as `Bridge.cs` dispatches them:
 | `shell.minimise`, `shell.maximise`, `shell.close`, `shell.hide`, `shell.drag`, `shell.state` | Window control. |
 | `shell.openFolder`, `shell.openExternal`, `shell.clipboard` | Open a folder, open an http or https link, write the clipboard. |
 | `app.reset` | Reset history, library or settings. |
+| `update.check` | Start an update check the user asked for. It replies at once with `{ "started": true or false }`; the result arrives later as an `update` event, so the interface never blocks on the network. |
+| `update.seen` | Record the version the prompt named, so the same release is not announced again. |
 
 Validation happens in the bridge before a command reaches `Sessions` or `Store`. An application id must be 1 to 25 digits. A game name must be non-empty, at most 200 characters, and free of control characters. A library entry reuses the same executable validation as a session. A malformed message produces an error reply and nothing else.
 
@@ -101,9 +106,9 @@ Schema version 2:
 ```json
 {
   "schema": 2,
-  "generated": "2026-11-06",
+  "generated": "2026-11-27",
   "source": "https://discord.com/api/applications/detectable",
-  "count": 10465,
+  "count": 10468,
   "games": [
     {
       "id": "1091500",
@@ -134,7 +139,7 @@ Schema version 2:
 | `games[].ex[].n` | Executable path relative to the game folder, using forward slashes. |
 | `games[].ex[].l` | 1 when Discord marks the entry as a launcher, otherwise 0. |
 
-The current catalog holds 10,465 games, 11,171 executable entries, 20 launcher entries and 10,452 icon hashes. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything whose extension Windows would not start as a program: `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` and `.pae`. Script types are refused. The gzip stream is written with `mtime=0`, so the same input produces a byte-identical archive.
+The current catalog holds 10,468 games, 11,178 executable entries, 20 launcher entries and 10,455 icon hashes. It is exhaustive for the endpoint: every application with at least one `win32` executable is present. Of the 25,474 applications the endpoint returned on 27 November 2026, 15,006 declare no executable at all, so they have no file name for Discord to match and a session could never be credited for them. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything whose extension Windows would not start as a program: `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` and `.pae`. Script types are refused. The gzip stream is written with `mtime=0`, so the same input produces a byte-identical archive.
 
 ## Path safety
 
@@ -187,6 +192,8 @@ Settings live in `%LOCALAPPDATA%\Zycord\settings.json` and are serialised with `
 
 Loading is defensive. A missing, empty or unreadable file falls back to defaults. A file that parses is normalised before use: null lists become empty lists, entries missing an id, name or executable are dropped, the auto stop is clamped to 0 to 240, the theme is forced to `glass` or `light`, the history is capped at 250 and the recents at 12, and the window size is clamped to a usable range.
 
+The update preference is stored as the negative, `UpdateCheckOff`, rather than as `UpdateCheck`. A settings file written by an earlier release has no such field, and `JavaScriptSerializer` gives a missing bool `false`; storing the opt-out is what makes an existing install arrive with the check on instead of silently off. `Store.UpdateCheckEnabled` inverts it, so the rest of the code and the interface see the positive form. `UpdateNotified` holds the last version the prompt named, and is dropped on load unless it is a plain dotted version number, so a hand-edited file cannot make the check treat some other string as an already-announced release.
+
 The data folder layout:
 
 | Path | Contents |
@@ -207,7 +214,7 @@ A log line is `YYYY-MM-DD HH:mm:ss.fff LEVEL message`, with the level one of `IN
 1. It creates a hidden, transparent form off screen and hosts a real WebView2 control in it.
 2. It creates the WebView2 environment, maps the interface folder to `zycord.local`, and navigates to `index.html`.
 3. The interface loads, calls `boot`, loads the catalog, and posts a `ready` probe when it has finished. The probe path is a separate message shape (`{ "selftest": "ready" }`) that carries no command.
-4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a custom game round trips through storage and its removal clears every reference to it, a real session starts, is tracked, records the detection flag, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, and the log file is being written.
+4. The backend then checks, in order: the stub exists, the four interface files exist, the catalog exists, path validation rejects all hostile inputs and accepts all valid ones, settings round trip and clamp the auto stop, the library round trips and the favourite toggle works, a custom game round trips through storage and its removal clears every reference to it, a real session starts, is tracked, records the detection flag, reports `already` on a duplicate start, stops, leaves an empty list and writes one history entry, the log file is being written, and the update check ranks versions correctly, uses the API host rather than the HTML releases page, and remembers the version it announced.
 5. It restores every setting and library entry it touched, deletes the test game folder, writes the report to `%LOCALAPPDATA%\Zycord\logs\selftest.txt`, prints it, and exits.
 
 A 60 second timer fails the run at the stage it reached, so a hang in WebView2 cannot block a build indefinitely.
@@ -227,10 +234,10 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 9. `check_version_refs` fails the build if the README download link or version badge names a release other than the one being built.
 10. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
 11. `report` prints the size and file count of `dist/`.
-12. `pack` writes `Zycord-1.1.5.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+12. `pack` writes `Zycord-1.2.0.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 13. `check_download_size` fails the build if the size in the README download badge is not the size of the archive `pack` just wrote.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.1.5`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.2.0`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 Text is copied with LF line endings and the build refuses to pack a file that still contains CRLF. A checkout made with `core.autocrlf=true` on Windows carries CRLF in the working tree, which is what the release workflow gets on `windows-latest`, so without this step every text file in the download would differ from its repository blob by one byte per line. `.gitattributes` pins `eol=lf` for the same reason, and marks images, assemblies and the compressed catalog as binary so they are never rewritten.
 
@@ -238,4 +245,6 @@ The shipped documents follow the same rule about standing on their own. `README.
 
 ## What the design deliberately leaves out
 
-There is no updater, no HTTP client in the launcher, no analytics and no crash reporter. The catalog is shipped rather than fetched. Those are choices, not gaps: each one would add a dependency the launcher does not need, and each one would be a way for the application to behave differently from what is in this repository.
+There is no installer, no background service, no analytics, no crash reporter and no auto-updater that downloads or replaces files. The catalog is shipped rather than fetched. Those are choices, not gaps: each one would add a dependency the launcher does not need, and each one would be a way for the application to behave differently from what is in this repository.
+
+The update check is the single exception, and it is deliberately narrow. `Updates.cs` holds one HTTP GET, to a fixed address (`"https://api.github.com/repos/" + AppInfo.RepoSlug + "/releases?per_page=20"`), made on a background thread after the window opens so the interface never waits on it. The API host is required rather than the web releases page: the page that serves the same list is HTML, and a request for it is refused with 406. It reads `tag_name` from the reply, skips drafts and prereleases, and compares the newest number with `AppInfo.Compare`, a dotted-numeric comparison that ranks `1.1.10` above `1.1.9` and treats an unparseable tag as equal so a malformed release can never look like an upgrade. The result is pushed to the interface as an `update` event; the dialog it produces links to the archive and installs nothing. `AppInfo.DownloadUrl` builds the link from the same version it named, so the prompt cannot offer a different release than the one it announced. The check is skipped entirely when the Settings opt-out is set, and `SelfTest` asserts the endpoint's host and repository as well as the comparison table, without touching the network, so a build passes on a machine with no connection.

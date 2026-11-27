@@ -1368,6 +1368,89 @@
     $("#about-folder").addEventListener("click", function () {
       call("shell.openFolder", { which: "data" });
     });
+    $("#about-check").addEventListener("click", checkUpdates);
+
+    $("#update-download").addEventListener("click", function () {
+      var url = state.update && state.update.download;
+      if (url) call("shell.openExternal", { url: url });
+      closeUpdate();
+    });
+
+    $$("[data-update-close]").forEach(function (node) {
+      node.addEventListener("click", closeUpdate);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !$("#update-modal").hidden) closeUpdate();
+    });
+  }
+
+  // ----------------------------------------------------------------- updates
+
+  function updateStatus(text) {
+    var node = $("#update-status");
+    if (node) node.textContent = text || "";
+  }
+
+  function closeUpdate() {
+    $("#update-modal").hidden = true;
+  }
+
+  function showUpdate(info) {
+    state.update = info;
+
+    $("#update-title").textContent = "Zycord " + info.version + " is available";
+    $("#update-sub").textContent = "You are running " + info.current + ".";
+
+    var line = $("#update-line");
+    line.textContent = "";
+    line.appendChild(document.createTextNode(
+      "You can download the new version now, or keep this one. Your library, favourites and settings stay where they are. "));
+    var link = el("button", "linkish", "Release notes");
+    link.addEventListener("click", function () {
+      if (info.page) call("shell.openExternal", { url: info.page });
+    });
+    line.appendChild(link);
+
+    // The prompt is raised once per release. Recording it here means a
+    // download that is closed, cancelled or forgotten does not reappear on
+    // every launch; the About tab can always ask again.
+    state.settings.updateNotified = info.version;
+    call("update.seen", { version: info.version });
+
+    // The dialog has to be laid out before the button can take focus: focus()
+    // on a node inside a display:none subtree does nothing.
+    $("#update-modal").hidden = false;
+    $("#update-download").focus();
+  }
+
+  function onUpdateEvent(data) {
+    var info = data || {};
+    state.update = info;
+
+    if (info.state === "available" && info.version) {
+      updateStatus("Version " + info.version + " is available.");
+      if (state.settings.updateNotified !== info.version) showUpdate(info);
+      return;
+    }
+
+    if (info.state === "current") {
+      updateStatus("This is the newest version.");
+      return;
+    }
+
+    if (info.state === "error") {
+      updateStatus("The update check could not complete: " + (info.error || "no reason given") + ".");
+    }
+  }
+
+  function checkUpdates() {
+    updateStatus("Checking…");
+    call("update.check").then(function (r) {
+      if (r && r.started === false) updateStatus("A check is already running.");
+    }).catch(function (e) {
+      updateStatus("The update check could not start: " + e.message);
+    });
   }
 
   // --------------------------------------------------------------- title bar
@@ -1500,6 +1583,11 @@
 
     if (name === "window") {
       document.dispatchEvent(new CustomEvent("zycord:window", { detail: data || {} }));
+      return;
+    }
+
+    if (name === "update") {
+      onUpdateEvent(data);
       return;
     }
 

@@ -111,6 +111,7 @@
       <tr><th>Start minimised</th><td>Open straight into the tray.</td></tr>
       <tr><th>Keep on top</th><td>Leave the window above other windows.</td></tr>
       <tr><th>Reduce motion</th><td>Turn off the background animation in the launcher.</td></tr>
+      <tr><th>Check for updates</th><td>On by default. One request at startup to the public release page, with a prompt when a newer version exists. Off means no request is made; the About tab keeps a manual check.</td></tr>
       <tr><th>Theme</th><td>Glass, the default graphite finish, or Light.</td></tr>
       <tr><th>Storage</th><td>Shows game file and log size, with buttons to open the data folder or clear game files.</td></tr>
       <tr><th>Data</th><td>Clear history and recents, clear the library and favourites, or reset settings. Each is separate.</td></tr>
@@ -126,8 +127,9 @@
 
     <h3>About and Help</h3>
     <p>
-      About shows the version, build facts and buttons for the data folder, the
-      website and the repository. Help is a short guide to starting a session and
+      About shows the version, build facts and buttons for the website, the
+      repository, the data folder, and a manual update check that reports its
+      result beside the buttons. Help is a short guide to starting a session and
       the answers to the questions that come up most.
     </p>
   </div>
@@ -168,7 +170,9 @@ python build.py --clean     remove dist/ first</pre>
           <code class="inline">Zycord.exe --headless</code> boots the real interface
           in a hidden window, waits for it to report ready, then exercises the
           backend directly. It checks path validation against hostile inputs, settings
-          round trips, and a full session start and stop.
+          round trips, a full session start and stop, and the update check's version
+          ranking and endpoint. The network request itself is never made, so the
+          test passes on a machine with no connection.
         </p>
         <p>
           The report is written to

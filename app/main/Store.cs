@@ -62,6 +62,22 @@ namespace Zycord
         public bool StartMinimised { get; set; }
         public bool ReduceMotion { get; set; }
 
+        /// <summary>
+        /// True when the user turned the startup update check off. The
+        /// negative is stored because an older settings file has no such
+        /// field, and a missing bool deserialises as false: storing the
+        /// opt-out makes an existing install arrive with the check on rather
+        /// than silently off. One request at startup, nothing about the
+        /// machine in it, and turning it off stops it entirely.
+        /// </summary>
+        public bool UpdateCheckOff { get; set; }
+
+        /// <summary>
+        /// The version the user was last told about, so the same release is
+        /// not announced on every launch.
+        /// </summary>
+        public string UpdateNotified { get; set; }
+
         /// <summary>0 disables the automatic stop timer. Otherwise 1-240 minutes.</summary>
         public int AutoStopMinutes { get; set; }
 
@@ -92,6 +108,8 @@ namespace Zycord
             KeepOnTop = false;
             StartMinimised = false;
             ReduceMotion = false;
+            UpdateCheckOff = false;
+            UpdateNotified = null;
             AutoStopMinutes = 0;
             Theme = "glass";
             Library = new List<SavedGame>();
@@ -181,6 +199,19 @@ namespace Zycord
             if (s.AutoStopMinutes > 240) s.AutoStopMinutes = 240;
 
             if (s.Theme != "light") s.Theme = "glass";
+
+            // A remembered notification only matters as a dotted version. A
+            // hand-edited file must not be able to make the check treat some
+            // other string as the release it already announced.
+            if (!string.IsNullOrEmpty(s.UpdateNotified) && AppInfo.Compare(s.UpdateNotified, s.UpdateNotified) == 0)
+            {
+                if (s.UpdateNotified.Length > 20 || s.UpdateNotified.Trim('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.').Length != 0)
+                    s.UpdateNotified = null;
+            }
+            else
+            {
+                s.UpdateNotified = null;
+            }
 
             if (s.WindowW < 900) s.WindowW = 900;
             if (s.WindowW > 6000) s.WindowW = 1180;
@@ -332,6 +363,34 @@ namespace Zycord
             }
             SaveQuiet();
             return removed > 0;
+        }
+
+        /// <summary>
+        /// The startup update check, as the interface sees it. The stored
+        /// field is the opt-out, so the answer is inverted here once.
+        /// </summary>
+        public static bool UpdateCheckEnabled
+        {
+            get { return !Settings.Current.UpdateCheckOff; }
+        }
+
+        /// <summary>The version last announced, or null.</summary>
+        public static string UpdateNotified
+        {
+            get { return Settings.Current.UpdateNotified; }
+        }
+
+        /// <summary>
+        /// Remember which release was announced, so the same one is not
+        /// raised again on the next launch.
+        /// </summary>
+        public static void MarkUpdateNotified(string version)
+        {
+            lock (Gate)
+            {
+                Settings.Current.UpdateNotified = string.IsNullOrEmpty(version) ? null : version;
+                SaveQuiet();
+            }
         }
 
         public static bool ToggleFavorite(string appId)

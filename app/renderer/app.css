@@ -1174,6 +1174,23 @@ html[data-theme="light"] .modal-card { background: rgba(255, 255, 255, .9); }
 .modal-foot .btn { flex: 1; justify-content: center; }
 .modal-foot #modal-start { flex: 1.3; }
 
+/* Update prompt */
+
+.modal-icon.is-empty svg { width: 24px; height: 24px; color: var(--accent-2); }
+.update-line { font-size: 12.5px; line-height: 1.6; color: var(--ink-3); }
+.linkish {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--accent-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.linkish:hover { color: var(--accent); }
+.update-status { margin-top: 11px; min-height: 16px; font-size: 11.5px; color: var(--ink-4); font-family: var(--mono); }
+
 /* ----------------------------------------------------------------- toasts */
 .toasts {
   position: fixed;

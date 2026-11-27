@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Features | Zycord</title>
-<meta name="description" content="Every Zycord 1.1.5 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
+<meta name="description" content="Every Zycord 1.2.0 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
 <link rel="canonical" href="https://izynu.github.io/zycord/features.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Features | Zycord">
-<meta property="og:description" content="Every Zycord 1.1.5 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
+<meta property="og:description" content="Every Zycord 1.2.0 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
 <meta property="og:url" content="https://izynu.github.io/zycord/features.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Features | Zycord">
-<meta name="twitter:description" content="Every Zycord 1.1.5 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
+<meta name="twitter:description" content="Every Zycord 1.2.0 feature: catalog search, one-click sessions, auto stop, history, favourites, tray behaviour, themes and logs.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -55,7 +55,7 @@
   <div class="wrap">
     <p class="eyebrow">Features</p>
     <h1>Everything in the launcher, and what each control actually does</h1>
-    <p class="lead">Zycord 1.1.5 is one window with ten sections. Every feature below exists in this release; nothing here is planned or partial.</p>
+    <p class="lead">Zycord 1.2.0 is one window with ten sections. Every feature below exists in this release; nothing here is planned or partial.</p>
   </div>
 </section>
 <section class="section">
@@ -67,8 +67,8 @@
   <div class="grid">
     <div class="card">
       <span class="card-kicker">Catalog</span>
-      <h3>10,465 games</h3>
-      <p>Generated from Discord's public detectable list at build time. 11,171 executable entries, 10,452 games with an icon.</p>
+      <h3>10,468 games</h3>
+      <p>Generated from Discord's public detectable list at build time. 11,178 executable entries, 10,455 games with an icon.</p>
     </div>
     <div class="card">
       <span class="card-kicker">Search</span>
@@ -214,6 +214,46 @@
       <span class="card-kicker">Single instance</span>
       <h3>One window</h3>
       <p>Launching Zycord again brings the existing window forward instead of opening a second copy.</p>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Updates</h2>
+    <p>A prompt when a newer release exists, and nothing installed behind your back.</p>
+    </div>
+  <div class="grid">
+    <div class="card">
+      <span class="card-kicker">Startup check</span>
+      <h3>One request</h3>
+      <p>After the window opens, the launcher asks the public release page for the newest version number. The window never waits on it.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Prompt</span>
+      <h3>Once per release</h3>
+      <p>When a newer version exists, a dialog names it and offers the download and the release notes. It does not reappear on every launch.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Manual check</span>
+      <h3>About tab</h3>
+      <p>A Check for updates button reports the result inline, whether or not the startup check is on.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Opt out</span>
+      <h3>Settings switch</h3>
+      <p>Check for updates in Settings. Off means no request is made at all; the manual button still works when you press it.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">Nothing installed</span>
+      <h3>A link, not an installer</h3>
+      <p>Zycord never downloads or replaces its own files. The download opens in your browser like any other link.</p>
+    </div>
+    <div class="card">
+      <span class="card-kicker">What is sent</span>
+      <h3>No identifier</h3>
+      <p>The request carries the build version in its User-Agent and nothing about the machine, account or sessions.</p>
     </div>
   </div>
   </div>

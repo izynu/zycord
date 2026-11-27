@@ -33,7 +33,7 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
-VERSION = "1.1.5"
+VERSION = "1.2.0"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -48,6 +48,7 @@ SOURCES = [
     "Store.cs",
     "Sessions.cs",
     "Ui.cs",
+    "Updates.cs",
     "Bridge.cs",
     "SelfTest.cs",
 ]

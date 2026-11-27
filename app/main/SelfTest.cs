@@ -168,8 +168,72 @@ namespace Zycord
             CheckCustom();
             CheckSession();
             CheckLog();
+            CheckUpdates();
 
             _stage = 9;
+        }
+
+        /// <summary>
+        /// The update check's pure parts: version ranking and the address it
+        /// would offer. The network call is not made here, because a self test
+        /// must pass on a machine with no connection.
+        /// </summary>
+        private static void CheckUpdates()
+        {
+            var cases = new[]
+            {
+                new object[] { "1.1.5", "1.1.5", 0 },
+                new object[] { "1.1.5", "1.1.6", -1 },
+                new object[] { "1.1.5", "1.2.0", -1 },
+                new object[] { "1.1.5", "2.0.0", -1 },
+                new object[] { "1.1.9", "1.1.10", -1 },
+                new object[] { "1.1.10", "1.1.9", 1 },
+                new object[] { "1.2", "1.2.0", 0 },
+                new object[] { "1.1.5", "1.1", 1 },
+                new object[] { "1.1.5", "garbage", 0 },
+                new object[] { "1.1.5", "1.1.5.1", -1 }
+            };
+
+            var wrong = 0;
+            foreach (var c in cases)
+            {
+                var got = AppInfo.Compare((string)c[0], (string)c[1]);
+                if (got == (int)c[2]) continue;
+                wrong++;
+                Fail("version compare " + c[0] + " vs " + c[1] + " gave " + got + ", expected " + c[2]);
+            }
+            if (wrong == 0) Pass("version ranking handles all " + cases.Length + " cases");
+
+            if (!AppInfo.IsNewer(AppInfo.Version)) Pass("the running version is not newer than itself");
+            else Fail("the running version ranked as newer than itself");
+
+            if (!AppInfo.IsNewer("0.0.1")) Pass("an older version is not treated as an update");
+            else Fail("an older version was treated as an update");
+
+            var expected = AppInfo.Repo + "/releases/download/v9.9.9/Zycord-9.9.9.zip";
+            if (AppInfo.DownloadUrl("9.9.9") == expected) Pass("the download address matches the release name");
+            else Fail("download address was " + AppInfo.DownloadUrl("9.9.9"));
+
+            if (Store.UpdateCheckEnabled) Pass("the update check is on by default");
+            else Fail("the update check was off by default");
+
+            // The releases page on github.com serves HTML, which cannot be
+            // parsed. The check has to address the API host, and a wrong one
+            // fails silently at runtime, so it is asserted here.
+            if (Updates.Endpoint.StartsWith("https://api.github.com/repos/", StringComparison.Ordinal))
+                Pass("the update endpoint uses the API host");
+            else Fail("the update endpoint is " + Updates.Endpoint);
+
+            if (Updates.Endpoint.IndexOf(AppInfo.RepoSlug, StringComparison.Ordinal) > 0)
+                Pass("the update endpoint names this repository");
+            else Fail("the update endpoint does not name " + AppInfo.RepoSlug);
+
+            var before = Store.UpdateNotified;
+            Store.MarkUpdateNotified("9.9.9");
+            if (Store.UpdateNotified == "9.9.9") Pass("the announced version is remembered");
+            else Fail("the announced version was not remembered, got " + (Store.UpdateNotified ?? "null"));
+
+            Store.MarkUpdateNotified(before ?? "");
         }
 
         private static void CheckPaths()

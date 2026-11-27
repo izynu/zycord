@@ -69,8 +69,37 @@
 
 <h3>What it collects</h3>
 <p>
-  Nothing. Zycord has no analytics, no crash reporting, no update check and no
-  server. It does not transmit data anywhere.
+  Nothing. Zycord has no analytics, no crash reporting and no server. It does
+  not transmit data about you or your sessions anywhere.
+</p>
+<p>
+  Two kinds of network request exist. Game icons are loaded from
+  <code class="inline">cdn.discordapp.com</code> by the interface, using only the
+  icon hash stored in the catalog. The update check, described below, asks the
+  public release page for this repository whether a newer version exists.
+  Nothing else leaves the machine.
+</p>
+
+<h3>The update check</h3>
+<p>
+  The update check sends one HTTPS GET to
+  <code class="inline">api.github.com</code> for the public release list of
+  <code class="inline">iZynu/zycord</code>, reads the newest version number, and
+  shows a prompt if it is newer than the build you are running. The request
+  carries no identifier, no account, no settings and no session data, and the
+  reply is discarded once the version number has been read. It runs at most
+  once per launch. GitHub sees the request as it would any web request, under
+  its own privacy statement; this project receives no log of it.
+</p>
+<p>
+  The only thing kept is the version you were last told about, so the same
+  release is not announced on every launch. That is one ordinary setting.
+  Turning off <b>Check for updates</b> in Settings means no request is made at
+  all. The About tab keeps a manual check, which you trigger yourself.
+</p>
+<p>
+  Zycord never downloads or replaces its own files. The prompt links to the
+  archive on the release page; what happens next is your browser.
 </p>
 
 <h3>What it stores on your computer</h3>
@@ -97,11 +126,22 @@
 
 <h3>Network access</h3>
 <p>
-  The only network request the application makes is for game icons. The game
-  catalog is stored with the application rather than downloaded. Game icons shown in the interface are loaded
-  from <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer,
-  using only the icon hash stored in the catalog. That request fetches a public
-  image and sends no information about you or your sessions.
+  The application makes two kinds of network request, and nothing else. The game
+  catalog is stored with the application rather than downloaded.
+</p>
+<p>
+  <b>Game icons.</b> Icons shown in the interface are loaded from
+  <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer, using
+  only the icon hash stored in the catalog. That request fetches a public image
+  and sends no information about you or your sessions.
+</p>
+<p>
+  <b>Update check.</b> When it is enabled, the launcher sends one HTTPS GET to
+  <code class="inline">api.github.com</code> for the public release list of this
+  repository, reads the newest version number and prompts when a newer release
+  exists. It carries no identifier, account, setting or session data. See
+  <a href="#the-update-check">The update check</a> above for what is kept and how
+  to turn it off.
 </p>
 
 <h3>Discord</h3>

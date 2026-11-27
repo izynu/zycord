@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.1.5.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.2.0.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |
@@ -61,7 +61,8 @@ The test covers:
 - a real session start, duplicate start, stop and history entry;
 - a session that records a file name Discord does not list;
 - a custom game round trip and its removal from every list;
-- the log file being written.
+- the log file being written;
+- the update check: version ranking, the API endpoint it addresses, and the version it remembers announcing. The network call itself is not made, so the test passes offline.
 
 It restores every setting and library entry it touches and deletes the game folder it creates. If you add a backend feature, add a check for it to `app/main/SelfTest.cs` rather than testing by hand.
 

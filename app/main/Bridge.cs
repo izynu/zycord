@@ -149,6 +149,20 @@ namespace Zycord
 
                 case "app.reset": Reset(id, a); return;
 
+                case "update.check":
+                    // The result arrives asynchronously as an "update" event,
+                    // so the reply only reports that the check was started.
+                    if (Updates.Busy) { Reply(id, true, new Dictionary<string, object> { { "started", false } }, null); return; }
+                    Updates.StartManual();
+                    Reply(id, true, new Dictionary<string, object> { { "started", true } }, null);
+                    return;
+                case "update.seen":
+                    var seen = Store.String(a, "version", "");
+                    if (seen.Length == 0 || seen.Length > 20) { Reply(id, false, null, "No version was supplied."); return; }
+                    Store.MarkUpdateNotified(seen);
+                    Reply(id, true, null, null);
+                    return;
+
                 default:
                     Reply(id, false, null, "Unknown command.");
                     return;
@@ -183,6 +197,8 @@ namespace Zycord
             Reply(id, true, new Dictionary<string, object>
             {
                 { "version", AppInfo.Version },
+                { "updateCheck", Store.UpdateCheckEnabled },
+                { "updateNotified", Store.UpdateNotified ?? "" },
                 { "stubPresent", File.Exists(Sessions.StubPath) },
                 { "dataDir", Paths.Data },
                 { "logDir", Paths.Logs },
@@ -213,7 +229,10 @@ namespace Zycord
                 { "startMinimised", s.StartMinimised },
                 { "reduceMotion", s.ReduceMotion },
                 { "autoStopMinutes", s.AutoStopMinutes },
-                { "theme", s.Theme }
+                { "theme", s.Theme },
+                { "updateCheck", Store.UpdateCheckEnabled },
+                { "updateNotified", Store.UpdateNotified ?? "" },
+                { "updateEndpoint", Updates.Endpoint }
             };
         }
 
@@ -235,6 +254,7 @@ namespace Zycord
             s.KeepOnTop = Store.Bool(a, "keepOnTop", s.KeepOnTop);
             s.StartMinimised = Store.Bool(a, "startMinimised", s.StartMinimised);
             s.ReduceMotion = Store.Bool(a, "reduceMotion", s.ReduceMotion);
+            s.UpdateCheckOff = !Store.Bool(a, "updateCheck", !s.UpdateCheckOff);
 
             var auto = Store.Int(a, "autoStopMinutes", s.AutoStopMinutes);
             if (auto < 0) auto = 0;
@@ -568,6 +588,8 @@ namespace Zycord
                     s.KeepOnTop = fresh.KeepOnTop;
                     s.StartMinimised = fresh.StartMinimised;
                     s.ReduceMotion = fresh.ReduceMotion;
+                    s.UpdateCheckOff = fresh.UpdateCheckOff;
+                    s.UpdateNotified = fresh.UpdateNotified;
                     s.AutoStopMinutes = fresh.AutoStopMinutes;
                     s.Theme = fresh.Theme;
                     break;

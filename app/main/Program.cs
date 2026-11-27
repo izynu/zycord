@@ -20,7 +20,11 @@ namespace Zycord
     internal static class AppInfo
     {
         public const string Name = "Zycord";
-        public const string Repo = "https://github.com/iZynu/zycord";
+
+        /// <summary>owner/name, the form the GitHub API addresses a repository by.</summary>
+        public const string RepoSlug = "iZynu/zycord";
+
+        public const string Repo = "https://github.com/" + RepoSlug;
 
         public static string Version
         {
@@ -31,8 +35,72 @@ namespace Zycord
                     var v = typeof(AppInfo).Assembly.GetName().Version;
                     return v.Major + "." + v.Minor + "." + v.Build;
                 }
-                catch { return "1.1.5"; }
+                catch { return "1.2.0"; }
             }
+        }
+
+        /// <summary>
+        /// The release address a version number downloads from. The update
+        /// check compares against this same pattern, so the link it offers
+        /// cannot point at a different release than the one it named.
+        /// </summary>
+        public static string DownloadUrl(string version)
+        {
+            return Repo + "/releases/download/v" + version + "/Zycord-" + version + ".zip";
+        }
+
+        /// <summary>
+        /// True when <paramref name="candidate"/> is a later release than the
+        /// running one.
+        /// </summary>
+        public static bool IsNewer(string candidate)
+        {
+            return Compare(Version, candidate) < 0;
+        }
+
+        /// <summary>True when <paramref name="a"/> is a later release than <paramref name="b"/>.</summary>
+        public static bool IsNewerThan(string a, string b)
+        {
+            return Compare(a, b) > 0;
+        }
+
+        /// <summary>
+        /// Compare two dotted version numbers, left to right, so "1.1.10"
+        /// ranks above "1.1.9" rather than sorting below it. A missing part
+        /// counts as zero and anything unparseable compares as equal, so a
+        /// malformed tag can never look like an upgrade.
+        /// </summary>
+        public static int Compare(string a, string b)
+        {
+            var left = Numbers(a);
+            var right = Numbers(b);
+            if (left == null || right == null) return 0;
+
+            var width = Math.Max(left.Length, right.Length);
+            for (var i = 0; i < width; i++)
+            {
+                var x = i < left.Length ? left[i] : 0;
+                var y = i < right.Length ? right[i] : 0;
+                if (x != y) return x < y ? -1 : 1;
+            }
+            return 0;
+        }
+
+        private static int[] Numbers(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            var parts = value.Split('.');
+            if (parts.Length < 2 || parts.Length > 4) return null;
+
+            var numbers = new int[parts.Length];
+            for (var i = 0; i < parts.Length; i++)
+            {
+                int n;
+                if (!int.TryParse(parts[i], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out n)) return null;
+                numbers[i] = n;
+            }
+            return numbers;
         }
     }
 

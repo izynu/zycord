@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.1.5"
+VERSION = "1.2.0"
 
 
 # Files outside this generator that name the site address, relative to the
@@ -477,7 +477,7 @@ INDEX = (
 """
     + cards(
         [
-            ("01", "Searches the catalog", "10,465 games with 11,171 executable entries, searchable by name, alias and theme. Filters narrow to single-executable, multi-executable, launcher or custom games, and any title you add yourself is searchable beside them."),
+            ("01", "Searches the catalog", GAMES + " games with " + EXECUTABLES + " executable entries, searchable by name, alias and theme. Filters narrow to single-executable, multi-executable, launcher or custom games, and any title you add yourself is searchable beside them."),
             ("02", "Prepares a session file", "Copies the " + STUB_SIZE + " stub into a per-game folder and gives it the filename Discord expects, including any subfolder the catalog records."),
             ("03", "Starts and tracks it", "Starts the process and records its process id. The Sessions tab shows a live timer, and an optional auto stop ends it for you."),
             ("04", "Keeps a local history", "Every session is recorded with its start, stop, duration and reason. Favourites and a saved library sit beside it in one settings file."),
@@ -544,7 +544,7 @@ INDEX = (
           <li>No sign-in, token or stored credential.</li>
           <li>No patch, injection or read of the Discord client.</li>
           <li>No network request from the launcher except Discord CDN icons.</li>
-          <li>No telemetry, analytics, crash reporting or update check.</li>
+          <li>No auto-updater that replaces files. The optional update check only reports that a release exists.</li>
           <li>No installer, background service or scheduled task.</li>
         </ul>
         <p style="margin-top:14px"><a href="safety.html">Read the safety page</a> for the full boundary.</p>
@@ -622,7 +622,7 @@ INDEX = (
               <h3>"""
     + VERSION
     + """ <span class="badge badge-live">Current</span></h3>
-              <p>WebView2 interface, process-id session tracking, a validated path pipeline, auto stop, history and favourites. The changelog lists what changed in this release.</p>
+              <p>WebView2 interface, process-id session tracking, a validated path pipeline, auto stop, history, favourites and an update prompt. The changelog lists what changed in this release.</p>
             </div>
             <span class="road-when">released</span>
           </div>
@@ -748,6 +748,20 @@ FEATURES = (
                 ("Themes", "Glass and light", "The default graphite glass finish, or a light theme. The choice is stored with your settings."),
                 ("Motion", "Reduce motion", "Turns off the background animation in the launcher."),
                 ("Single instance", "One window", "Launching Zycord again brings the existing window forward instead of opening a second copy."),
+            ]
+        ),
+    )
+    + section(
+        "Updates",
+        "A prompt when a newer release exists, and nothing installed behind your back.",
+        cards(
+            [
+                ("Startup check", "One request", "After the window opens, the launcher asks the public release page for the newest version number. The window never waits on it."),
+                ("Prompt", "Once per release", "When a newer version exists, a dialog names it and offers the download and the release notes. It does not reappear on every launch."),
+                ("Manual check", "About tab", "A Check for updates button reports the result inline, whether or not the startup check is on."),
+                ("Opt out", "Settings switch", "Check for updates in Settings. Off means no request is made at all; the manual button still works when you press it."),
+                ("Nothing installed", "A link, not an installer", "Zycord never downloads or replaces its own files. The download opens in your browser like any other link."),
+                ("What is sent", "No identifier", "The request carries the build version in its User-Agent and nothing about the machine, account or sessions."),
             ]
         ),
     )
@@ -973,7 +987,7 @@ SHOTS = (
     page_head(
         "Screenshots",
         "The launcher as it looks in version " + VERSION,
-        "Captures of the three sections you will use most: browsing the catalog, watching sessions, and changing settings. The window is shown at 1280 by 820.",
+        "Captures of the sections you will use most: browsing the catalog, watching sessions, changing settings, and the update prompt. The window is shown at 1280 by 820.",
     )
     + """
 <section class="section">
@@ -993,8 +1007,14 @@ SHOTS = (
 
       <figure class="shot">
         <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Zycord, Settings</span></div>
-        <img src="assets/shot-settings.png" alt="The Settings section: panels for sessions, window behaviour, storage size and data clearing, with switches, an auto stop stepper and a theme choice." width="1280" height="820" loading="lazy">
-        <figcaption>Settings. Session, window, storage and data controls in one place.</figcaption>
+        <img src="assets/shot-settings.png" alt="The Settings section: panels for sessions, window behaviour, storage size and data clearing, including the Check for updates switch." width="1280" height="820" loading="lazy">
+        <figcaption>Settings. Session, window, update and storage controls in one place.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>Zycord, Update available</span></div>
+        <img src="assets/shot-update.png" alt="The update prompt: a dialog naming the new version and the version in use, with a Download button and a Later button." width="1280" height="820" loading="lazy">
+        <figcaption>The update prompt. It names the new version, links to the archive and the release notes, and appears once per release.</figcaption>
       </figure>
     </div>
   </div>
@@ -1262,6 +1282,7 @@ DOCS = (
             ("Start minimised", "Open straight into the tray."),
             ("Keep on top", "Leave the window above other windows."),
             ("Reduce motion", "Turn off the background animation in the launcher."),
+            ("Check for updates", "On by default. One request at startup to the public release page, with a prompt when a newer version exists. Off means no request is made; the About tab keeps a manual check."),
             ("Theme", "Glass, the default graphite finish, or Light."),
             ("Storage", "Shows game file and log size, with buttons to open the data folder or clear game files."),
             ("Data", "Clear history and recents, clear the library and favourites, or reset settings. Each is separate."),
@@ -1279,8 +1300,9 @@ DOCS = (
 
     <h3>About and Help</h3>
     <p>
-      About shows the version, build facts and buttons for the data folder, the
-      website and the repository. Help is a short guide to starting a session and
+      About shows the version, build facts and buttons for the website, the
+      repository, the data folder, and a manual update check that reports its
+      result beside the buttons. Help is a short guide to starting a session and
       the answers to the questions that come up most.
     </p>
   </div>
@@ -1323,7 +1345,9 @@ python build.py --clean     remove dist/ first</pre>
           <code class="inline">Zycord.exe --headless</code> boots the real interface
           in a hidden window, waits for it to report ready, then exercises the
           backend directly. It checks path validation against hostile inputs, settings
-          round trips, and a full session start and stop.
+          round trips, a full session start and stop, and the update check's version
+          ranking and endpoint. The network request itself is never made, so the
+          test passes on a machine with no connection.
         </p>
         <p>
           The report is written to
@@ -1458,7 +1482,7 @@ FAQ = (
     )
     + qa(
         "Why is the catalog fixed instead of downloaded?",
-        "A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher never contacts Discord's API or gateway. The only remote request the interface makes is for game icons.",
+        "A launcher that fetches its data at startup has to trust whoever serves it. That is a dependency on a server staying online, and a way for the data to change under you. The catalog is generated at build time from Discord's public endpoint and shipped with the application, so the launcher never contacts Discord's API or gateway, and the catalog is not fetched when you open the launcher.",
         "The trade-off is real: games added to Discord's list after a release will not appear until the next release ships with an updated catalog.",
     )
     + qa(
@@ -1487,7 +1511,11 @@ FAQ = (
     )
     + qa(
         "Does it collect anything?",
-        "No. There is no analytics, no crash reporting and no update check. The only things written are a settings file, a local log and the prepared session files, all in %LOCALAPPDATA%\\Zycord.",
+        "No. There is no analytics, no crash reporting and no server. The only things written are a settings file, a local log and the prepared session files, all in %LOCALAPPDATA%\\\\Zycord. The single network request the launcher can make is the update check, described below.",
+    )
+    + qa(
+        "How will I know when a new version is out?",
+        "The launcher asks the public release page once at startup and shows a prompt when there is something newer. The prompt names the version, links to the archive and the release notes, and appears once per release rather than on every launch. Zycord never downloads or replaces its own files. Turn it off under Settings, Check for updates, and no request is made; the About tab keeps a check you can run yourself.",
     )
     + qa(
         "Why is it called Zycord?",
@@ -1544,7 +1572,7 @@ SAFETY = (
                 ("Discord client", "No patch or injection", "Discord's installation, memory and files are not touched. Zycord does not read the client at all."),
                 ("Credentials", "No token, no account", "There is no sign-in, no token capture and no stored credential of any kind."),
                 ("Detection", "No spoofing of Discord", "The launcher does not talk to Discord or pretend to be it. It creates a local process and lets Discord's own client detect it."),
-                ("Telemetry", "No collection", "No analytics, no crash reporting, no update check and no phone home. Nothing is measured."),
+                ("Telemetry", "No collection", "No analytics, no crash reporting and no phone home. Nothing is measured. The one network request is the optional update check, which sends nothing about the machine."),
                 ("Elevation", "No admin rights", "The launcher runs as your user and never asks to elevate. It installs no service and schedules no task."),
                 ("Persistence", "No autostart", "Nothing is added to startup. Zycord runs only when you start it."),
             ]
@@ -1668,7 +1696,23 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.1.5 <span class="badge badge-live">Current</span></h2>
+<h2>1.2.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 27 November 2026</p>
+
+<h3>Added</h3>
+<ul>
+  <li>An update prompt. After the window opens, Zycord asks the public release page for the newest published version, compares it with the build you are running, and shows a dialog offering the download when there is something newer. It appears once per release and links to the archive and the release notes; Zycord installs nothing itself.</li>
+  <li>A <b>Check for updates</b> switch in Settings. The stored value is the opt-out, so an existing settings file without the field arrives with the check on rather than silently off.</li>
+  <li>A manual <b>Check for updates</b> button on the About tab, which reports its result beside the buttons rather than in a dialog.</li>
+</ul>
+
+<h3>Changed</h3>
+<ul>
+  <li>The catalog is rebuilt from Discord's detectable list as at 27 November 2026: 10,468 games and 11,178 executable entries, up from 10,465 and 11,171. Arkheron, Cyphers and Invokers: Titan Legacy are new; MapleStory Classic World and Sable each gained executable entries.</li>
+  <li>The README and the privacy policy no longer say there is no update check. They name the one request it makes, what it does not carry, and how to turn it off.</li>
+</ul>
+
+<h2>1.1.5</h2>
 <p class="updated">Released 6 November 2026</p>
 
 <h3>Fixed</h3>
@@ -1820,7 +1864,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to 1.1.5.",
+    "Every notable change in Zycord, from the first public release to 1.2.0.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1837,6 +1881,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.2.0</h3>
+          <p>An update prompt, so an installed copy learns about a new release instead of waiting for a manual download. The catalog is refreshed to 10,468 games, and the README and privacy policy now describe the one request the check makes.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
@@ -1982,8 +2034,37 @@ PRIVACY = f"""
 
 <h3>What it collects</h3>
 <p>
-  Nothing. Zycord has no analytics, no crash reporting, no update check and no
-  server. It does not transmit data anywhere.
+  Nothing. Zycord has no analytics, no crash reporting and no server. It does
+  not transmit data about you or your sessions anywhere.
+</p>
+<p>
+  Two kinds of network request exist. Game icons are loaded from
+  <code class="inline">cdn.discordapp.com</code> by the interface, using only the
+  icon hash stored in the catalog. The update check, described below, asks the
+  public release page for this repository whether a newer version exists.
+  Nothing else leaves the machine.
+</p>
+
+<h3>The update check</h3>
+<p>
+  The update check sends one HTTPS GET to
+  <code class="inline">api.github.com</code> for the public release list of
+  <code class="inline">iZynu/zycord</code>, reads the newest version number, and
+  shows a prompt if it is newer than the build you are running. The request
+  carries no identifier, no account, no settings and no session data, and the
+  reply is discarded once the version number has been read. It runs at most
+  once per launch. GitHub sees the request as it would any web request, under
+  its own privacy statement; this project receives no log of it.
+</p>
+<p>
+  The only thing kept is the version you were last told about, so the same
+  release is not announced on every launch. That is one ordinary setting.
+  Turning off <b>Check for updates</b> in Settings means no request is made at
+  all. The About tab keeps a manual check, which you trigger yourself.
+</p>
+<p>
+  Zycord never downloads or replaces its own files. The prompt links to the
+  archive on the release page; what happens next is your browser.
 </p>
 
 <h3>What it stores on your computer</h3>
@@ -2010,11 +2091,22 @@ PRIVACY = f"""
 
 <h3>Network access</h3>
 <p>
-  The only network request the application makes is for game icons. The game
-  catalog is stored with the application rather than downloaded. Game icons shown in the interface are loaded
-  from <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer,
-  using only the icon hash stored in the catalog. That request fetches a public
-  image and sends no information about you or your sessions.
+  The application makes two kinds of network request, and nothing else. The game
+  catalog is stored with the application rather than downloaded.
+</p>
+<p>
+  <b>Game icons.</b> Icons shown in the interface are loaded from
+  <code class="inline">cdn.discordapp.com</code> by the WebView2 renderer, using
+  only the icon hash stored in the catalog. That request fetches a public image
+  and sends no information about you or your sessions.
+</p>
+<p>
+  <b>Update check.</b> When it is enabled, the launcher sends one HTTPS GET to
+  <code class="inline">api.github.com</code> for the public release list of this
+  repository, reads the newest version number and prompts when a newer release
+  exists. It carries no identifier, account, setting or session data. See
+  <a href="#the-update-check">The update check</a> above for what is kept and how
+  to turn it off.
 </p>
 
 <h3>Discord</h3>
@@ -2158,9 +2250,11 @@ TERMS = f"""
 
 <h2>9. Updates</h2>
 <p>
-  Zycord does not update itself and does not check for updates. New versions are
-  published on the project's releases page. Continuing to use an old version is
-  your choice.
+  Zycord does not update itself and does not replace its own files. New versions
+  are published on the project's releases page. When the update check is on, the
+  launcher reports that a newer release exists and links to it; installing it is
+  your decision. Continuing to use an old version is your choice, and the check
+  can be turned off in Settings.
 </p>
 
 <h2>10. Changes to these terms</h2>

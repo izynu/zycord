@@ -328,6 +328,11 @@ namespace Zycord
                 core.Navigate("https://zycord.local/index.html");
                 Log.Info("shell ready, interface at " + Ui.Root + " (development=" + Ui.IsDevelopment + ")");
 
+                // Ask for the release list once the interface exists to show
+                // the answer. The result arrives as an "update" event, so the
+                // window is never held open waiting for the network.
+                Updates.Start();
+
                 if (Settings.Current.StartMinimised)
                 {
                     HideToTray();

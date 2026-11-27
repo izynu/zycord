@@ -4,9 +4,9 @@
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-[Download 1.1.5](https://github.com/iZynu/zycord/releases/download/v1.1.5/Zycord-1.1.5.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
+[Download 1.2.0](https://github.com/iZynu/zycord/releases/download/v1.2.0/Zycord-1.2.0.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
 
-![Version 1.1.5](https://img.shields.io/badge/version-1.1.5-0b0f14?style=flat-square)
+![Version 1.2.0](https://img.shields.io/badge/version-1.2.0-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 0.95 MB](https://img.shields.io/badge/download-0.95%20MB-0b0f14?style=flat-square)
@@ -33,14 +33,15 @@ Zycord does the part Discord checks and nothing else. It starts a process with t
 
 | Area | What it does |
 | --- | --- |
-| Catalog | 10,465 games and 11,171 executable entries, generated from Discord's public detectable list and shipped with the application. Search by name, alias or theme, and add any game Discord does not list. A custom game appears as activity only when its file name is one Discord already lists, and the dialog says so before you add it. |
+| Catalog | 10,468 games and 11,178 executable entries, generated from Discord's public detectable list and shipped with the application. Search by name, alias or theme, and add any game Discord does not list. A custom game appears as activity only when its file name is one Discord already lists, and the dialog says so before you add it. |
 | Sessions | Starts one stub per game, tracked by process id, with a live timer and an optional auto stop. |
 | Library | Saves a game and the executable you chose, so the next session is one click. |
 | Favourites | Marks games for quick access. |
 | History | Records each session with its start, stop, duration and end reason. |
-| Settings | Session window, tray behaviour, confirmations, auto stop, theme and storage. |
+| Settings | Session window, tray behaviour, confirmations, auto stop, theme, update check and storage. |
 | Logs | One text file per day, with session ids, refused operations and errors. |
 | Storage | Shows how much the prepared game files use and clears them on demand. |
+| Updates | Optional. One request at startup to the public release page, and a prompt when a newer version exists. Nothing about the machine is sent, the check runs at most once per launch, and Settings can turn it off. |
 
 The interface has ten sections: Home, Games, Library, Favourites, Sessions, History, Settings, Logs, About and Help.
 
@@ -59,13 +60,13 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 ![The Zycord launcher](https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/screenshot.png)
 
-| Games | Sessions | Settings |
-| --- | --- | --- |
-| <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-games.png" alt="The Games tab" width="320"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-sessions.png" alt="The Sessions tab" width="320"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-settings.png" alt="The Settings tab" width="320"> |
+| Games | Sessions | Settings | Update prompt |
+| --- | --- | --- | --- |
+| <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-games.png" alt="The Games tab" width="300"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-sessions.png" alt="The Sessions tab" width="300"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-settings.png" alt="The Settings tab" width="300"> | <img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/shot-update.png" alt="The update prompt" width="300"> |
 
 ## Install
 
-1. Download `Zycord-1.1.5.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
+1. Download `Zycord-1.2.0.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
 2. Extract it to a folder you can write to, for example `C:\Users\you\Apps\Zycord`.
 3. Run `Zycord.exe`.
 4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
@@ -83,7 +84,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.1.5.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.2.0.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |
@@ -130,7 +131,11 @@ No. Discord must be running on the same computer to detect the process and credi
 
 ### Why is the catalog fixed instead of downloaded?
 
-A launcher that fetches its data at startup has to trust whoever serves it, and depends on a server staying online. The catalog is generated at build time and shipped with the application, so it never depends on a server. The only network request the interface makes is for game icons from Discord's CDN. The trade-off is that games added to Discord's list after a release will not appear until the next release ships with an updated catalog.
+A launcher that fetches its data at startup has to trust whoever serves it, and depends on a server staying online. The catalog is generated at build time and shipped with the application, so it never depends on a server, and it is not downloaded when you open the launcher. The trade-off is that games added to Discord's list after a release will not appear until the next release ships with an updated catalog.
+
+### How does it know when a new version is out?
+
+The launcher asks the public release page for this repository once at startup, compares the newest published version with the one it is running, and shows a prompt when there is something newer. The prompt appears once per release, not on every launch. Downloading is a normal link to the release archive, so nothing is installed behind your back. Turn the check off in Settings and no request is made at all; the About tab can still check on demand.
 
 ### Why does Windows SmartScreen warn me?
 
@@ -146,7 +151,9 @@ About 3.1 MB for the application, plus about 36 KB for each prepared game. The S
 
 ## Privacy
 
-Zycord collects nothing. There is no analytics, no crash reporting, no update check and no server. Settings, logs and prepared game files live in `%LOCALAPPDATA%\Zycord`. The application never asks for Discord credentials and never contacts Discord.
+Zycord collects nothing. There is no analytics, no crash reporting and no server. Settings, logs and prepared game files live in `%LOCALAPPDATA%\Zycord`. The application never asks for Discord credentials and never contacts Discord.
+
+The update check is the one exception to "no network", and it is visible: when it is on, the launcher makes a single HTTPS request to the public GitHub release page for this repository, reads the newest version number, and shows a prompt if it is newer than the build you are running. The request carries no identifier, no account and no session data, and turning it off in Settings stops it entirely. The catalog is not downloaded; it ships inside the application.
 
 The full policy is in [docs/PRIVACY.md](https://github.com/iZynu/zycord/blob/HEAD/docs/PRIVACY.md), and on the website at [izynu.github.io/zycord/privacy.html](https://izynu.github.io/zycord/privacy.html).
 

@@ -4,6 +4,31 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-27
+
+### Added
+
+- An update prompt. After the window opens, the launcher asks the public
+  release page for this repository for the newest published version, compares
+  it with the build that is running, and shows a dialog offering the download
+  when there is something newer. The dialog appears once per release, links to
+  the release archive rather than installing anything itself, and carries a
+  release notes link. A manual check sits on the About tab beside Website and
+  GitHub and reports its result inline.
+- A **Check for updates** switch in Settings. The setting stores the opt-out,
+  so an existing settings file without the field arrives with the check on
+  rather than silently off.
+
+### Changed
+
+- The catalog is rebuilt from Discord's detectable-applications list as at
+  today: 10,468 games and 11,178 executable entries, up from 10,465 and
+  11,171. Arkheron, Cyphers and Invokers: Titan Legacy are new; MapleStory
+  Classic World and Sable each gained executable entries.
+- The README and the privacy policy no longer say there is no update check.
+  They name the single request it makes, what it does not carry, and how to
+  turn it off.
+
 ## [1.1.5] - 2026-11-06
 
 ### Fixed
@@ -201,6 +226,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.2.0]: https://github.com/iZynu/zycord/releases/tag/v1.2.0
 [1.1.5]: https://github.com/iZynu/zycord/releases/tag/v1.1.5
 [1.1.4]: https://github.com/iZynu/zycord/releases/tag/v1.1.4
 [1.1.3]: https://github.com/iZynu/zycord/releases/tag/v1.1.3
