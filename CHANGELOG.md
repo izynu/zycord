@@ -22,9 +22,14 @@ All notable changes to Zycord are recorded here. The format follows
 ### Changed
 
 - The catalog is rebuilt from Discord's detectable-applications list as at
-  today: 10,468 games and 11,178 executable entries, up from 10,465 and
+  today: 10,468 games and 11,181 executable entries, up from 10,465 and
   11,171. Arkheron, Cyphers and Invokers: Titan Legacy are new; MapleStory
   Classic World and Sable each gained executable entries.
+- Entries Discord publishes with a leading `>`, such as `>hl2.exe` and
+  `>javaw.exe`, now contribute their real name instead of being dropped. Half-
+  Life 2, Team Fortress 2 and Minecraft therefore offer the executable Discord
+  actually watches, `hl2.exe` and `javaw.exe`, rather than only their
+  secondary entries.
 - The README and the privacy policy no longer say there is no update check.
   They name the single request it makes, what it does not carry, and how to
   turn it off.

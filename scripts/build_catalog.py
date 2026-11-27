@@ -53,6 +53,21 @@ def fetch(url):
         return json.loads(response.read().decode("utf-8"))
 
 
+def process_name(name):
+    """The file name Discord actually matches, from a published entry name.
+
+    Discord writes a handful of entries with a leading ">": ">hl2.exe" for
+    Half-Life 2 and Team Fortress 2, ">javaw.exe" for Minecraft. No Windows
+    file can start with ">", and the name Discord watches for those games is
+    the rest of the string, so the marker is removed rather than kept. Only
+    one is stripped, so the transform is exact and idempotent.
+    """
+    name = (name or "").strip()
+    if name.startswith(">"):
+        return name[1:].strip()
+    return name
+
+
 def safe_entry(name):
     """Reject anything that could escape the games folder once written."""
     name = (name or "").strip()
@@ -93,7 +108,7 @@ def build(raw):
         for entry in (app.get("executables") or []):
             if entry.get("os") != "win32":
                 continue
-            name = (entry.get("name") or "").strip()
+            name = process_name(entry.get("name"))
             if not safe_entry(name):
                 continue
             key = name.lower()
@@ -140,9 +155,13 @@ def main():
     blob = json.dumps(catalog, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    # mtime=0 keeps the archive byte-identical across runs, so builds are reproducible.
-    with gzip.GzipFile(args.out, "wb", compresslevel=9, mtime=0) as handle:
-        handle.write(blob)
+    # mtime=0 and an empty name keep the archive byte-identical across runs.
+    # gzip.GzipFile copies the output file's name into the header by default,
+    # so two runs writing the same content to different paths would produce
+    # different bytes and defeat the reproducibility the build relies on.
+    with open(args.out, "wb") as raw_out:
+        with gzip.GzipFile(filename="", mode="wb", compresslevel=9, mtime=0, fileobj=raw_out) as handle:
+            handle.write(blob)
 
     entries = sum(len(g["ex"]) for g in catalog["games"])
     launchers = sum(1 for g in catalog["games"] for e in g["ex"] if e["l"])
