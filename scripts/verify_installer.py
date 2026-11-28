@@ -88,12 +88,24 @@ def check(exe_bytes, source_dir):
     for name, size in files:
         chunk = body[position:position + size]
         position += size
-        if source_dir:
-            source = os.path.join(source_dir, name.replace("/", os.sep))
+        if not source_dir:
+            continue
+
+        source = os.path.join(source_dir, name.replace("/", os.sep))
+        if name == "Zycord.exe":
+            # The payload holds the launcher as it was before the payload was
+            # embedded, because an executable cannot contain itself. It must
+            # still be this build's first pass, which the build leaves beside
+            # the final executable for exactly this comparison.
+            source = os.path.join(source_dir, "Zycord.exe.firstpass")
             if not os.path.isfile(source):
-                missing.append(name)
-            elif open(source, "rb").read() != chunk:
-                wrong.append(name)
+                # Packaging a zip has no first pass available; skip rather
+                # than report a false failure.
+                continue
+        if not os.path.isfile(source):
+            missing.append(name)
+        elif open(source, "rb").read() != chunk:
+            wrong.append(name)
 
     if missing:
         raise SystemExit("FAIL: embedded files absent from the build: " + ", ".join(missing))

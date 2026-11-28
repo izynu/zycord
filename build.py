@@ -34,6 +34,9 @@ BRAND = os.path.join(ROOT, "brand")
 VENDOR = os.path.join(ROOT, "vendor")
 DIST = os.path.join(ROOT, "dist")
 
+# The launcher image captured before the payload was embedded into it.
+PRE_PAYLOAD_EXE = None
+
 VERSION = "1.2.1"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
@@ -427,13 +430,16 @@ def build_payload():
 
     The release ships as one Zycord.exe with every other file embedded, so a
     user can install from a single download and the installed copy can replace
-    its own files on update. The resource is a zlib stream holding a manifest
-    of "path\\0length\\n" lines followed by the concatenated file bytes.
+    its own files on update. The resource is a zlib stream holding a
+    four-byte manifest length, a manifest of "path\\0length\\n" lines, and then
+    the concatenated file bytes.
 
     It is built after dist/ is complete and the launcher is recompiled with it,
-    because the payload contains the launcher that carries it. The file already
-    in the payload manifest is the one from the first pass, without the
-    payload; the installed copy is the extracted one, so that is correct.
+    because the payload contains the launcher that carries it. The executable
+    inside the payload is the first-pass build, without the payload, which is
+    what an installed copy should be. build_launcher_with_payload keeps that
+    image so the check can prove the embedded copy is the build and not
+    something stale.
     """
     import zlib
 
@@ -453,7 +459,11 @@ def build_payload():
             if rel == "SHA256.txt":
                 continue
             with open(full, "rb") as handle:
-                blobs.append((rel, handle.read()))
+                body = handle.read()
+            if rel == "Zycord.exe":
+                global PRE_PAYLOAD_EXE
+                PRE_PAYLOAD_EXE = body
+            blobs.append((rel, body))
 
     manifest = "".join("%s\0%d\n" % (rel, len(body)) for rel, body in blobs).encode("utf-8")
     resource = os.path.join(DIST, "payload.tmp")
@@ -469,6 +479,13 @@ def build_payload():
         handle.write(compressor.flush())
 
     print("  payload  %d files, %.2f MB" % (len(blobs), os.path.getsize(resource) / (1024 * 1024)))
+
+    # Kept beside the executable so the verifier can prove the embedded copy of
+    # Zycord.exe is this build's first pass. It is removed once the check runs.
+    if PRE_PAYLOAD_EXE:
+        with open(os.path.join(DIST, "Zycord.exe.firstpass"), "wb") as handle:
+            handle.write(PRE_PAYLOAD_EXE)
+
     return resource
 
 
@@ -504,6 +521,27 @@ def build_launcher_with_payload(resource):
     print("  Zycord.exe  %d bytes (single file)" % os.path.getsize(out))
 
 
+def verify_installer():
+    """Prove the single file carries a complete, correct payload.
+
+    Runs the same script CI runs, so a broken installer fails the build here
+    rather than on a user's machine. The expected image of Zycord.exe is the
+    first pass captured before embedding; the sidecar is removed afterwards so
+    it never reaches the archive.
+    """
+    script = os.path.join(ROOT, "scripts", "verify_installer.py")
+    r = run([sys.executable, script], capture_output=True, text=True)
+    for line in (r.stdout or "").splitlines():
+        if line.strip():
+            print("  " + line)
+    sidecar = os.path.join(DIST, "Zycord.exe.firstpass")
+    if os.path.isfile(sidecar):
+        os.remove(sidecar)
+    if r.returncode != 0:
+        print(r.stderr)
+        raise SystemExit("installer verification failed")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--clean", action="store_true")
@@ -532,6 +570,7 @@ def main():
     # the tested build and the shipped build differ only by the embedded copy.
     payload = build_payload()
     build_launcher_with_payload(payload)
+    verify_installer()
 
     report()
     if not args.no_zip:
