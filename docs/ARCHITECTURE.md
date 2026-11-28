@@ -106,7 +106,7 @@ Schema version 2:
 ```json
 {
   "schema": 2,
-  "generated": "2026-11-27",
+  "generated": "2026-11-28",
   "source": "https://discord.com/api/applications/detectable",
   "count": 10468,
   "games": [
@@ -120,7 +120,8 @@ Schema version 2:
         { "n": "bin/x64/Cyberpunk2077.exe", "l": 0 }
       ]
     }
-  ]
+  ],
+  "unsupported": ["Firefox", "..."]
 }
 ```
 
@@ -138,8 +139,9 @@ Schema version 2:
 | `games[].ex` | Executable entries. |
 | `games[].ex[].n` | Executable path relative to the game folder, using forward slashes. |
 | `games[].ex[].l` | 1 when Discord marks the entry as a launcher, otherwise 0. |
+| `unsupported` | Display names of applications Discord lists with no executable. Plain strings, no ids or icons, because none of them can ever run. The interface searches this list only to explain an otherwise empty result. About 120 KB deflated for roughly fifteen thousand names. |
 
-The current catalog holds 10,468 games, 11,181 executable entries, 20 launcher entries and 10,455 icon hashes. It is exhaustive for the endpoint: every application with at least one `win32` executable is present. Of the 25,474 applications the endpoint returned on 28 November 2026, 15,006 declare no executable at all, so they have no file name for Discord to match and a session could never be credited for them. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything whose extension Windows would not start as a program: `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` and `.pae`. Script types are refused. Discord writes a few entries with a leading `>`, as in `>hl2.exe` for Half-Life 2 and Team Fortress 2, or `>javaw.exe` for Minecraft. No Windows file name can begin with `>`, and the name Discord watches for those games is the rest of the string, so the generator strips one leading marker and validates the remainder like any other entry. Without that step those games keep only their secondary entries, such as Half-Life 2's `hl2hl2.exe`, and the name Discord actually detects is never offered. The gzip stream is written with `mtime=0`, so the same input produces a byte-identical archive.
+The current catalog holds 10,468 games, 11,181 executable entries, 20 launcher entries and 10,455 icon hashes. It is exhaustive for the endpoint: every application with at least one `win32` executable is present. Of the 25,474 applications the endpoint returned on 28 November 2026, 15,006 declare no executable at all, so they have no file name for Discord to match and a session could never be credited for them; their names ship in a separate `unsupported` list of plain strings, so a search for one explains that rather than returning nothing. The generator keeps only `win32` entries, rejects names with characters Windows refuses in a filename, rejects absolute paths, `..` segments, entries deeper than 8 segments, and anything whose extension Windows would not start as a program: `.exe`, `.bin`, `.dat`, `.dll`, `.des`, `.jbg`, `.game` and `.pae`. Script types are refused. Discord writes a few entries with a leading `>`, as in `>hl2.exe` for Half-Life 2 and Team Fortress 2, or `>javaw.exe` for Minecraft. No Windows file name can begin with `>`, and the name Discord watches for those games is the rest of the string, so the generator strips one leading marker and validates the remainder like any other entry. Without that step those games keep only their secondary entries, such as Half-Life 2's `hl2hl2.exe`, and the name Discord actually detects is never offered. The gzip stream is written with `mtime=0` and an empty header name, so the same input produces a byte-identical archive wherever it is written.
 
 ## Path safety
 

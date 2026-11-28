@@ -100,8 +100,20 @@ def icon_hash(app):
     return value[:128]
 
 
+def sort_key(name):
+    """A total order for names.
+
+    Case-insensitive order alone is not total: "FIRE STATE" and "Fire State"
+    compare equal, and a set's iteration order differs per process, so the two
+    could swap between runs and break reproducibility. The raw name is the
+    tie-break.
+    """
+    return (name.lower(), name)
+
+
 def build(raw):
     games = []
+    unsupported = set()
     for app in raw:
         executables = []
         seen = set()
@@ -118,6 +130,14 @@ def build(raw):
             executables.append({"n": name, "l": 1 if entry.get("is_launcher") else 0})
 
         if not executables:
+            # Discord lists this application but publishes no executable for
+            # it, so no process can ever be matched and a session cannot be
+            # credited. The name is kept anyway: someone searching for it
+            # deserves to be told that, rather than seeing an empty result
+            # and assuming the catalog is out of date.
+            name = (app.get("name") or "").strip()
+            if name:
+                unsupported.add(name)
             continue
 
         games.append({
@@ -130,12 +150,16 @@ def build(raw):
         })
 
     games.sort(key=lambda g: g["name"].lower())
+    # Names only. These are never playable, so they carry no id, icon or
+    # executable, which keeps the extra weight to roughly 120 KB deflated
+    # for about fifteen thousand names.
     return {
         "schema": SCHEMA,
         "generated": datetime.date.today().isoformat(),
         "source": ENDPOINT,
         "count": len(games),
         "games": games,
+        "unsupported": sorted(unsupported, key=sort_key),
     }
 
 

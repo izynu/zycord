@@ -1048,6 +1048,53 @@
     renderGrid(grid, picks.slice(0, 8), null);
   }
 
+  // Names Discord lists without any executable. Such an application can never
+  // be matched, because there is no file name to run, so it is not a game
+  // card. Searching for one still deserves an answer rather than an empty
+  // grid, which reads as "the catalog is stale".
+  function unsupportedMatches(query) {
+    var q = (query || "").trim().toLowerCase();
+    if (!q || !state.catalog || !state.catalog.unsupported) return [];
+    var all = state.catalog.unsupported;
+
+    // An exact name wins outright. "Steam" also matches twenty-two games with
+    // Steam in the title, and without this the one name the user typed would
+    // be lost among them.
+    for (var e = 0; e < all.length; e++) {
+      if (String(all[e]).toLowerCase() === q) return [all[e]];
+    }
+
+    var hits = [];
+    for (var i = 0; i < all.length && hits.length < 5; i++) {
+      if (String(all[i]).toLowerCase().indexOf(q) !== -1) hits.push(all[i]);
+    }
+    return hits;
+  }
+
+  function paintUnsupported(results) {
+    var note = $("#unsupported-note");
+    var text = $("#unsupported-text");
+    if (!note || !text) return;
+
+    var names = unsupportedMatches(state.query);
+    // Partial matches are only worth raising when nothing playable matched;
+    // otherwise the note would just add noise under a grid of real results.
+    // An exact match is raised either way, because that is what was typed.
+    var exact = names.length === 1 && state.catalog &&
+      String(names[0]).toLowerCase() === state.query.trim().toLowerCase();
+    if (!names.length || (!exact && results.length)) {
+      note.hidden = true;
+      text.textContent = "";
+      return;
+    }
+
+    var label = names.join(", ") + (names.length === 5 ? ", and possibly more" : "");
+    text.textContent = names.length === 1
+      ? "“" + names[0] + "” appears in Discord's list but cannot be played this way."
+      : "These appear in Discord's list but cannot be played this way: " + label + ".";
+    note.hidden = false;
+  }
+
   function paintGames() {
     if (!state.catalog) return;
 
@@ -1063,6 +1110,7 @@
       : "";
 
     renderGrid($("#game-grid"), shown, $("#games-empty"));
+    paintUnsupported(results);
     $("#load-more").hidden = results.length <= shown.length;
   }
 

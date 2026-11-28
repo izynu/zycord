@@ -701,7 +701,7 @@ FEATURES = (
         cards(
             [
                 ("Catalog", GAMES + " games", "Generated from Discord's public detectable list at build time. " + EXECUTABLES + " executable entries, " + ICONS + " games with an icon."),
-                ("Search", "Name and alias", "Type any part of a game name or one of its registered aliases. Matching is a case-insensitive substring check, so partial words work."),
+                ("Search", "Name and alias", "Type any part of a game name or one of its registered aliases. Matching is a case-insensitive substring check, so partial words work. A name Discord lists without an executable is found too, and the page explains that it cannot be played rather than leaving the grid empty."),
                 ("Filters", "Theme and executable count", "Filter by any theme in the catalog, then to games with a single executable, multiple executables, or a marked launcher process."),
                 ("Sort", "Three orders", "Name A to Z, name Z to A, or most executables first. The catalog opens sorted by name."),
                 ("Icons", "Discord CDN, with fallback", "Icons load from Discord's icon CDN. If one fails, a lettered tile is shown instead, so the grid never breaks."),

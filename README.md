@@ -33,7 +33,7 @@ Zycord does the part Discord checks and nothing else. It starts a process with t
 
 | Area | What it does |
 | --- | --- |
-| Catalog | 10,468 games and 11,181 executable entries, generated from Discord's public detectable list and shipped with the application. Search by name, alias or theme, and add any game Discord does not list. A custom game appears as activity only when its file name is one Discord already lists, and the dialog says so before you add it. |
+| Catalog | 10,468 games and 11,181 executable entries, generated from Discord's public detectable list and shipped with the application. Search by name, alias or theme, and add any game Discord does not list. A custom game appears as activity only when its file name is one Discord already lists, and the dialog says so before you add it. The 15,006 applications Discord lists without any executable are searchable too: they are not offered as games, because no process could ever match, and searching one says so instead of returning nothing. |
 | Sessions | Starts one stub per game, tracked by process id, with a live timer and an optional auto stop. |
 | Library | Saves a game and the executable you chose, so the next session is one click. |
 | Favourites | Marks games for quick access. |

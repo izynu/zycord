@@ -34,6 +34,15 @@ All notable changes to Zycord are recorded here. The format follows
   They name the single request it makes, what it does not carry, and how to
   turn it off.
 
+- Search now answers for names Discord lists without an executable. About
+  fifteen thousand applications in the list declare no executable, so no
+  process can match and a quest cannot be credited; searching one used to
+  return an empty grid, which reads as a stale catalog. The catalog now
+  carries those names, about 120 KB deflated, and the Games page explains the
+  situation instead of offering a session that could never work. Browsers such
+  as Firefox and Brave are in this group, and Opera is not in Discord's list
+  at all.
+
 ## [1.1.5] - 2026-11-06
 
 ### Fixed
