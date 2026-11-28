@@ -1,0 +1,36 @@
+name: Verify installer build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # --no-test: the self test boots WebView2 in a hidden window, which a
+      # headless runner cannot do reliably. The point of this job is to prove
+      # the Windows build and the embedded payload, not to re-run the GUI test.
+      - name: Build and pack
+        run: python build.py --no-test
+
+      - name: Verify the single-file installer
+        run: python scripts/verify_installer.py
+
+      - name: Show checksum
+        run: type SHA256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zycord-verify
+          path: |
+            Zycord-*.zip
+            SHA256.txt

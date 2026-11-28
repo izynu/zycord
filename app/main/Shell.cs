@@ -166,6 +166,35 @@ namespace Zycord
             Close();
         }
 
+        /// <summary>
+        /// Shut down and start the second copy that replaces the files. The
+        /// running image cannot be overwritten, so this process has to be gone
+        /// before the new one copies anything.
+        /// </summary>
+        public void BeginApplyUpdate()
+        {
+            if (InvokeRequired) { BeginInvoke(new MethodInvoker(BeginApplyUpdate)); return; }
+            try
+            {
+                Log.Info("applying update, restarting to replace files");
+                Sessions.StopAll();
+                _reallyClosing = true;
+                if (_tray != null) { _tray.Visible = false; _tray.Dispose(); _tray = null; }
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+                    Application.ExecutablePath, "--apply-update " + System.Diagnostics.Process.GetCurrentProcess().Id)
+                {
+                    UseShellExecute = true,
+                    WorkingDirectory = Paths.ExeDir
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Error("apply update: could not start the helper: " + ex.Message);
+            }
+            Close();
+        }
+
         /// <summary>Asks the interface to switch page, for tray menu shortcuts.</summary>
         public void ShowPage(string page)
         {

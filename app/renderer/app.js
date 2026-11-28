@@ -1419,10 +1419,25 @@
     $("#about-check").addEventListener("click", checkUpdates);
 
     $("#update-download").addEventListener("click", function () {
-      var url = state.update && state.update.download;
-      if (url) call("shell.openExternal", { url: url });
+      var info = state.update || {};
+
+      // An installed copy replaces its own files, which is what the button is
+      // for. A portable copy cannot: the file is still in use by the process
+      // that would have to overwrite it, so it gets a link instead.
+      if (info.canApply) {
+        call("update.download", { version: info.version }).catch(function (e) {
+          showProgress("The download could not start: " + e.message);
+        });
+        showProgress("Starting the download…", 0);
+        $("#update-download").hidden = true;
+        return;
+      }
+
+      if (info.download) call("shell.openExternal", { url: info.download });
       closeUpdate();
     });
+
+    $("#uninstall").addEventListener("click", confirmUninstall);
 
     $$("[data-update-close]").forEach(function (node) {
       node.addEventListener("click", closeUpdate);
@@ -1472,8 +1487,41 @@
     $("#update-download").focus();
   }
 
+  function showProgress(message, percent) {
+    var box = $("#update-progress");
+    var bar = $("#update-bar");
+    var text = $("#update-progress-text");
+    if (!box || !bar || !text) return;
+    box.hidden = false;
+    text.textContent = message || "";
+    bar.style.width = Math.max(0, Math.min(100, percent || 0)) + "%";
+  }
+
+  function resetUpdateButtons() {
+    $("#update-download").hidden = false;
+    $("#update-progress").hidden = true;
+    $("#update-bar").style.width = "0%";
+  }
+
   function onUpdateEvent(data) {
     var info = data || {};
+
+    // Progress and staging report their own state; they are not a fresh
+    // "available" result and must not re-raise the prompt.
+    if (info.state === "download") {
+      state.update = info;
+      showProgress(info.message || "Downloading…", info.percent || 0);
+      updateStatus(info.message || "Downloading…");
+      updateInstallLabels();
+      return;
+    }
+
+    if (info.state === "staged") {
+      updateStatus("Version " + (state.update && state.update.version ? state.update.version : "") + " is ready to install.");
+      installNow();
+      return;
+    }
+
     state.update = info;
 
     if (info.state === "available" && info.version) {
@@ -1488,8 +1536,25 @@
     }
 
     if (info.state === "error") {
-      updateStatus("The update check could not complete: " + (info.error || "no reason given") + ".");
+      resetUpdateButtons();
+      updateStatus("The update could not complete: " + (info.error || "no reason given") + ".");
+      updateInstallLabels();
     }
+  }
+
+  /// The downloaded release is verified and unpacked; ask, then restart into it.
+  function installNow() {
+    var version = (state.update && state.update.version) || "the new version";
+    ask("Install Zycord " + version + "?",
+        "Zycord will close and reopen with the new version. Your library, favourites and settings are kept.",
+        "Install and restart")
+      .then(function (yes) {
+        if (!yes) { resetUpdateButtons(); updateInstallLabels(); return; }
+        call("update.apply").catch(function (e) {
+          toast(e.message, "error");
+          resetUpdateButtons();
+        });
+      });
   }
 
   function checkUpdates() {
@@ -1499,6 +1564,37 @@
     }).catch(function (e) {
       updateStatus("The update check could not start: " + e.message);
     });
+  }
+
+  // --------------------------------------------------------------- uninstall
+
+  function confirmUninstall() {
+    ask("Uninstall Zycord?",
+        "This deletes the program files, the Start Menu shortcut and everything in your Zycord data folder, including settings, logs and prepared game files. It cannot be undone.",
+        "Uninstall")
+      .then(function (yes) {
+        if (!yes) return;
+        call("app.uninstall").then(function () {
+          toast("Zycord is being removed", "ok");
+        }).catch(function (e) { toast(e.message, "error"); });
+      });
+  }
+
+  /// Settings shows what removing the app would actually delete.
+  function updateInstallLabels() {
+    var note = $("#uninstall-note");
+    var btn = $("#uninstall");
+    if (!note || !btn) return;
+
+    var boot = state.boot || {};
+    var installed = boot.runningInstalled;
+    btn.hidden = false;
+    if (!installed) {
+      note.textContent = "This copy is not installed. Run the Zycord executable and choose Install to add it to your PC.";
+      btn.hidden = true;
+      return;
+    }
+    note.textContent = "Remove Zycord, its shortcut and the data folder at " + (boot.dataDir || "%LOCALAPPDATA%\\Zycord") + ".";
   }
 
   // --------------------------------------------------------------- title bar
@@ -1693,6 +1789,7 @@
 
       applySettings(data.settings);
       paintNavCounts();
+      updateInstallLabels();
       paintHomeStats();
       paintHomeRunning();
       paintHistory();

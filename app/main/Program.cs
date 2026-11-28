@@ -135,6 +135,27 @@ namespace Zycord
                 return;
             }
 
+            // A second copy started by an update, or by the uninstaller's TEMP
+            // copy, does its work before the single-instance guard: both run
+            // while another Zycord is exiting and neither opens a window.
+            if (cli.ApplyUpdatePid > 0)
+            {
+                Environment.Exit(UpdateApply.Apply(cli.ApplyUpdatePid));
+                return;
+            }
+
+            if (cli.Uninstall)
+            {
+                Environment.Exit(UpdateApply.Uninstall(cli.UninstallSilent));
+                return;
+            }
+
+            if (cli.UninstallTarget != null)
+            {
+                Environment.Exit(UpdateApply.UninstallFinish(cli.UninstallTarget));
+                return;
+            }
+
             bool created;
             using (var guard = new Mutex(true, MutexName, out created))
             {
@@ -151,7 +172,11 @@ namespace Zycord
                 {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new Shell(cli));
+
+                    // A single file that has not been installed yet offers to
+                    // install. Declining runs it in place, which is why this
+                    // takes a continuation rather than exiting.
+                    Setup.OfferInstallIfNeeded(delegate { Application.Run(new Shell(cli)); });
                 }
                 finally
                 {
@@ -167,16 +192,37 @@ namespace Zycord
         public bool DevTools;
         public bool Version;
 
+        /// <summary>Process id to wait for, then apply a staged update.</summary>
+        public int ApplyUpdatePid;
+
+        public bool Uninstall;
+        public bool UninstallSilent;
+
+        /// <summary>Install folder to remove; set only for the TEMP copy.</summary>
+        public string UninstallTarget;
+
         public static CommandLine Parse(string[] argv)
         {
             var c = new CommandLine();
             if (argv == null) return c;
-            foreach (var a in argv)
+            for (var i = 0; i < argv.Length; i++)
             {
+                var a = argv[i];
                 if (string.Equals(a, "--headless", StringComparison.OrdinalIgnoreCase)) c.Headless = true;
                 else if (string.Equals(a, "--devtools", StringComparison.OrdinalIgnoreCase)) c.DevTools = true;
                 else if (string.Equals(a, "--version", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(a, "-v", StringComparison.OrdinalIgnoreCase)) c.Version = true;
+                else if (string.Equals(a, "--uninstall", StringComparison.OrdinalIgnoreCase)) c.Uninstall = true;
+                else if (string.Equals(a, "--silent", StringComparison.OrdinalIgnoreCase)) c.UninstallSilent = true;
+                else if (string.Equals(a, "--apply-update", StringComparison.OrdinalIgnoreCase))
+                {
+                    int pid;
+                    if (i + 1 < argv.Length && int.TryParse(argv[++i], out pid)) c.ApplyUpdatePid = pid;
+                }
+                else if (string.Equals(a, "--uninstall-finish", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (i + 1 < argv.Length) c.UninstallTarget = argv[++i];
+                }
             }
             return c;
         }
@@ -276,6 +322,22 @@ namespace Zycord
         public static string Logs { get { return Ensure("logs"); } }
         public static string WebView { get { return Ensure("webview"); } }
         public static string Games { get { return Ensure("games"); } }
+
+        /// <summary>
+        /// Where an installed copy lives. It sits inside the data folder so the
+        /// single file and the installed build share settings, logs and
+        /// prepared games instead of splitting them between two locations.
+        /// </summary>
+        public static string App
+        {
+            get
+            {
+                var p = Path.Combine(Data, "app");
+                Directory.CreateDirectory(p);
+                return p;
+            }
+        }
+
         public static string Settings { get { return Path.Combine(Data, "settings.json"); } }
 
         public static string ExeDir

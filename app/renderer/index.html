@@ -401,6 +401,10 @@
               <span><b>Settings</b><small>Return every preference to its default.</small></span>
               <button class="btn is-ghost is-small" data-reset="settings">Reset</button>
             </div>
+            <div class="row">
+              <span><b>Uninstall</b><small id="uninstall-note">Remove Zycord and everything it stored on this PC.</small></span>
+              <button class="btn is-ghost is-small is-danger" id="uninstall">Uninstall</button>
+            </div>
           </div>
         </div>
       </section>
@@ -583,6 +587,10 @@
     </div>
     <div class="modal-body">
       <p class="update-line" id="update-line"></p>
+      <div class="update-progress" id="update-progress" hidden>
+        <div class="progress-track"><span class="progress-bar" id="update-bar"></span></div>
+        <p class="update-status" id="update-progress-text"></p>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn is-ghost" data-update-close>Later</button>

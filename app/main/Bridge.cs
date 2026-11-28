@@ -162,6 +162,32 @@ namespace Zycord
                     Store.MarkUpdateNotified(seen);
                     Reply(id, true, null, null);
                     return;
+                case "update.download":
+                    var target = Store.String(a, "version", "");
+                    if (target.Length == 0 || target.Length > 20) { Reply(id, false, null, "No version was supplied."); return; }
+                    Updates.BeginDownload(target);
+                    Reply(id, true, new Dictionary<string, object> { { "started", true } }, null);
+                    return;
+                case "update.apply":
+                    if (!Updates.HasPending) { Reply(id, false, null, "No update is ready to install."); return; }
+                    if (!Updates.CanApply) { Reply(id, false, null, "This copy cannot update itself."); return; }
+                    if (_shell != null) _shell.BeginApplyUpdate();
+                    Reply(id, true, null, null);
+                    return;
+                case "app.uninstall":
+                    UpdateApply.Uninstall(false);
+                    Reply(id, true, null, null);
+                    return;
+                case "app.installInfo":
+                    Reply(id, true, new Dictionary<string, object>
+                    {
+                        { "installed", Setup.IsInstalled },
+                        { "runningInstalled", Setup.IsRunningInstalled },
+                        { "installDir", Setup.InstallDirectory },
+                        { "canInstall", Setup.SupportsInstall },
+                        { "pending", Updates.HasPending }
+                    }, null);
+                    return;
 
                 default:
                     Reply(id, false, null, "Unknown command.");
@@ -232,7 +258,11 @@ namespace Zycord
                 { "theme", s.Theme },
                 { "updateCheck", Store.UpdateCheckEnabled },
                 { "updateNotified", Store.UpdateNotified ?? "" },
-                { "updateEndpoint", Updates.Endpoint }
+                { "updateEndpoint", Updates.Endpoint },
+                { "installed", Setup.IsInstalled },
+                { "runningInstalled", Setup.IsRunningInstalled },
+                { "installDir", Setup.InstallDirectory },
+                { "canApplyUpdate", Updates.CanApply }
             };
         }
 

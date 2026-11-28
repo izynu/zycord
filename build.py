@@ -21,6 +21,7 @@ import hashlib
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import zipfile
@@ -49,6 +50,8 @@ SOURCES = [
     "Sessions.cs",
     "Ui.cs",
     "Updates.cs",
+    "UpdateApply.cs",
+    "Setup.cs",
     "Bridge.cs",
     "SelfTest.cs",
 ]
@@ -400,6 +403,88 @@ def report():
     print("dist/ ready, %.1f MB in %d files" % (total / (1024 * 1024), count))
 
 
+def build_payload():
+    """Fold the whole release folder into a single executable.
+
+    The release ships as one Zycord.exe with every other file embedded, so a
+    user can install from a single download and the installed copy can replace
+    its own files on update. The resource is a zlib stream holding a manifest
+    of "path\\0length\\n" lines followed by the concatenated file bytes.
+
+    It is built after dist/ is complete and the launcher is recompiled with it,
+    because the payload contains the launcher that carries it. The file already
+    in the payload manifest is the one from the first pass, without the
+    payload; the installed copy is the extracted one, so that is correct.
+    """
+    import zlib
+
+    blobs = []
+    for dirpath, _dirnames, filenames in os.walk(DIST):
+        for name in sorted(filenames):
+            full = os.path.join(dirpath, name)
+            rel = os.path.relpath(full, DIST).replace("\\", "/")
+            # Documents are left out: they are for the reader of the download,
+            # and a single-file install has no folder to put them in. The
+            # scratch payload file must never include itself, or the next
+            # build would embed the previous build's payload.
+            if rel in ("README.md", "LICENSE"):
+                continue
+            if rel.endswith(".tmp"):
+                continue
+            if rel == "SHA256.txt":
+                continue
+            with open(full, "rb") as handle:
+                blobs.append((rel, handle.read()))
+
+    manifest = "".join("%s\0%d\n" % (rel, len(body)) for rel, body in blobs).encode("utf-8")
+    resource = os.path.join(DIST, "payload.tmp")
+    with open(resource, "wb") as handle:
+        compressor = zlib.compressobj(9, zlib.DEFLATED, 15)
+        # A little-endian length in front of the manifest makes the split
+        # between manifest and file bytes unambiguous. Scanning for a marker
+        # instead would mean reading binary data as text to find it.
+        handle.write(compressor.compress(struct.pack("<I", len(manifest))))
+        handle.write(compressor.compress(manifest))
+        for _rel, body in blobs:
+            handle.write(compressor.compress(body))
+        handle.write(compressor.flush())
+
+    print("  payload  %d files, %.2f MB" % (len(blobs), os.path.getsize(resource) / (1024 * 1024)))
+    return resource
+
+
+def build_launcher_with_payload(resource):
+    """Recompile the launcher with the payload resource embedded.
+
+    csc.exe links a file into an assembly with -resource:<file>,<name>; the
+    name is what Assembly.GetManifestResourceStream looks for.
+    """
+    out = os.path.join(DIST, "Zycord.exe")
+    cmd = [
+        find_csc(), "-nologo", "-target:winexe", "-platform:x64", "-optimize+",
+        "-warn:4",
+        "-win32icon:" + os.path.join(BRAND, "zycord.ico"),
+        "-out:" + out,
+        "-resource:" + resource + ",Zycord.release.bin",
+    ]
+    cmd += ["-r:" + r for r in REFERENCES]
+    for rel, _name in VENDOR_FILES:
+        if rel.endswith(".dll") and "lib/" in rel:
+            cmd.append("-r:" + os.path.join(VENDOR, rel))
+    cmd += [os.path.join(MAIN, s) for s in SOURCES]
+
+    print("compiling launcher with payload")
+    r = run(cmd, capture_output=True, text=True)
+    for line in (r.stdout or "").splitlines():
+        if line.strip():
+            print("  " + line)
+    if r.returncode != 0 or not os.path.isfile(out):
+        print(r.stderr)
+        raise SystemExit("launcher build with payload failed")
+    os.remove(resource)
+    print("  Zycord.exe  %d bytes (single file)" % os.path.getsize(out))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--clean", action="store_true")
@@ -423,6 +508,11 @@ def main():
 
     if not args.no_test:
         self_test()
+
+    # The single-file installer is what users download. Built after the test so
+    # the tested build and the shipped build differ only by the embedded copy.
+    payload = build_payload()
+    build_launcher_with_payload(payload)
 
     report()
     if not args.no_zip:

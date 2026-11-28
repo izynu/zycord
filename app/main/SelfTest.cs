@@ -228,12 +228,38 @@ namespace Zycord
                 Pass("the update endpoint names this repository");
             else Fail("the update endpoint does not name " + AppInfo.RepoSlug);
 
+            // An install must never write outside its own folder, whatever a
+            // corrupted payload names.
+            var escapes = new[] { "../../evil.exe", "..\\..\\evil.exe", "/etc/passwd", "C:\\Windows\\x.exe" };
+            var refused = 0;
+            foreach (var bad in escapes)
+            {
+                try { SetupTestTarget(bad); }
+                catch (Exception) { refused++; }
+            }
+            if (refused == escapes.Length) Pass("payload paths cannot escape the install folder");
+            else Fail("payload path check allowed " + (escapes.Length - refused) + " escape");
+
+            if (Setup.InstallDirectory.EndsWith("app", StringComparison.OrdinalIgnoreCase))
+                Pass("the install folder sits inside the data folder");
+            else Fail("install folder is " + Setup.InstallDirectory);
+
             var before = Store.UpdateNotified;
             Store.MarkUpdateNotified("9.9.9");
             if (Store.UpdateNotified == "9.9.9") Pass("the announced version is remembered");
             else Fail("the announced version was not remembered, got " + (Store.UpdateNotified ?? "null"));
 
             Store.MarkUpdateNotified(before ?? "");
+        }
+
+        /// <summary>Drives the same containment rule Setup uses, for the test.</summary>
+        private static void SetupTestTarget(string relative)
+        {
+            var root = Path.GetFullPath(Setup.InstallDirectory) + Path.DirectorySeparatorChar;
+            var clean = relative.Replace('/', Path.DirectorySeparatorChar);
+            var target = Path.GetFullPath(Path.Combine(Setup.InstallDirectory, clean));
+            if (!target.StartsWith(root, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("escape");
         }
 
         private static void CheckPaths()
