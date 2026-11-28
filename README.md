@@ -9,7 +9,7 @@
 ![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
-![Download 1.13 MB](https://img.shields.io/badge/download-1.13%20MB-0b0f14?style=flat-square)
+![Download 1.14 MB](https://img.shields.io/badge/download-1.14%20MB-0b0f14?style=flat-square)
 
 </div>
 
