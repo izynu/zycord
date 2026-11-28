@@ -20,7 +20,7 @@ python build.py
 
 | Command | Effect |
 | --- | --- |
-| `python build.py` | Build, run the self test, pack `Zycord-1.2.0.zip` and `SHA256.txt`. |
+| `python build.py` | Build, run the self test, pack `Zycord-1.2.1.zip` and `SHA256.txt`. |
 | `python build.py --no-test` | Build and pack without the self test. |
 | `python build.py --no-zip` | Leave `dist/` unpacked. |
 | `python build.py --clean` | Remove `dist/` first. |

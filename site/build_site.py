@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.2.0"
+VERSION = "1.2.1"
 
 
 # Files outside this generator that name the site address, relative to the
@@ -1696,7 +1696,26 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.2.0 <span class="badge badge-live">Current</span></h2>
+<h2>1.2.1 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 28 November 2026</p>
+
+<h3>Added</h3>
+<ul>
+  <li>Search now answers for names Discord lists without an executable. About fifteen thousand applications declare none, so no process can match and a quest cannot be credited; searching one used to return an empty grid, which reads as a stale catalog. The Games page now explains the situation instead of offering a session that could never work. An exact name is raised even when fuzzy matches exist, so typing <b>Steam</b> still names Steam rather than only the games with Steam in their title.</li>
+  <li>Entries Discord publishes with a leading <code class="inline">&gt;</code>, such as <code class="inline">&gt;hl2.exe</code> and <code class="inline">&gt;javaw.exe</code>, now contribute their real name. Half-Life 2, Team Fortress 2 and Minecraft therefore offer <code class="inline">hl2.exe</code> and <code class="inline">javaw.exe</code>, the executables Discord actually watches.</li>
+</ul>
+
+<h3>Fixed</h3>
+<ul>
+  <li>The catalog generator claimed a reproducibility it did not have. The name list was sorted case-insensitively alone, which is not a total order, so names differing only in case could swap between runs. The raw name is the tie-break now, and the gzip header no longer carries the output file name.</li>
+</ul>
+
+<h3>About browsers</h3>
+<ul>
+  <li>Browsers are in the explained group rather than the catalog. Discord publishes no browser executable, and a browser quest is completed by watching or playing in a browser rather than by running a process. Opera is not in Discord's list at all.</li>
+</ul>
+
+<h2>1.2.0</h2>
 <p class="updated">Released 27 November 2026</p>
 
 <h3>Added</h3>
@@ -1865,7 +1884,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to 1.2.0.",
+    "Every notable change in Zycord, from the first public release to 1.2.1.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1882,6 +1901,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.2.1</h3>
+          <p>A search for a name Discord lists without an executable now explains why no session could work, instead of returning an empty grid. The catalog generator's reproducibility claim is now true.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>

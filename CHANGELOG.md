@@ -4,6 +4,40 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-11-28
+
+### Added
+
+- Search now answers for names Discord lists without an executable. About
+  fifteen thousand applications in the list declare no executable, so no
+  process can match and a quest cannot be credited; searching one used to
+  return an empty grid, which reads as a stale catalog. The catalog now
+  carries those names, about 120 KB deflated, and the Games page explains the
+  situation instead of offering a session that could never work. An exact name
+  is raised even when fuzzy matches exist, so typing "Steam" still names Steam
+  rather than only the games with Steam in their title.
+- Entries Discord publishes with a leading `>`, such as `>hl2.exe` and
+  `>javaw.exe`, now contribute their real name instead of being dropped. Half-
+  Life 2, Team Fortress 2 and Minecraft therefore offer `hl2.exe` and
+  `javaw.exe`, the executables Discord actually watches, rather than only a
+  secondary entry.
+
+### Fixed
+
+- The catalog generator claimed reproducibility it did not have. The name list
+  was sorted case-insensitively alone, which is not a total order: "FIRE
+  STATE" and "Fire State" compare equal, and a set's iteration order differs
+  per process, so the two swapped between runs. The raw name is now the
+  tie-break, and the gzip header no longer carries the output file name, so
+  the same input produces identical bytes wherever it is written.
+
+### Notable
+
+- Browsers are in this group rather than in the catalog. Discord publishes no
+  browser executable, and a browser quest is completed by watching or playing
+  in a browser rather than by running a process, so no session could ever
+  credit one. Opera is not in Discord's list at all.
+
 ## [1.2.0] - 2026-11-27
 
 ### Added
@@ -240,6 +274,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.2.1]: https://github.com/iZynu/zycord/releases/tag/v1.2.1
 [1.2.0]: https://github.com/iZynu/zycord/releases/tag/v1.2.0
 [1.1.5]: https://github.com/iZynu/zycord/releases/tag/v1.1.5
 [1.1.4]: https://github.com/iZynu/zycord/releases/tag/v1.1.4
