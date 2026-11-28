@@ -54,6 +54,7 @@ namespace Zycord
         {
             get
             {
+                if (ForceInstalledForTest) return true;
                 try
                 {
                     return string.Equals(
@@ -66,14 +67,21 @@ namespace Zycord
         }
 
         /// <summary>
-        /// Called once at startup. If this executable carries the payload and
-        /// is not already the installed copy, offer to install; a user who
-        /// declines runs the portable copy in place, which still works.
+        /// Lets the self test drive the installed-copy path from the single
+        /// file's build, where the two folders differ. Never set in normal use.
         /// </summary>
-        public static void OfferInstallIfNeeded(Action onDeclined)
+        internal static bool ForceInstalledForTest;
+
+        /// <summary>
+        /// Called once at startup. The installed copy opens its window; a copy
+        /// that carries the payload but is not installed offers to install.
+        /// Either way the caller's continuation is what shows the window, so
+        /// every path has to reach it.
+        /// </summary>
+        public static void OfferInstallIfNeeded(Action openWindow, Action releaseGuard)
         {
-            if (IsRunningInstalled) return;
-            if (!HasPayload()) { onDeclined(); return; }
+            if (IsRunningInstalled) { openWindow(); return; }
+            if (!HasPayload()) { openWindow(); return; }
 
             var answer = MessageBox.Show(
                 "Install Zycord on this PC?\n\n" +
@@ -83,7 +91,7 @@ namespace Zycord
                 "Install Zycord", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
             if (answer == DialogResult.Cancel) { Environment.Exit(0); return; }
-            if (answer != DialogResult.Yes) { onDeclined(); return; }
+            if (answer != DialogResult.Yes) { openWindow(); return; }
 
             string error;
             if (!Install(out error))
@@ -91,11 +99,25 @@ namespace Zycord
                 MessageBox.Show("Zycord could not install itself.\n\n" + error +
                                 "\n\nIt will run from this file instead.",
                     "Zycord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                onDeclined();
+                openWindow();
                 return;
             }
 
-            LaunchInstalled();
+            // The single-instance guard must be dropped before the installed
+            // copy starts. A named mutex object exists while any handle is open,
+            // so launching first would make the child see an existing instance
+            // and exit without a window.
+            if (releaseGuard != null) releaseGuard();
+
+            if (LaunchInstalled(out error))
+            {
+                Environment.Exit(0);
+                return;
+            }
+
+            MessageBox.Show("Zycord installed, but it could not be started.\n\n" + error +
+                            "\n\nOpen it from the Start Menu.",
+                "Zycord", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Environment.Exit(0);
         }
 
@@ -247,12 +269,7 @@ namespace Zycord
 
         public static void CreateShortcut()
         {
-            var link = new List<string>(UpdateApply.ShortcutPaths());
-            var startMenu = link[0];
             var exe = Path.Combine(InstallDirectory, "Zycord.exe");
-
-            var directory = Path.GetDirectoryName(startMenu);
-            if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
 
             // A .lnk is a shell object, created through WScript.Shell, which
             // every supported Windows carries. No COM interop assembly is
@@ -261,21 +278,36 @@ namespace Zycord
             try
             {
                 var type = Type.GetTypeFromProgID("WScript.Shell");
-                if (type == null) return;
+                if (type == null)
+                    throw new InvalidOperationException("WScript.Shell is unavailable, so no shortcut could be created.");
                 shell = Activator.CreateInstance(type);
-                dynamic shortcut = shell.CreateShortcut(startMenu);
-                shortcut.TargetPath = exe;
-                shortcut.WorkingDirectory = InstallDirectory;
-                shortcut.IconLocation = exe + ",0";
-                shortcut.Description = "Zycord";
-                shortcut.Save();
             }
-            catch (Exception ex) { Log.Warn("install: shortcut: " + ex.Message); }
-            finally
+            catch (Exception ex)
             {
-                try { if (shell != null) System.Runtime.InteropServices.Marshal.ReleaseComObject(shell); }
-                catch { }
+                // A shortcut the user expects but never gets is worth failing
+                // the install over; the caller reports it.
+                throw new InvalidOperationException("The Start Menu shortcut could not be created: " + ex.Message, ex);
             }
+
+            foreach (var path in UpdateApply.ShortcutPaths())
+            {
+                try
+                {
+                    var directory = Path.GetDirectoryName(path);
+                    if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+
+                    dynamic shortcut = shell.CreateShortcut(path);
+                    shortcut.TargetPath = exe;
+                    shortcut.WorkingDirectory = InstallDirectory;
+                    shortcut.IconLocation = exe + ",0";
+                    shortcut.Description = "Zycord";
+                    shortcut.Save();
+                }
+                catch (Exception ex) { Log.Warn("install: shortcut " + path + ": " + ex.Message); }
+            }
+
+            try { if (shell != null) System.Runtime.InteropServices.Marshal.ReleaseComObject(shell); }
+            catch { }
         }
 
         public static void WriteUninstallEntry()
@@ -313,17 +345,42 @@ namespace Zycord
             catch { return 0; }
         }
 
-        private static void LaunchInstalled()
+        private static bool LaunchInstalled(out string error)
         {
+            error = null;
+            var exe = Path.Combine(InstallDirectory, "Zycord.exe");
             try
             {
-                Process.Start(new ProcessStartInfo(Path.Combine(InstallDirectory, "Zycord.exe"))
+                var child = Process.Start(new ProcessStartInfo(exe)
                 {
                     UseShellExecute = true,
                     WorkingDirectory = InstallDirectory
                 });
+                // ShellExecute can return null when the shell reuses a process
+                // it already started; that is not a failure on its own.
+                if (child == null)
+                {
+                    Log.Info("install: launch handed to the shell: " + exe);
+                    return true;
+                }
+                // A process that dies within a moment of starting has failed to
+                // open its window. Reporting that is better than exiting as if
+                // the install worked.
+                if (child.WaitForExit(2500) && child.ExitCode != 0)
+                {
+                    error = "The installed copy exited immediately (code " + child.ExitCode + ").";
+                    Log.Error("install: child exited " + child.ExitCode);
+                    return false;
+                }
+                Log.Info("install: started " + exe + " pid=" + child.Id);
+                return true;
             }
-            catch (Exception ex) { Log.Error("install: launch failed: " + ex.Message); }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                Log.Error("install: launch failed: " + ex.Message);
+                return false;
+            }
         }
 
         /// <summary>True when this build was made for installation (it carries a payload).</summary>

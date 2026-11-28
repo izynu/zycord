@@ -244,6 +244,29 @@ namespace Zycord
                 Pass("the install folder sits inside the data folder");
             else Fail("install folder is " + Setup.InstallDirectory);
 
+            // The installed copy has to open its window. It once returned from
+            // OfferInstallIfNeeded without calling the continuation, which is
+            // the only place a Shell is ever constructed, so an installed
+            // Zycord started, drew nothing and exited 0. Reproduce the installed
+            // case and assert the continuation runs.
+            var opened = 0;
+            var released = 0;
+            var installedOriginal = Setup.ForceInstalledForTest;
+            Setup.ForceInstalledForTest = true;
+            try
+            {
+                Setup.OfferInstallIfNeeded(
+                    delegate { opened++; },
+                    delegate { released++; });
+            }
+            finally { Setup.ForceInstalledForTest = installedOriginal; }
+
+            if (opened == 1) Pass("the installed copy opens its window");
+            else Fail("the installed copy returned without opening a window");
+
+            if (released == 0) Pass("no guard is released when nothing is installed");
+            else Fail("the guard release ran for an already-installed copy");
+
             var before = Store.UpdateNotified;
             Store.MarkUpdateNotified("9.9.9");
             if (Store.UpdateNotified == "9.9.9") Pass("the announced version is remembered");

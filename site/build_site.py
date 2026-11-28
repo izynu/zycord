@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 
 
 # Files outside this generator that name the site address, relative to the

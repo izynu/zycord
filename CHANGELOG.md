@@ -4,6 +4,25 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-11-28
+
+### Fixed
+
+- The installed copy never opened. After choosing Install, the new copy
+  started, saw the installer still held the single-instance guard, decided
+  another Zycord was already running, and exited without drawing a window.
+  The guard is now released before the installed copy is started.
+- The installed copy also never opened when started from the Start Menu.
+  The check for "am I the installed copy" returned without reaching the call
+  that builds the window, so every installed launch exited silently. That
+  path now opens the window. The self test covers it.
+- A failed launch after install was logged and discarded. It is now reported,
+  and the installer checks that the copy it started is still running.
+- Install wrote only the Start Menu shortcut while uninstall removed a Desktop
+  shortcut too, and a missing WScript.Shell ended the shortcut step silently.
+  Both shortcuts are written, and a shortcut that cannot be created fails the
+  install instead of leaving it half done.
+
 ## [2.0.0] - 2026-11-28
 
 This release fixes the single-file installer, which has never worked. An
@@ -338,6 +357,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[2.0.1]: https://github.com/iZynu/zycord/releases/tag/v2.0.1
 [2.0.0]: https://github.com/iZynu/zycord/releases/tag/v2.0.0
 [1.2.2]: https://github.com/iZynu/zycord/releases/tag/v1.2.2
 [1.2.1]: https://github.com/iZynu/zycord/releases/tag/v1.2.1

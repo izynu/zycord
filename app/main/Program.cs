@@ -35,7 +35,7 @@ namespace Zycord
                     var v = typeof(AppInfo).Assembly.GetName().Version;
                     return v.Major + "." + v.Minor + "." + v.Build;
                 }
-                catch { return "2.0.0"; }
+                catch { return "2.0.1"; }
             }
         }
 
@@ -173,10 +173,17 @@ namespace Zycord
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
 
-                    // A single file that has not been installed yet offers to
-                    // install. Declining runs it in place, which is why this
-                    // takes a continuation rather than exiting.
-                    Setup.OfferInstallIfNeeded(delegate { Application.Run(new Shell(cli)); });
+                    // Opening the window happens through this continuation on
+                    // every path, including the installed copy. Installing also
+                    // needs the guard dropped first, so that the copy it starts
+                    // does not see this process as the running instance.
+                    Setup.OfferInstallIfNeeded(
+                        delegate { Application.Run(new Shell(cli)); },
+                        delegate
+                        {
+                            try { guard.ReleaseMutex(); } catch { }
+                            guard.Dispose();
+                        });
                 }
                 finally
                 {

@@ -41,7 +41,7 @@ PRE_PAYLOAD_EXE = None
 # start of the stream instead of scanning for something that merely decodes.
 PAYLOAD_MAGIC = b"ZYCRDPAYLOAD1\0\0\0"
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
