@@ -61,9 +61,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REF_NAME: ${{ github.ref_name }}
           VERSION: ${{ steps.version.outputs.version }}
-        run: >
-          gh release create "$REF_NAME"
-          "Zycord-$VERSION.zip" "Zycord-$VERSION.exe" SHA256.txt
-          --title "Zycord $REF_NAME"
-          --notes-file CHANGELOG.md
-          --verify-tag
+        # bash, not PowerShell: the default Windows shell reads $VERSION.zip as
+        # a property lookup on $VERSION and produces "Zycord-.zip".
+        shell: bash
+        run: |
+          gh release create "$REF_NAME" \
+            "Zycord-${VERSION}.zip" "Zycord-${VERSION}.exe" SHA256.txt \
+            --title "Zycord $REF_NAME" \
+            --notes-file CHANGELOG.md \
+            --verify-tag
