@@ -35,7 +35,7 @@ namespace Zycord
                     var v = typeof(AppInfo).Assembly.GetName().Version;
                     return v.Major + "." + v.Minor + "." + v.Build;
                 }
-                catch { return "1.2.2"; }
+                catch { return "2.0.0"; }
             }
         }
 

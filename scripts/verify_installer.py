@@ -26,23 +26,40 @@ import zlib
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIST_EXE = os.path.join(ROOT, "dist", "Zycord.exe")
 
-# A zlib stream in a PE file carries no length of its own, so the payload is
-# located by scanning for a deflate header and keeping the first candidate that
-# parses as a manifest and accounts for every byte.
-SCAN_TAIL = 8 * 1024 * 1024
+# The payload is prefixed with a fixed marker that states where the deflate
+# stream begins, so nothing is scanned for and a marker-less or zlib-wrapped
+# payload is rejected outright.
+MAGIC = b"ZYCRDPAYLOAD1\0\0\0"
 
 
 def candidate_streams(exe_bytes):
-    start = max(0, len(exe_bytes) - SCAN_TAIL)
-    for offset in range(start, len(exe_bytes) - 2):
-        if exe_bytes[offset] != 0x78:
-            continue
-        try:
-            raw = zlib.decompressobj().decompress(exe_bytes[offset:])
-        except zlib.error:
-            continue
-        if len(raw) > 4:
-            yield offset, raw
+    """Yield the payload stream, located by its marker.
+
+    Raw inflate (wbits=-15) is what System.IO.Compression's DeflateStream
+    performs, so the check uses it too.
+
+    Locating by marker matters: a zlib-wrapped stream also decodes if a scan
+    is allowed to skip its two-byte header, and that payload is exactly what
+    every copy of Windows rejects with "Block length does not match with its
+    complement". Anchoring to the marker makes the verifier read the same bytes
+    the application reads, no more forgiving and no more strict.
+    """
+    at = exe_bytes.find(MAGIC)
+    if at < 0:
+        raise SystemExit("FAIL: no payload marker in the executable")
+    offset = at + len(MAGIC)
+
+    inflater = zlib.decompressobj(-15)
+    try:
+        raw = inflater.decompress(exe_bytes[offset:]) + inflater.flush()
+    except zlib.error as error:
+        raise SystemExit(
+            "FAIL: the payload is not a raw deflate stream (%s). "
+            "A zlib header here fails on Windows with \"Block length does not "
+            "match with its complement\"." % error)
+    if not inflater.eof:
+        raise SystemExit("FAIL: the payload stream ends before its final block")
+    yield offset, raw
 
 
 def parse_payload(raw):

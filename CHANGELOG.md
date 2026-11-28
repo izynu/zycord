@@ -4,6 +4,48 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-11-28
+
+This release fixes the single-file installer, which has never worked. An
+earlier attempt numbered 1.2.3 was never published because it carried a second
+fault of its own; that work is folded in here and corrected.
+
+### Fixed
+
+- Installing from the single file failed on every machine with "Block length
+  does not match with its complement". The embedded payload was written as a
+  zlib stream, while .NET's `DeflateStream` reads raw deflate, so the reader
+  rejected the header before reaching a single file. It is written raw now.
+- The marker that pins down where the payload starts was written ahead of the
+  compressed data, but the reader looked for it after decompressing. Every
+  install would have failed with "invalid distance too far back" instead. The
+  reader now consumes the marker from the raw resource before opening the
+  stream, which is where the writer puts it.
+- The verifier reads the payload from that marker rather than scanning for
+  anything that happens to decode. A scan finds a zlib-wrapped stream two bytes
+  in and reports success, which is how the original fault reached a release.
+- The download page told people to checksum the archive while the button
+  downloaded the executable, and a second block on the same page still said to
+  open the zip and run the app from inside it. Both now describe the one file
+  the button gives you.
+
+### Added
+
+- The release publishes `Zycord-<version>.exe` beside the zip, so the download
+  is the executable itself. Every download link points at it; nothing has to be
+  unpacked first.
+- `SHA256.txt` lists the executable as well as the archive. The primary download
+  previously shipped with no published digest.
+
+### Changed
+
+- The release workflow derives file names from the tag and refuses to build
+  when the tag and the version in the build script disagree. The version was
+  typed into the workflow in four places, so any release other than the one it
+  was edited for uploaded nothing.
+- A negative length in the payload manifest is rejected instead of being written
+  as an empty file, so a damaged release fails cleanly.
+
 ## [1.2.2] - 2026-11-28
 
 ### Added
@@ -296,6 +338,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[2.0.0]: https://github.com/iZynu/zycord/releases/tag/v2.0.0
 [1.2.2]: https://github.com/iZynu/zycord/releases/tag/v1.2.2
 [1.2.1]: https://github.com/iZynu/zycord/releases/tag/v1.2.1
 [1.2.0]: https://github.com/iZynu/zycord/releases/tag/v1.2.0

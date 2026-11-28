@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.2.2"
+VERSION = "2.0.0"
 
 
 # Files outside this generator that name the site address, relative to the
@@ -439,7 +439,7 @@ INDEX = (
         stub has no game code, no network code and never contacts Discord.
       </p>
       <div class="hero-actions">
-        <a class="hero-download" href=\"""" + REPO + """/releases/download/v""" + VERSION + """/Zycord-""" + VERSION + """.zip">
+        <a class="hero-download" href=\"""" + REPO + """/releases/download/v""" + VERSION + """/Zycord-""" + VERSION + """.exe">
           <img src="assets/download-button.svg" alt="Download Zycord" width="260" height="56">
         </a>
         <a class="btn btn-secondary" href="download.html">All downloads and checksums</a>
@@ -1067,9 +1067,11 @@ DOWNLOAD = (
           <h2>Get the release</h2>
         </div>
         <p>
-          The archive holds one file. Everything Zycord needs — the launcher, the
-          session stub, the interface, the catalog and the WebView2 assemblies —
-          is inside that executable, so there is nothing else to install.
+          The download is the executable itself. Everything Zycord needs — the
+          launcher, the session stub, the interface, the catalog and the WebView2
+          assemblies — is inside that one file, so there is nothing to unpack and
+          nothing else to install. A zip is published beside it for anyone who
+          wants one.
         </p>
         <div class="hero-actions" style="margin:18px 0">
           <a class="hero-download" href=\""""
@@ -1078,7 +1080,7 @@ DOWNLOAD = (
     + VERSION
     + """/Zycord-"""
     + VERSION
-    + """.zip\">
+    + """.exe\">
             <img src="assets/download-button.svg" alt="Download Zycord" width="260" height="56">
           </a>
           <a class="btn btn-secondary" href=\""""
@@ -1086,11 +1088,11 @@ DOWNLOAD = (
     + """/releases\">All releases</a>
         </div>
         <p class="muted" style="font-size:12.5px">
-          The download is """
+          The executable is """
     + DOWNLOAD_SIZE
-    + """. Unpacked, it is """
+    + """ on its own, and """
     + RELEASE_SIZE
-    + """. Each prepared game adds """
+    + """ once installed. Each prepared game adds """
     + STUB_SIZE
     + """.
         </p>
@@ -1100,16 +1102,21 @@ DOWNLOAD = (
           <h2>Verify the download</h2>
         </div>
         <p>
-          Every release publishes the SHA-256 of the archive on its GitHub release
-          page. Compare it before you run anything. On Windows:
+          Every release publishes the SHA-256 of both downloads in
+          <code class="inline">SHA256.txt</code> on its GitHub release page.
+          Compare the one you downloaded before you run anything. On Windows:
         </p>
         <pre class="code">certutil -hashfile Zycord-"""
     + VERSION
-    + """.zip SHA256</pre>
-        <p style="margin-top:12px">On Linux or macOS, with the archive and the published hash side by side:</p>
+    + """.exe SHA256</pre>
+        <p style="margin-top:12px">On Linux or macOS, with the download and the published hash side by side:</p>
         <pre class="code">sha256sum Zycord-"""
     + VERSION
-    + """.zip</pre>
+    + """.exe</pre>
+        <p style="margin-top:12px">
+          <code class="inline">SHA256.txt</code> lists the executable and the archive,
+          one digest per line, so the same check works for either file.
+        </p>
       </div>
     </div>
   </div>
@@ -1118,11 +1125,13 @@ DOWNLOAD = (
 <section class="section">
   <div class="wrap">
     <div class="section-head">
-      <h2>What is in the archive</h2>
+      <h2>What is inside the executable</h2>
     </div>
-    <pre class="code">Zycord-"""
-    + VERSION
-    + """/
+    <p>
+      The download is a single file. These are the parts it carries and unpacks
+      into <code class="inline">%LOCALAPPDATA%\\Zycord\\app</code> when you choose Install:
+    </p>
+    <pre class="code">Zycord.exe                       the download, launcher and payload in one file
   Zycord.exe                     the launcher
   stub.exe                       the session process, """
     + STUB_SIZE
@@ -1140,6 +1149,10 @@ DOWNLOAD = (
   WebView2Loader.dll
   README.md
   LICENSE</pre>
+    <p style="margin-top:12px">
+      A zip is published beside it for anyone who wants the loose files, but it is
+      not the download the button gives you.
+    </p>
   </div>
 </section>
 
@@ -1151,7 +1164,7 @@ DOWNLOAD = (
           <h2>Installing</h2>
         </div>
         <ol>
-          <li>Open the downloaded <code class="inline">Zycord-""" + VERSION + """.zip</code> and run <code class="inline">Zycord.exe</code> from inside it.</li>
+          <li>Run the downloaded <code class="inline">Zycord-""" + VERSION + """.exe</code>. There is nothing to unpack.</li>
           <li>Choose <b>Install</b>. It copies itself to <code class="inline">%LOCALAPPDATA%\\Zycord\\app</code> and adds a Start Menu shortcut.</li>
           <li>If Windows shows a SmartScreen warning, choose More info and then Run anyway.</li>
         </ol>
@@ -1703,7 +1716,31 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.2.2 <span class="badge badge-live">Current</span></h2>
+<h2>2.0.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 28 November 2026</p>
+
+<p>The single-file installer has never worked. An earlier attempt numbered 1.2.3 was never published because it carried a second fault of its own; that work is folded in here and corrected.</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>Installing from the single file failed with "Block length does not match with its complement". The embedded payload was written as a zlib stream while .NET reads raw deflate, so the reader rejected it before reaching a file. It is written raw now.</li>
+  <li>The marker that pins down where the payload starts was written ahead of the compressed data, but the reader looked for it after decompressing, which would have failed with "invalid distance too far back". The reader now consumes the marker from the raw resource before opening the stream.</li>
+  <li>The installer check reads the payload from its marker instead of scanning for anything that decodes, which is how the original fault slipped through.</li>
+  <li>The download page told people to checksum the archive while the button downloaded the executable, and a second block on the same page still said to open the zip. Both now describe the one file the button gives you.</li>
+</ul>
+
+<h3>Added</h3>
+<ul>
+  <li>The release publishes <code class="inline">Zycord-&lt;version&gt;.exe</code> beside the zip, so the download is the executable itself. Nothing has to be unpacked.</li>
+  <li><code class="inline">SHA256.txt</code> lists the executable as well as the archive, so the primary download has a published digest.</li>
+</ul>
+
+<h3>Changed</h3>
+<ul>
+  <li>The release workflow takes file names from the tag and refuses to build when the tag and the build script disagree, instead of repeating the version in four places.</li>
+</ul>
+
+<h2>1.2.2</h2>
 <p class="updated">Released 28 November 2026</p>
 
 <h3>Added</h3>
@@ -1907,7 +1944,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to 1.2.2.",
+    "Every notable change in Zycord, from the first public release to 2.0.0.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1927,8 +1964,8 @@ ROADMAP = (
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
-          <h3>Version 1.2.2</h3>
-          <p>One executable that installs, updates and uninstalls itself from inside the app, and an animated download button.</p>
+          <h3>Version 2.0.0</h3>
+          <p>The single file installs correctly for the first time, and the download is the executable itself.</p>
         </div>
         <span class="road-when">Shipped</span>
       </div>

@@ -27,6 +27,13 @@ namespace Zycord
     {
         private const string PayloadName = "Zycord.release.bin";
 
+        /// <summary>
+        /// Stamped immediately before the deflate stream. It fixes where the
+        /// payload begins, which the verifier relies on; the reader skips it.
+        /// </summary>
+        private static readonly byte[] PayloadMagic =
+            Encoding.ASCII.GetBytes("ZYCRDPAYLOAD1\0\0\0");
+
         /// <summary>Where an installed copy lives.</summary>
         public static string InstallDirectory
         {
@@ -141,6 +148,18 @@ namespace Zycord
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(PayloadName))
             {
                 if (stream == null) throw new InvalidDataException("The release payload is missing.");
+                // The marker sits in front of the deflate stream, so it has to be
+                // read from the resource itself. Constructing the DeflateStream
+                // first and reading the marker through it tries to inflate the
+                // marker as compressed data, which fails with "invalid distance
+                // too far back" on every install.
+                var magic = ReadExactly(stream, PayloadMagic.Length);
+                for (var i = 0; i < magic.Length; i++)
+                {
+                    if (magic[i] != PayloadMagic[i])
+                        throw new InvalidDataException("The release payload is not in the expected format.");
+                }
+
                 using (var zlib = new DeflateStream(stream, CompressionMode.Decompress))
                 {
                     var lengthBytes = ReadExactly(zlib, 4);
@@ -162,7 +181,8 @@ namespace Zycord
 
                         var relative = manifest.Substring(index, pathEnd - index);
                         int length;
-                        if (!int.TryParse(manifest.Substring(pathEnd + 1, lengthEnd - pathEnd - 1), out length))
+                        if (!int.TryParse(manifest.Substring(pathEnd + 1, lengthEnd - pathEnd - 1), out length)
+                            || length < 0)
                             throw new InvalidDataException("The release payload is damaged.");
                         files.Add(new KeyValuePair<string, int>(relative, length));
                         index = lengthEnd + 1;

@@ -37,7 +37,11 @@ DIST = os.path.join(ROOT, "dist")
 # The launcher image captured before the payload was embedded into it.
 PRE_PAYLOAD_EXE = None
 
-VERSION = "1.2.2"
+# Stamped immediately before the payload so the verifier can find the exact
+# start of the stream instead of scanning for something that merely decodes.
+PAYLOAD_MAGIC = b"ZYCRDPAYLOAD1\0\0\0"
+
+VERSION = "2.0.0"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [
@@ -95,7 +99,7 @@ BADGE_SIZE = re.compile(r'badge/download-([0-9.]+)%20MB-')
 # The download link and the version badge in the README. A version bump
 # edits VERSION first, and these checks then fail on any README that still
 # names the previous release.
-RELEASE_LINK = re.compile(r'releases/download/v([0-9.]+)/Zycord-([0-9.]+)\.zip')
+RELEASE_LINK = re.compile(r'releases/download/v([0-9.]+)/Zycord-([0-9.]+)\.(?:zip|exe)')
 VERSION_BADGE = re.compile(r'badge/version-([0-9.]+)-')
 
 # Strings that must never appear in a release. The project was rebuilt from
@@ -118,7 +122,7 @@ def clean():
     if os.path.isdir(DIST):
         shutil.rmtree(DIST)
         print("removed dist/")
-    for name in (ARCHIVE, "SHA256.txt"):
+    for name in (ARCHIVE, "SHA256.txt", "Zycord-%s.exe" % VERSION):
         path = os.path.join(ROOT, name)
         if os.path.isfile(path):
             os.remove(path)
@@ -305,12 +309,13 @@ def check_version_refs():
     if not link:
         raise SystemExit(
             "version check failed: README.md has no download link. "
-            "Add one so the version can be checked against this build."
+            "Add a releases/download/v<version>/Zycord-<version>.zip or .exe "
+            "link so the version can be checked against this build."
         )
     tag_version, file_version = link.group(1), link.group(2)
     if tag_version != VERSION or file_version != VERSION:
         raise SystemExit(
-            "version check failed: README.md links to v%s/Zycord-%s.zip, "
+            "version check failed: README.md links to v%s/Zycord-%s, "
             "this build is %s." % (tag_version, file_version, VERSION)
         )
     badge = VERSION_BADGE.search(text)
@@ -323,29 +328,38 @@ def check_version_refs():
 
 
 def check_download_size():
-    # Fail the build if the README badge disagrees with the packed archive.
-    # The badge, the download page and the build output all state the size of
-    # the download. They disagreed once, and the badge is the one a reader
-    # sees first, so it is checked against the archive rather than trusted.
+    # Fail the build if the README badge disagrees with the file the download
+    # button serves. That file is the bare executable, not the archive, so the
+    # badge is checked against the exe. A --no-zip build packs nothing, and the
+    # check skips itself when neither file exists.
     path = os.path.join(DIST, "README.md")
+    installer = os.path.join(ROOT, "Zycord-%s.exe" % VERSION)
     archive = os.path.join(ROOT, ARCHIVE)
-    if not os.path.isfile(path) or not os.path.isfile(archive):
+    if not os.path.isfile(path):
         return
+    if not os.path.isfile(installer):
+        if os.path.isfile(archive):  # a zip-only build: fall back to the archive
+            installer = archive
+        else:
+            return
     with open(path, encoding="utf-8") as handle:
         match = BADGE_SIZE.search(handle.read())
     if not match:
         raise SystemExit(
             "download size check failed: README.md has no download badge. "
-            "Add one so the figure can be checked against the archive."
+            "Add one so the figure can be checked against the download."
         )
     stated = match.group(1)
-    actual = "%.2f" % (os.path.getsize(archive) / (1024 * 1024))
+    target = installer if os.path.isfile(installer) else archive
+    actual = "%.2f" % (os.path.getsize(target) / (1024 * 1024))
     if stated != actual:
         raise SystemExit(
-            "download size check failed: README.md says %s MB, the archive "
-            "is %s MB. Update the badge to match the file." % (stated, actual)
+            "download size check failed: README.md says %s MB, %s is %s MB. "
+            "Update the badge to match the file." % (
+                stated, os.path.basename(target), actual)
         )
-    print("  download size matches the archive: %s MB" % stated)
+    print("  download size matches %s: %s MB" % (
+        os.path.basename(target), stated))
 
 
 def self_test():
@@ -399,18 +413,35 @@ def pack():
             with open(full, "rb") as handle:
                 z.writestr(info, handle.read())
 
+    # The bare executable, for a direct download with no archive to open.
+    # It is the same file that sits inside the zip.
+    installer = os.path.join(ROOT, "Zycord-%s.exe" % VERSION)
+    shutil.copy2(os.path.join(DIST, "Zycord.exe"), installer)
+    print("installer %s  %.2f MB" % (os.path.basename(installer),
+                                     os.path.getsize(installer) / (1024 * 1024)))
+
     digest = hashlib.sha256()
     with open(archive, "rb") as handle:
         for chunk in iter(lambda: handle.read(1 << 20), b""):
             digest.update(chunk)
     sha = digest.hexdigest()
 
+    # The bare exe is the primary download, so it needs its own digest. A
+    # SHA256.txt listing only the zip leaves the button's file unverifiable.
+    exe_digest = hashlib.sha256()
+    with open(installer, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            exe_digest.update(chunk)
+    exe_sha = exe_digest.hexdigest()
+
     with open(os.path.join(ROOT, "SHA256.txt"), "w", encoding="utf-8", newline="\n") as handle:
         handle.write("%s  %s\n" % (sha, ARCHIVE))
+        handle.write("%s  %s\n" % (exe_sha, os.path.basename(installer)))
 
     print()
     print("release  %s  %.2f MB" % (ARCHIVE, os.path.getsize(archive) / (1024 * 1024)))
     print("sha256   %s" % sha)
+    print("exe sha  %s" % exe_sha)
     return sha
 
 
@@ -430,9 +461,9 @@ def build_payload():
 
     The release ships as one Zycord.exe with every other file embedded, so a
     user can install from a single download and the installed copy can replace
-    its own files on update. The resource is a zlib stream holding a
-    four-byte manifest length, a manifest of "path\\0length\\n" lines, and then
-    the concatenated file bytes.
+    its own files on update. The resource is the marker ZYCRDPAYLOAD1 followed
+    by a raw deflate stream holding a four-byte manifest length, a manifest of
+    "path\\0length\\n" lines, and then the concatenated file bytes.
 
     It is built after dist/ is complete and the launcher is recompiled with it,
     because the payload contains the launcher that carries it. The executable
@@ -468,10 +499,17 @@ def build_payload():
     manifest = "".join("%s\0%d\n" % (rel, len(body)) for rel, body in blobs).encode("utf-8")
     resource = os.path.join(DIST, "payload.tmp")
     with open(resource, "wb") as handle:
-        compressor = zlib.compressobj(9, zlib.DEFLATED, 15)
+        # Raw deflate (wbits=-15), not zlib-wrapped. System.IO.Compression's
+        # DeflateStream reads a raw stream; handing it a zlib header and
+        # Adler-32 trailer makes it fail with "Block length does not match
+        # with its complement" on every machine.
+        compressor = zlib.compressobj(9, zlib.DEFLATED, -15)
+        # The marker fixes exactly where the stream starts. Without it a
+        # verifier can only scan, and a zlib-wrapped stream would also decode
+        # two bytes in, so a broken payload would pass the check.
+        handle.write(PAYLOAD_MAGIC)
         # A little-endian length in front of the manifest makes the split
-        # between manifest and file bytes unambiguous. Scanning for a marker
-        # instead would mean reading binary data as text to find it.
+        # between manifest and file bytes unambiguous.
         handle.write(compressor.compress(struct.pack("<I", len(manifest))))
         handle.write(compressor.compress(manifest))
         for _rel, body in blobs:
@@ -542,6 +580,23 @@ def verify_installer():
         raise SystemExit("installer verification failed")
 
 
+def check_payload_layout():
+    """Reject a reader/writer disagreement before it reaches an installer.
+
+    The verifier runs in Python and mirrors build_payload, so the two can agree
+    while Setup.cs reads different bytes. This runs the layout test, which
+    asserts the marker's position and the manifest framing the reader expects.
+    """
+    script = os.path.join(ROOT, "scripts", "test_payload_layout.py")
+    r = run([sys.executable, script], capture_output=True, text=True)
+    for line in (r.stdout or "").splitlines():
+        if line.strip():
+            print("  " + line)
+    if r.returncode != 0:
+        print(r.stderr)
+        raise SystemExit("payload layout check failed")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--clean", action="store_true")
@@ -568,6 +623,7 @@ def main():
 
     # The single-file installer is what users download. Built after the test so
     # the tested build and the shipped build differ only by the embedded copy.
+    check_payload_layout()
     payload = build_payload()
     build_launcher_with_payload(payload)
     verify_installer()

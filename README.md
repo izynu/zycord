@@ -4,13 +4,13 @@
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-<a href="https://github.com/iZynu/zycord/releases/download/v1.2.2/Zycord-1.2.2.zip"><img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/download-button.svg" alt="Download Zycord" width="260" height="56"></a>
+<a href="https://github.com/iZynu/zycord/releases/download/v2.0.0/Zycord-2.0.0.exe"><img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/download-button.svg" alt="Download Zycord" width="260" height="56"></a>
 
 <sub>One executable, 1.14 MB. Runs on Windows 10 and 11, 64-bit.</sub>
 
 [Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Changelog](https://github.com/iZynu/zycord/blob/HEAD/CHANGELOG.md) | [Issues](https://github.com/iZynu/zycord/issues)
 
-![Version 1.2.2](https://img.shields.io/badge/version-1.2.2-0b0f14?style=flat-square)
+![Version 2.0.0](https://img.shields.io/badge/version-2.0.0-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 1.14 MB](https://img.shields.io/badge/download-1.14%20MB-0b0f14?style=flat-square)
@@ -72,9 +72,9 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 Windows 10 or 11, 64-bit. No administrator rights, no account, no runtime to install first.
 
-1. **Download.** Use the button above or the [releases page](https://github.com/iZynu/zycord/releases) and take `Zycord-1.2.2.zip`.
-2. **Open the zip.** It holds one file, `Zycord.exe` (1.14 MB). Everything Zycord needs — the interface, the game catalog and the WebView2 assemblies — is inside that one file.
-3. **Run `Zycord.exe`.** You can run it straight from the zip preview, or copy it to the Desktop first. Nothing is written outside your own user profile either way.
+1. **Download.** Use the button above, or take `Zycord-2.0.0.exe` from the [releases page](https://github.com/iZynu/zycord/releases). It is the executable itself — no archive to unpack.
+2. **A single file.** `Zycord-2.0.0.exe` is 1.14 MB and self-contained: the interface, the game catalog and the WebView2 assemblies are all inside it. Rename it to `Zycord.exe` if you prefer.
+3. **Run it.** Double-click the downloaded file. Windows may ask for confirmation before running a file from the internet; choose Run.
 4. **Choose Install** when Zycord asks. It copies itself to `%LOCALAPPDATA%\Zycord\app`, adds a **Start Menu shortcut** and an entry in **Add or remove programs**, then opens. Choosing **No** runs it once without installing, which is fine for a quick look but leaves you updating by hand.
 5. **SmartScreen.** Windows will warn that the publisher is unknown, because the executable is not signed with a code-signing certificate. Choose **More info**, then **Run anyway**.
 
@@ -106,7 +106,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.2.2.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-2.0.0.exe`, `Zycord-2.0.0.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |

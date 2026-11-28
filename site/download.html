@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download | Zycord</title>
-<meta name="description" content="Download Zycord 1.2.2 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
+<meta name="description" content="Download Zycord 2.0.0 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
 <link rel="canonical" href="https://izynu.github.io/zycord/download.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Download | Zycord">
-<meta property="og:description" content="Download Zycord 1.2.2 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
+<meta property="og:description" content="Download Zycord 2.0.0 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
 <meta property="og:url" content="https://izynu.github.io/zycord/download.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Download | Zycord">
-<meta name="twitter:description" content="Download Zycord 1.2.2 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
+<meta name="twitter:description" content="Download Zycord 2.0.0 for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -54,7 +54,7 @@
 <section class="page-head">
   <div class="wrap">
     <p class="eyebrow">Download</p>
-    <h1>Zycord 1.2.2 for Windows 10 and Windows 11, 64-bit</h1>
+    <h1>Zycord 2.0.0 for Windows 10 and Windows 11, 64-bit</h1>
     <p class="lead">One executable, no background service and no administrator rights. Run it, choose Install, and the launcher is ready; updates and uninstalling are buttons inside it.</p>
   </div>
 </section>
@@ -66,18 +66,20 @@
           <h2>Get the release</h2>
         </div>
         <p>
-          The archive holds one file. Everything Zycord needs — the launcher, the
-          session stub, the interface, the catalog and the WebView2 assemblies —
-          is inside that executable, so there is nothing else to install.
+          The download is the executable itself. Everything Zycord needs — the
+          launcher, the session stub, the interface, the catalog and the WebView2
+          assemblies — is inside that one file, so there is nothing to unpack and
+          nothing else to install. A zip is published beside it for anyone who
+          wants one.
         </p>
         <div class="hero-actions" style="margin:18px 0">
-          <a class="hero-download" href="https://github.com/iZynu/zycord/releases/download/v1.2.2/Zycord-1.2.2.zip">
+          <a class="hero-download" href="https://github.com/iZynu/zycord/releases/download/v2.0.0/Zycord-2.0.0.exe">
             <img src="assets/download-button.svg" alt="Download Zycord" width="260" height="56">
           </a>
           <a class="btn btn-secondary" href="https://github.com/iZynu/zycord/releases">All releases</a>
         </div>
         <p class="muted" style="font-size:12.5px">
-          The download is 1.14 MB. Unpacked, it is about 3.1 MB. Each prepared game adds about 36 KB.
+          The executable is 1.14 MB on its own, and about 3.1 MB once installed. Each prepared game adds about 36 KB.
         </p>
       </div>
       <div>
@@ -85,12 +87,17 @@
           <h2>Verify the download</h2>
         </div>
         <p>
-          Every release publishes the SHA-256 of the archive on its GitHub release
-          page. Compare it before you run anything. On Windows:
+          Every release publishes the SHA-256 of both downloads in
+          <code class="inline">SHA256.txt</code> on its GitHub release page.
+          Compare the one you downloaded before you run anything. On Windows:
         </p>
-        <pre class="code">certutil -hashfile Zycord-1.2.2.zip SHA256</pre>
-        <p style="margin-top:12px">On Linux or macOS, with the archive and the published hash side by side:</p>
-        <pre class="code">sha256sum Zycord-1.2.2.zip</pre>
+        <pre class="code">certutil -hashfile Zycord-2.0.0.exe SHA256</pre>
+        <p style="margin-top:12px">On Linux or macOS, with the download and the published hash side by side:</p>
+        <pre class="code">sha256sum Zycord-2.0.0.exe</pre>
+        <p style="margin-top:12px">
+          <code class="inline">SHA256.txt</code> lists the executable and the archive,
+          one digest per line, so the same check works for either file.
+        </p>
       </div>
     </div>
   </div>
@@ -99,9 +106,13 @@
 <section class="section">
   <div class="wrap">
     <div class="section-head">
-      <h2>What is in the archive</h2>
+      <h2>What is inside the executable</h2>
     </div>
-    <pre class="code">Zycord-1.2.2/
+    <p>
+      The download is a single file. These are the parts it carries and unpacks
+      into <code class="inline">%LOCALAPPDATA%\Zycord\app</code> when you choose Install:
+    </p>
+    <pre class="code">Zycord.exe                       the download, launcher and payload in one file
   Zycord.exe                     the launcher
   stub.exe                       the session process, about 36 KB
   ui/
@@ -115,6 +126,10 @@
   WebView2Loader.dll
   README.md
   LICENSE</pre>
+    <p style="margin-top:12px">
+      A zip is published beside it for anyone who wants the loose files, but it is
+      not the download the button gives you.
+    </p>
   </div>
 </section>
 
@@ -126,7 +141,7 @@
           <h2>Installing</h2>
         </div>
         <ol>
-          <li>Open the downloaded <code class="inline">Zycord-1.2.2.zip</code> and run <code class="inline">Zycord.exe</code> from inside it.</li>
+          <li>Run the downloaded <code class="inline">Zycord-2.0.0.exe</code>. There is nothing to unpack.</li>
           <li>Choose <b>Install</b>. It copies itself to <code class="inline">%LOCALAPPDATA%\Zycord\app</code> and adds a Start Menu shortcut.</li>
           <li>If Windows shows a SmartScreen warning, choose More info and then Run anyway.</li>
         </ol>

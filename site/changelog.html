@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Changelog | Zycord</title>
-<meta name="description" content="Every notable change in Zycord, from the first public release to 1.2.2.">
+<meta name="description" content="Every notable change in Zycord, from the first public release to 2.0.0.">
 <link rel="canonical" href="https://izynu.github.io/zycord/changelog.html">
 <meta name="theme-color" content="#0c0c0e">
 <meta name="color-scheme" content="dark">
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Zycord">
 <meta property="og:title" content="Changelog | Zycord">
-<meta property="og:description" content="Every notable change in Zycord, from the first public release to 1.2.2.">
+<meta property="og:description" content="Every notable change in Zycord, from the first public release to 2.0.0.">
 <meta property="og:url" content="https://izynu.github.io/zycord/changelog.html">
 <meta property="og:image" content="https://izynu.github.io/zycord/assets/mark-512.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Changelog | Zycord">
-<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to 1.2.2.">
+<meta name="twitter:description" content="Every notable change in Zycord, from the first public release to 2.0.0.">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -53,9 +53,33 @@
 <div class="wrap">
   <article class="doc">
     <h1>Changelog</h1>
-    <p class="updated">Version 1.2.2</p>
+    <p class="updated">Version 2.0.0</p>
 
-<h2>1.2.2 <span class="badge badge-live">Current</span></h2>
+<h2>2.0.0 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 28 November 2026</p>
+
+<p>The single-file installer has never worked. An earlier attempt numbered 1.2.3 was never published because it carried a second fault of its own; that work is folded in here and corrected.</p>
+
+<h3>Fixed</h3>
+<ul>
+  <li>Installing from the single file failed with "Block length does not match with its complement". The embedded payload was written as a zlib stream while .NET reads raw deflate, so the reader rejected it before reaching a file. It is written raw now.</li>
+  <li>The marker that pins down where the payload starts was written ahead of the compressed data, but the reader looked for it after decompressing, which would have failed with "invalid distance too far back". The reader now consumes the marker from the raw resource before opening the stream.</li>
+  <li>The installer check reads the payload from its marker instead of scanning for anything that decodes, which is how the original fault slipped through.</li>
+  <li>The download page told people to checksum the archive while the button downloaded the executable, and a second block on the same page still said to open the zip. Both now describe the one file the button gives you.</li>
+</ul>
+
+<h3>Added</h3>
+<ul>
+  <li>The release publishes <code class="inline">Zycord-&lt;version&gt;.exe</code> beside the zip, so the download is the executable itself. Nothing has to be unpacked.</li>
+  <li><code class="inline">SHA256.txt</code> lists the executable as well as the archive, so the primary download has a published digest.</li>
+</ul>
+
+<h3>Changed</h3>
+<ul>
+  <li>The release workflow takes file names from the tag and refuses to build when the tag and the build script disagree, instead of repeating the version in four places.</li>
+</ul>
+
+<h2>1.2.2</h2>
 <p class="updated">Released 28 November 2026</p>
 
 <h3>Added</h3>

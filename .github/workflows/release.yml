@@ -19,6 +19,28 @@ jobs:
         with:
           python-version: "3.12"
 
+      # The tag is the release name; build.py is the version stamped into the
+      # files. If they disagree the release publishes assets nobody can find,
+      # so this fails before anything is built. The tag reaches the shell only
+      # through an environment variable, never interpolated into the script.
+      - name: Resolve version from tag
+        id: version
+        shell: bash
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          ref="$REF_NAME"
+          declared=$(python -c "import re;print(re.search(r'VERSION = \"([^\"]+)\"', open('build.py').read()).group(1))")
+          case "$ref" in
+            v*) ver="${ref#v}" ;;
+            *)  ver="$declared" ;;
+          esac
+          if [ "$ver" != "$declared" ]; then
+            echo "Tag says $ver but build.py says $declared. Bump build.py before tagging." >&2
+            exit 1
+          fi
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+
       - name: Build, self test and pack
         run: python build.py
 
@@ -27,18 +49,21 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Zycord-1.2.2
+          name: Zycord-${{ steps.version.outputs.version }}
           path: |
-            Zycord-1.2.2.zip
+            Zycord-${{ steps.version.outputs.version }}.zip
+            Zycord-${{ steps.version.outputs.version }}.exe
             SHA256.txt
 
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
+          REF_NAME: ${{ github.ref_name }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: >
-          gh release create "${{ github.ref_name }}"
-          Zycord-1.2.2.zip SHA256.txt
-          --title "Zycord ${{ github.ref_name }}"
+          gh release create "$REF_NAME"
+          "Zycord-$VERSION.zip" "Zycord-$VERSION.exe" SHA256.txt
+          --title "Zycord $REF_NAME"
           --notes-file CHANGELOG.md
           --verify-tag

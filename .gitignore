@@ -2,6 +2,7 @@
 dist/
 dist-zip/
 Zycord-*.zip
+Zycord-*.exe
 SHA256.txt
 bin/
 obj/
