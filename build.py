@@ -61,6 +61,11 @@ REFERENCES = [
     "System.Drawing.dll",
     "System.Windows.Forms.dll",
     "System.Web.Extensions.dll",
+    # ZipFile lives here, not in System.dll. Without it the launcher fails to
+    # compile on Windows and nowhere else, which is why the Windows build job
+    # exists.
+    "System.IO.Compression.FileSystem.dll",
+    "System.IO.Compression.dll",
 ]
 
 VENDOR_FILES = [
