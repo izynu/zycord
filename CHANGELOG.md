@@ -4,6 +4,28 @@ All notable changes to Zycord are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-11-28
+
+### Added
+
+- Zycord.exe is a single self-contained installer. The build embeds the whole
+  release folder, so the download is one executable that installs itself,
+  writes a Start Menu shortcut and an Add or remove programs entry, and starts
+  the installed copy. Running it without installing still works.
+- **Update** is a button inside the app. On an installed copy it downloads the
+  release, checks it against the published SHA-256, and restarts into it.
+- **Uninstall** is a button inside the app, in Settings. It removes the program
+  files, the shortcut, the registry entry and the data folder. The installer
+  file is not needed, so deleting it after installing changes nothing.
+- An animated Download button in the README and on the website.
+
+### Changed
+
+- The archive is one executable plus README and LICENSE. The previous layout
+  carried a second copy of every file the executable already embeds.
+- README and website now carry step-by-step instructions for installing,
+  updating and uninstalling.
+
 ## [1.2.1] - 2026-11-28
 
 ### Added
@@ -274,6 +296,7 @@ First public release.
 - A build time check fails the build if any identifier from an earlier project
   appears in the source.
 
+[1.2.2]: https://github.com/iZynu/zycord/releases/tag/v1.2.2
 [1.2.1]: https://github.com/iZynu/zycord/releases/tag/v1.2.1
 [1.2.0]: https://github.com/iZynu/zycord/releases/tag/v1.2.0
 [1.1.5]: https://github.com/iZynu/zycord/releases/tag/v1.1.5

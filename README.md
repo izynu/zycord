@@ -4,16 +4,20 @@
 
 **A Windows launcher that lets Discord credit desktop-play quests without launching the game.**
 
-[Download 1.2.1](https://github.com/iZynu/zycord/releases/download/v1.2.1/Zycord-1.2.1.zip) | [Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Issues](https://github.com/iZynu/zycord/issues)
+<a href="https://github.com/iZynu/zycord/releases/download/v1.2.2/Zycord-1.2.2.zip"><img src="https://raw.githubusercontent.com/iZynu/zycord/HEAD/docs/download-button.svg" alt="Download Zycord" width="260" height="56"></a>
 
-![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-0b0f14?style=flat-square)
+<sub>One executable, 1.14 MB. Runs on Windows 10 and 11, 64-bit.</sub>
+
+[Website](https://izynu.github.io/zycord/) | [Architecture](https://github.com/iZynu/zycord/blob/HEAD/docs/ARCHITECTURE.md) | [Changelog](https://github.com/iZynu/zycord/blob/HEAD/CHANGELOG.md) | [Issues](https://github.com/iZynu/zycord/issues)
+
+![Version 1.2.2](https://img.shields.io/badge/version-1.2.2-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
 ![Download 1.14 MB](https://img.shields.io/badge/download-1.14%20MB-0b0f14?style=flat-square)
 
 </div>
 
-If the animated banner does not load, open [docs/banner.svg](https://github.com/iZynu/zycord/blob/HEAD/docs/banner.svg).
+If the animated banner or the download button does not load, use the plain links: [docs/banner.svg](https://github.com/iZynu/zycord/blob/HEAD/docs/banner.svg) and the [releases page](https://github.com/iZynu/zycord/releases).
 
 ## What it is
 
@@ -66,13 +70,31 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 ## Install
 
-1. Download `Zycord-1.2.1.zip` from the [releases page](https://github.com/iZynu/zycord/releases) and open it. The archive holds one executable.
-2. Run `Zycord.exe` from inside the archive, or copy it anywhere first. It is a single self-contained file: the interface, the catalog and the WebView2 assemblies are inside it.
-3. Zycord offers to install. Choosing **Yes** copies it to `%LOCALAPPDATA%\Zycord\app`, adds a Start Menu shortcut and an entry in Add or remove programs. Choosing **No** runs it once without installing.
-4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
-5. If the WebView2 Runtime is missing, install the Evergreen Runtime from Microsoft and run Zycord again. It ships with Windows 11 and with current Windows 10 updates.
+Windows 10 or 11, 64-bit. No administrator rights, no account, no runtime to install first.
 
-No administrator rights are needed. Once installed you never need the downloaded file again: updates are a button in the app, and so is uninstalling. **Uninstall** on the Settings tab removes the program files, the shortcut, the Add or remove programs entry and the data folder in `%LOCALAPPDATA%\Zycord`.
+1. **Download.** Use the button above or the [releases page](https://github.com/iZynu/zycord/releases) and take `Zycord-1.2.2.zip`.
+2. **Open the zip.** It holds one file, `Zycord.exe` (1.14 MB). Everything Zycord needs — the interface, the game catalog and the WebView2 assemblies — is inside that one file.
+3. **Run `Zycord.exe`.** You can run it straight from the zip preview, or copy it to the Desktop first. Nothing is written outside your own user profile either way.
+4. **Choose Install** when Zycord asks. It copies itself to `%LOCALAPPDATA%\Zycord\app`, adds a **Start Menu shortcut** and an entry in **Add or remove programs**, then opens. Choosing **No** runs it once without installing, which is fine for a quick look but leaves you updating by hand.
+5. **SmartScreen.** Windows will warn that the publisher is unknown, because the executable is not signed with a code-signing certificate. Choose **More info**, then **Run anyway**.
+
+After that you launch Zycord from the Start Menu. **You never need the downloaded file again.**
+
+### Updating
+
+When a new release is published, Zycord shows an **Update available** prompt on its next launch. Press **Download** and it:
+
+- downloads the release archive,
+- checks it against the SHA-256 checksum the release publishes, and refuses it if they differ,
+- asks before installing, then restarts into the new version.
+
+Your library, favourites, settings and history are kept. You can also check on demand: **About → Check for updates**.
+
+### Uninstalling
+
+**Settings → Uninstall**, then confirm. It removes the program files, the Start Menu shortcut, the Add or remove programs entry and the data folder at `%LOCALAPPDATA%\Zycord` — settings, logs and prepared game files included. Stop any running sessions first.
+
+If you ran Zycord without installing, there is nothing to uninstall: delete the `Zycord.exe` file and, if you want the data gone too, delete `%LOCALAPPDATA%\Zycord`.
 
 ## Build from source
 
@@ -84,7 +106,7 @@ cd zycord
 python build.py
 ```
 
-The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.2.1.zip` plus `SHA256.txt`.
+The script compiles the stub and the launcher, copies the interface and the WebView2 assemblies into `dist/`, runs the self test, and produces `Zycord-1.2.2.zip` plus `SHA256.txt`.
 
 | Command | What it does |
 | --- | --- |

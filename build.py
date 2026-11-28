@@ -37,7 +37,7 @@ DIST = os.path.join(ROOT, "dist")
 # The launcher image captured before the payload was embedded into it.
 PRE_PAYLOAD_EXE = None
 
-VERSION = "1.2.1"
+VERSION = "1.2.2"
 ARCHIVE = "Zycord-%s.zip" % VERSION
 
 CSC_CANDIDATES = [

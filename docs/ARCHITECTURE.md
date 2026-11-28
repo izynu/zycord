@@ -236,10 +236,10 @@ A 60 second timer fails the run at the stage it reached, so a hang in WebView2 c
 9. `check_version_refs` fails the build if the README download link or version badge names a release other than the one being built.
 10. `self_test` runs `dist/Zycord.exe --headless` unless `--no-test` was passed.
 11. `report` prints the size and file count of `dist/`.
-12. `pack` writes `Zycord-1.2.1.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
+12. `pack` writes `Zycord-1.2.2.zip` with deflate level 9, then writes `SHA256.txt` with the digest and the archive name.
 13. `check_download_size` fails the build if the size in the README download badge is not the size of the archive `pack` just wrote.
 
-The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.2.1`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
+The release folder is about 3.1 MB. The archive contains one top-level folder named `Zycord-1.2.2`, and every entry carries a fixed timestamp, so rebuilding the same `dist/` produces a byte-identical archive and an identical checksum.
 
 Text is copied with LF line endings and the build refuses to pack a file that still contains CRLF. A checkout made with `core.autocrlf=true` on Windows carries CRLF in the working tree, which is what the release workflow gets on `windows-latest`, so without this step every text file in the download would differ from its repository blob by one byte per line. `.gitattributes` pins `eol=lf` for the same reason, and marks images, assemblies and the compressed catalog as binary so they are never rewritten.
 

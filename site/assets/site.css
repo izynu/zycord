@@ -338,6 +338,20 @@ pre.code,
   font-size: 17px;
 }
 
+.hero-download {
+  display: inline-flex;
+  border-radius: 14px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.hero-download:hover, .hero-download:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px -12px rgba(87, 184, 162, .65);
+}
+.hero-download img { display: block; border-radius: 14px; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-download { transition: none; }
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;

@@ -20,7 +20,7 @@ SITE = os.path.dirname(os.path.abspath(__file__))
 
 REPO = "https://github.com/iZynu/zycord"
 SITE_URL = "https://izynu.github.io/zycord"
-VERSION = "1.2.1"
+VERSION = "1.2.2"
 
 
 # Files outside this generator that name the site address, relative to the
@@ -439,10 +439,12 @@ INDEX = (
         stub has no game code, no network code and never contacts Discord.
       </p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="download.html">Download for Windows</a>
-        <a class="btn btn-secondary" href="how-it-works.html">How the stub works</a>
+        <a class="hero-download" href=\"""" + REPO + """/releases/download/v""" + VERSION + """/Zycord-""" + VERSION + """.zip">
+          <img src="assets/download-button.svg" alt="Download Zycord" width="260" height="56">
+        </a>
+        <a class="btn btn-secondary" href="download.html">All downloads and checksums</a>
       </div>
-      <p class="hero-note">Windows 10 and 11, 64-bit. No installer, no account, no telemetry. Version """
+      <p class="hero-note">Windows 10 and 11, 64-bit. One executable, """ + DOWNLOAD_SIZE + """. Installs, updates and uninstalls itself. No account, no telemetry. Version """
     + VERSION
     + """.</p>
     </div>
@@ -1065,19 +1067,20 @@ DOWNLOAD = (
           <h2>Get the release</h2>
         </div>
         <p>
-          The archive contains the launcher, the session stub, the interface, the
-          catalog and the WebView2 assemblies. There is nothing else to install.
+          The archive holds one file. Everything Zycord needs — the launcher, the
+          session stub, the interface, the catalog and the WebView2 assemblies —
+          is inside that executable, so there is nothing else to install.
         </p>
-        <div class="actions" style="margin:18px 0">
-          <a class="btn btn-primary" href=\""""
+        <div class="hero-actions" style="margin:18px 0">
+          <a class="hero-download" href=\""""
     + REPO
     + """/releases/download/v"""
     + VERSION
     + """/Zycord-"""
     + VERSION
-    + """.zip\">Download Zycord-"""
-    + VERSION
-    + """.zip</a>
+    + """.zip\">
+            <img src="assets/download-button.svg" alt="Download Zycord" width="260" height="56">
+          </a>
           <a class="btn btn-secondary" href=\""""
     + REPO
     + """/releases\">All releases</a>
@@ -1700,7 +1703,23 @@ page(
 # ----------------------------------------------------------------- changelog
 
 CHANGELOG = f"""
-<h2>1.2.1 <span class="badge badge-live">Current</span></h2>
+<h2>1.2.2 <span class="badge badge-live">Current</span></h2>
+<p class="updated">Released 28 November 2026</p>
+
+<h3>Added</h3>
+<ul>
+  <li><b>One executable.</b> Zycord.exe now carries the whole release, so the download is a single self-contained installer. Run it, choose Install, and it copies itself into your local app data folder, adds a Start Menu shortcut and an entry in Add or remove programs.</li>
+  <li><b>Update</b> is a button. On an installed copy it downloads the release, checks it against the published SHA-256 and restarts into the new version.</li>
+  <li><b>Uninstall</b> is a button, in Settings. It removes the program files, the shortcut, the registry entry and the data folder.</li>
+</ul>
+
+<h3>Changed</h3>
+<ul>
+  <li>The archive is the executable plus README and LICENSE, rather than a second copy of every file the executable already holds.</li>
+  <li>Instructions for installing, updating and uninstalling are on the download page and in the README.</li>
+</ul>
+
+<h2>1.2.1</h2>
 <p class="updated">Released 28 November 2026</p>
 
 <h3>Added</h3>
@@ -1888,7 +1907,7 @@ CHANGELOG = f"""
 doc(
     "changelog.html",
     "Changelog",
-    "Every notable change in Zycord, from the first public release to 1.2.1.",
+    "Every notable change in Zycord, from the first public release to 1.2.2.",
     "Version " + VERSION,
     CHANGELOG,
 )
@@ -1905,6 +1924,14 @@ ROADMAP = (
 <section class="section">
   <div class="wrap">
     <div class="road">
+      <div class="road-item">
+        <span class="road-dot is-shipped"></span>
+        <div>
+          <h3>Version 1.2.2</h3>
+          <p>One executable that installs, updates and uninstalls itself from inside the app, and an animated download button.</p>
+        </div>
+        <span class="road-when">Shipped</span>
+      </div>
       <div class="road-item">
         <span class="road-dot is-shipped"></span>
         <div>
