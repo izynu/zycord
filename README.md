@@ -9,7 +9,7 @@
 ![Version 1.2.1](https://img.shields.io/badge/version-1.2.1-0b0f14?style=flat-square)
 ![License MIT](https://img.shields.io/badge/license-MIT-0b0f14?style=flat-square)
 ![Platform Windows 10 and 11](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b0f14?style=flat-square)
-![Download 1.07 MB](https://img.shields.io/badge/download-1.07%20MB-0b0f14?style=flat-square)
+![Download 1.13 MB](https://img.shields.io/badge/download-1.13%20MB-0b0f14?style=flat-square)
 
 </div>
 
@@ -19,7 +19,7 @@ If the animated banner does not load, open [docs/banner.svg](https://github.com/
 
 Zycord is a desktop application for Windows 10 and Windows 11, 64-bit. It runs a small process that Discord recognises as a registered game, so Discord credits `PLAY_ON_DESKTOP` quests while the game itself stays closed.
 
-The launcher is a .NET Framework 4 application that hosts its interface in Microsoft Edge WebView2. It ships as one folder with no installer, no background service, no account and no server.
+The launcher is a .NET Framework 4 application that hosts its interface in Microsoft Edge WebView2. It ships as a single executable with every other file embedded, installs itself into your local app data folder when you ask it to, and runs no background service.
 
 ## Why it exists
 
@@ -66,13 +66,13 @@ The stub contains no game code and no network code. It never contacts Discord. T
 
 ## Install
 
-1. Download `Zycord-1.2.1.zip` from the [releases page](https://github.com/iZynu/zycord/releases).
-2. Extract it to a folder you can write to, for example `C:\Users\you\Apps\Zycord`.
-3. Run `Zycord.exe`.
+1. Download `Zycord-1.2.1.zip` from the [releases page](https://github.com/iZynu/zycord/releases) and open it. The archive holds one executable.
+2. Run `Zycord.exe` from inside the archive, or copy it anywhere first. It is a single self-contained file: the interface, the catalog and the WebView2 assemblies are inside it.
+3. Zycord offers to install. Choosing **Yes** copies it to `%LOCALAPPDATA%\Zycord\app`, adds a Start Menu shortcut and an entry in Add or remove programs. Choosing **No** runs it once without installing.
 4. If Windows shows a SmartScreen warning, choose More info and then Run anyway. The executable is not signed with a code-signing certificate.
 5. If the WebView2 Runtime is missing, install the Evergreen Runtime from Microsoft and run Zycord again. It ships with Windows 11 and with current Windows 10 updates.
 
-No administrator rights are needed. To uninstall, stop any sessions, delete the extracted folder, then delete `%LOCALAPPDATA%\Zycord` to remove settings, logs and prepared game files.
+No administrator rights are needed. Once installed you never need the downloaded file again: updates are a button in the app, and so is uninstalling. **Uninstall** on the Settings tab removes the program files, the shortcut, the Add or remove programs entry and the data folder in `%LOCALAPPDATA%\Zycord`.
 
 ## Build from source
 

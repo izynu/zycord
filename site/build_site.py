@@ -1054,7 +1054,7 @@ DOWNLOAD = (
     page_head(
         "Download",
         "Zycord " + VERSION + " for Windows 10 and Windows 11, 64-bit",
-        "One zip archive, no installer, no background service and no registry entry. Extract it, run Zycord.exe, and the launcher is ready.",
+        "One executable, no background service and no administrator rights. Run it, choose Install, and the launcher is ready; updates and uninstalling are buttons inside it.",
     )
     + """
 <section class="section">
@@ -1148,13 +1148,14 @@ DOWNLOAD = (
           <h2>Installing</h2>
         </div>
         <ol>
-          <li>Extract the archive to a folder you can write to, for example <code class="inline">C:\\Users\\you\\Apps\\Zycord</code>.</li>
-          <li>Run <code class="inline">Zycord.exe</code>.</li>
+          <li>Open the downloaded <code class="inline">Zycord-""" + VERSION + """.zip</code> and run <code class="inline">Zycord.exe</code> from inside it.</li>
+          <li>Choose <b>Install</b>. It copies itself to <code class="inline">%LOCALAPPDATA%\\Zycord\\app</code> and adds a Start Menu shortcut.</li>
           <li>If Windows shows a SmartScreen warning, choose More info and then Run anyway.</li>
         </ol>
         <p>
-          There is no installer and no elevation prompt. The launcher runs as your
-          user and writes only to <code class="inline">%LOCALAPPDATA%\\Zycord</code>.
+          There is no elevation prompt. The launcher runs as your user and writes only
+          to <code class="inline">%LOCALAPPDATA%\\Zycord</code>. Choosing No instead of
+          Install runs it once without installing anything.
         </p>
       </div>
       <div>
@@ -1162,14 +1163,17 @@ DOWNLOAD = (
           <h2>Upgrading and removing</h2>
         </div>
         <p>
-          To upgrade, extract the new version over the old folder. Settings, logs and
-          prepared game files live in <code class="inline">%LOCALAPPDATA%\\Zycord</code>
-          and are not touched.
+          Both happen inside the app, so you do not need the downloaded file again.
+          When a new release is published, Zycord offers it: it downloads the
+          archive, checks it against the published SHA-256, and restarts into the
+          new version. Settings, logs and prepared game files live in
+          <code class="inline">%LOCALAPPDATA%\\Zycord</code> and are kept.
         </p>
         <p>
-          To remove it, stop any running sessions, delete the folder you extracted,
-          then delete <code class="inline">%LOCALAPPDATA%\\Zycord</code> to remove
-          settings, logs and prepared files.
+          <b>Uninstall</b> on the Settings tab removes the program files, the
+          Start Menu shortcut, the Add or remove programs entry and the data folder.
+          Nothing outside <code class="inline">%LOCALAPPDATA%\\Zycord</code> and the
+          shortcut is written.
         </p>
       </div>
     </div>
@@ -1214,7 +1218,7 @@ page(
     "Download",
     "Download Zycord "
     + VERSION
-    + " for Windows. One zip archive, no installer, with a published SHA-256 checksum.",
+    + " for Windows. One executable, one self-contained installer, with a published SHA-256 checksum.",
     DOWNLOAD,
 )
 

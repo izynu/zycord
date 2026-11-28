@@ -358,16 +358,30 @@ def self_test():
 
 
 def pack():
+    """Pack the single-file installer.
+
+    The download is one executable. It already carries the interface, the
+    catalog, the stub and the WebView2 assemblies, so shipping those beside it
+    would double the archive for no benefit; the previous flat layout grew the
+    download from 1.07 MB to 2.15 MB that way.
+
+    README and LICENSE are kept: they are what a person opening the zip
+    expects to find, and they are small.
+    """
     archive = os.path.join(ROOT, ARCHIVE)
     if os.path.isfile(archive):
         os.remove(archive)
 
     names = []
-    for dirpath, _dirnames, filenames in os.walk(DIST):
-        for name in filenames:
-            full = os.path.join(dirpath, name)
-            rel = os.path.relpath(full, DIST).replace("\\", "/")
-            names.append((full, "Zycord-%s/%s" % (VERSION, rel)))
+    installer = os.path.join(DIST, "Zycord.exe")
+    if not os.path.isfile(installer):
+        raise SystemExit("pack failed: dist/Zycord.exe was not built")
+    names.append((installer, "Zycord-%s/Zycord.exe" % VERSION))
+
+    for name in SHIPPED_DOCS:
+        full = os.path.join(DIST, name)
+        if os.path.isfile(full):
+            names.append((full, "Zycord-%s/%s" % (VERSION, name)))
 
     names.sort(key=lambda pair: pair[1])
     # Fixed timestamps and attributes keep the archive byte-identical across
